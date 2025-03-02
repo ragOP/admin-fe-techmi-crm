@@ -1,6 +1,6 @@
 import { getItem } from "@/utils/local_storage";
-import axios from "axios";
 import { BACKEND_URL } from "../enpoints";
+import axios from "axios";
 
 export const apiService = async ({
   endpoint,

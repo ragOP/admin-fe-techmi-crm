@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BarChart,
@@ -16,18 +15,6 @@ import {
 } from "recharts";
 
 const DashboardCharts = () => {
-  const [chartWidth, setChartWidth] = useState(500);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setChartWidth(window.innerWidth < 640 ? window.innerWidth - 40 : 500);
-    };
-
-    handleResize(); // Initial call
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const data = [
     { name: "Jan", value: 400, sales: 2400 },
     { name: "Feb", value: 300, sales: 2210 },
@@ -76,7 +63,12 @@ const DashboardCharts = () => {
               <YAxis />
               <Tooltip />
               <CartesianGrid strokeDasharray="3 3" />
-              <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#8884d8"
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -90,9 +82,19 @@ const DashboardCharts = () => {
         <CardContent className="overflow-x-auto">
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
-              <Pie data={pieData} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" dataKey="value">
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+              >
                 {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -113,7 +115,12 @@ const DashboardCharts = () => {
               <YAxis />
               <Tooltip />
               <CartesianGrid strokeDasharray="3 3" />
-              <Line type="monotone" dataKey="sales" stroke="#ff7300" strokeWidth={2} />
+              <Line
+                type="monotone"
+                dataKey="sales"
+                stroke="#ff7300"
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
