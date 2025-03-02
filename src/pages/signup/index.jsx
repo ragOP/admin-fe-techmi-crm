@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/login-form";
+import { SignupForm } from "@/components/signup-form";
 
 const Signup = () => {
   return (
@@ -14,7 +15,7 @@ const Signup = () => {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm />
+            <SignupForm />
           </div>
         </div>
       </div>
