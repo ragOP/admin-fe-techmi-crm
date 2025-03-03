@@ -18,3 +18,20 @@ export const fetchCategories = async ({ params }) => {
     console.error(error);
   }
 };
+
+export const deleteCategory = async (id) => {
+  try {
+    const apiResponse = await apiService({
+      endpoint: `${endpoints.category}/${id}`,
+      method: "DELETE",
+    });
+
+    if (apiResponse?.response?.success) {
+      return apiResponse?.response?.data;
+    }
+
+    return [];
+  } catch (error) {
+    console.error(error);
+  }
+}

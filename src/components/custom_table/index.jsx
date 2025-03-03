@@ -46,7 +46,7 @@ const CustomTable = ({ columns, data, isLoading, error }) => {
 
   return (
     <Card className="p-4">
-      <div className="overflow-x-auto">
+      <div className="">
         <Table className="min-w-full">
           <TableHeader>
             <TableRow>

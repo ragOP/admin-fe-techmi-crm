@@ -134,7 +134,7 @@ export function AppSidebar({ ...props }) {
         <TeamSwitcher teams={data.teams} />
         <Input placeholder="Search" className="bg-white" />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="overflow-y-auto [&::-webkit-scrollbar]:hidden">
         <NavMain items={data.navMain} showHeader={false} />
         <NavMain items={data.projects} showHeader={true} header={"More"} />
         <NavProjects projects={data.extra} />

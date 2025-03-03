@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchServices } from "../helpers/fetchServices";
+import { deleteService, fetchServices } from "../helpers/fetchServices";
 import { format, formatDistanceToNow } from "date-fns";
 import ActionMenu from "@/components/action_menu";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
+import { useState } from "react";
+import { CustomDialog } from "@/components/custom_dialog";
 
-const ServicesTable = () => {
+const ServicesTable = ({ setServiceLength }) => {
   const {
     data: services,
     isLoading,
@@ -15,6 +17,30 @@ const ServicesTable = () => {
     queryKey: ["services"],
     queryFn: fetchServices,
   });
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const [serviceData, setServiceData] = useState(null);
+
+  const onOpenDialog = (row) => {
+    console.log("Open Dialog", row);
+    setOpenDelete(true);
+    setServiceData(row);
+  };
+
+  const onCloseDialog = () => {
+    setOpenDelete(false);
+    setServiceData(null);
+  };
+
+  const onDeleteClick = (id) => {
+    console.log("Delete Clicked", id);
+    useQuery({
+      queryKey: ["delete_services"],
+      queryFn: deleteService(id),
+    });
+  };
+
+  setServiceLength(services?.length);
 
   const columns = [
     {
@@ -38,7 +64,9 @@ const ServicesTable = () => {
       label: "Created At",
       render: (value, row) => (
         <div className="flex flex-col gap-1">
-          <Typography>{format(new Date(value), "dd/MM/yyyy hh:mm a")}</Typography>
+          <Typography>
+            {format(new Date(value), "dd/MM/yyyy hh:mm a")}
+          </Typography>
           {value !== row.updatedAt && (
             <Typography className="text-gray-500 text-sm">
               Updated -{" "}
@@ -53,7 +81,7 @@ const ServicesTable = () => {
     {
       key: "actions",
       label: "Actions",
-      render: () => (
+      render: (value, row) => (
         <ActionMenu
           options={[
             {
@@ -69,7 +97,7 @@ const ServicesTable = () => {
             {
               label: "Delete",
               icon: Trash2,
-              action: () => console.log("Delete Clicked"),
+              action: () => onOpenDialog(row),
               className: "text-red-500",
             },
           ]}
@@ -79,12 +107,22 @@ const ServicesTable = () => {
   ];
 
   return (
-    <CustomTable
-      columns={columns}
-      data={services}
-      isLoading={isLoading}
-      error={error}
-    />
+    <>
+      <CustomTable
+        columns={columns}
+        data={services}
+        isLoading={isLoading}
+        error={error}
+      />
+      <CustomDialog
+        onOpen={openDelete}
+        onClose={onCloseDialog}
+        title={serviceData?.name}
+        modalType="Delete"
+        onDelete={onDeleteClick}
+        id={serviceData?._id}
+      />
+    </>
   );
 };
 

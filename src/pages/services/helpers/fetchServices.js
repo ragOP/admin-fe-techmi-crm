@@ -17,3 +17,20 @@ export const fetchServices = async () => {
     console.error(error);
   }
 };
+
+export const deleteService = async (id) => {
+  try {
+    const apiResponse = await apiService({
+      endpoint: `${endpoints.service}/${id}`,
+      method: "DELETE",
+    });
+
+    if (apiResponse?.response?.success) {
+      return apiResponse?.response?.data;
+    }
+
+    return [];
+  } catch (error) {
+    console.error(error);
+  }
+};

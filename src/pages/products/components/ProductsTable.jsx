@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchProducts } from "../helpers/fetchProducts";
+import { deleteProduct, fetchProducts } from "../helpers/fetchProducts";
 import { format, formatDistanceToNow } from "date-fns";
 import ActionMenu from "@/components/action_menu";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
+import { CustomDialog } from "@/components/custom_dialog";
+import { useState } from "react";
 
-const ProductsTable = () => {
+const ProductsTable = ({ setProductLength }) => {
   const {
     data: apiProductsResponse,
     isLoading,
@@ -16,7 +18,30 @@ const ProductsTable = () => {
     queryFn: fetchProducts,
   });
 
+  const [openDelete, setOpenDelete] = useState(false);
+  const [serviceData, setServiceData] = useState(null);
+
+  const onOpenDialog = (row) => {
+    console.log("Open Dialog", row);
+    setOpenDelete(true);
+    setServiceData(row);
+  };
+
+  const onCloseDialog = () => {
+    setOpenDelete(false);
+    setServiceData(null);
+  };
+
+  const onDeleteClick = (id) => {
+    console.log("Delete Clicked", id);
+    useQuery({
+      queryKey: ["delete_products"],
+      queryFn: deleteProduct(id),
+    });
+  };
+
   const products = apiProductsResponse?.data || [];
+  setProductLength(products?.length);
 
   const columns = [
     {
@@ -35,15 +60,25 @@ const ProductsTable = () => {
     },
     { key: "small_description", label: "Short Description" },
     { key: "price", label: "Price", render: (value) => `₹${value}` },
-    { key: "discounted_price", label: "Discounted Price", render: (value) => `₹${value}` },
-    { key: "instock", label: "In Stock", render: (value) => (value ? "Yes" : "No") },
+    {
+      key: "discounted_price",
+      label: "Discounted Price",
+      render: (value) => `₹${value}`,
+    },
+    {
+      key: "instock",
+      label: "In Stock",
+      render: (value) => (value ? "Yes" : "No"),
+    },
     { key: "manufacturer", label: "Manufacturer" },
     {
       key: "createdAt",
       label: "Created At",
       render: (value, row) => (
         <div className="flex flex-col gap-1">
-          <Typography>{format(new Date(value), "dd/MM/yyyy hh:mm a")}</Typography>
+          <Typography>
+            {format(new Date(value), "dd/MM/yyyy hh:mm a")}
+          </Typography>
           {value !== row.updatedAt && (
             <Typography className="text-gray-500 text-sm">
               Updated -{" "}
@@ -58,7 +93,7 @@ const ProductsTable = () => {
     {
       key: "actions",
       label: "Actions",
-      render: () => (
+      render: (value, row) => (
         <ActionMenu
           options={[
             {
@@ -74,7 +109,7 @@ const ProductsTable = () => {
             {
               label: "Delete",
               icon: Trash2,
-              action: () => console.log("Delete Clicked"),
+              action: () => onOpenDialog(row),
               className: "text-red-500",
             },
           ]}
@@ -84,12 +119,22 @@ const ProductsTable = () => {
   ];
 
   return (
-    <CustomTable
-      columns={columns}
-      data={products}
-      isLoading={isLoading}
-      error={error}
-    />
+    <>
+      <CustomTable
+        columns={columns}
+        data={products}
+        isLoading={isLoading}
+        error={error}
+      />
+      <CustomDialog
+        onOpen={openDelete}
+        onClose={onCloseDialog}
+        title={serviceData?.name}
+        modalType="Delete"
+        onDelete={onDeleteClick}
+        id={serviceData?._id}
+      />
+    </>
   );
 };
 
