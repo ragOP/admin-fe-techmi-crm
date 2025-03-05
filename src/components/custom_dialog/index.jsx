@@ -15,7 +15,8 @@ export function CustomDialog({
   buttonText,
   modalType,
   onDelete,
-  id
+  id,
+  isLoading,
 }) {
   return (
     <Dialog open={onOpen} onOpenChange={onClose}>
@@ -29,10 +30,13 @@ export function CustomDialog({
         </DialogHeader>
         <DialogFooter>
           <Button
+          
+            disabled={isLoading}
             onClick={() => onDelete(id)}
             variant={modalType === "Delete" ? "destructive" : "primary"}
             type="submit"
           >
+            {/* {isLoading && } */}
             {modalType ? modalType : buttonText}
           </Button>
         </DialogFooter>

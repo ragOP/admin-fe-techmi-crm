@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteService, fetchServices } from "../helpers/fetchServices";
 import { format, formatDistanceToNow } from "date-fns";
 import ActionMenu from "@/components/action_menu";
@@ -7,8 +7,11 @@ import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
 import { useState } from "react";
 import { CustomDialog } from "@/components/custom_dialog";
+import { toast } from "sonner";
 
 const ServicesTable = ({ setServiceLength }) => {
+  const queryClient = useQueryClient();
+
   const {
     data: services,
     isLoading,
@@ -32,12 +35,21 @@ const ServicesTable = ({ setServiceLength }) => {
     setServiceData(null);
   };
 
+  const { mutate: deleteServiceMutation, isLoading: isDeleting } = useMutation({
+    mutationFn: deleteService,
+    onSuccess: () => {
+      toast.success("Service deleted successfully.");
+      queryClient.invalidateQueries(["services"]);
+      onCloseDialog();
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to delete service.");
+    },
+  });
+
   const onDeleteClick = (id) => {
-    console.log("Delete Clicked", id);
-    useQuery({
-      queryKey: ["delete_services"],
-      queryFn: deleteService(id),
-    });
+    deleteServiceMutation(id);
   };
 
   setServiceLength(services?.length);
@@ -121,6 +133,7 @@ const ServicesTable = ({ setServiceLength }) => {
         modalType="Delete"
         onDelete={onDeleteClick}
         id={serviceData?._id}
+        isLoading={isDeleting}
       />
     </>
   );

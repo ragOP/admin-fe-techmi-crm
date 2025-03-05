@@ -6,17 +6,23 @@ import { PlusIcon } from "lucide-react";
 import { singularize } from "@/utils/singularizing_word";
 import { capitalize } from "@/utils/captilize";
 
-const CustomActionMenu = ({ title, total }) => {  
+const CustomActionMenu = ({ title, total, onAdd }) => {
   return (
     <div className="flex items-center justify-between w-full my-3">
       <div>
-        <Typography variant="p">Showing {total} {" "} {title}</Typography>
+        <Typography variant="p">
+          Showing {total} {title}
+        </Typography>
       </div>
       <div className="flex items-center gap-4">
         <Input placeholder="Search" />
-        <Button className="flex items-center gap-2 cursor-pointer"> 
-          <PlusIcon /> 
-          <span>Add {capitalize(singularize(title))}</span></Button>
+        <Button
+          onClick={onAdd}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <PlusIcon />
+          <span>Add {capitalize(singularize(title))}</span>
+        </Button>
       </div>
     </div>
   );

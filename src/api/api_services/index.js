@@ -1,6 +1,7 @@
 import { getItem } from "@/utils/local_storage";
 import { BACKEND_URL } from "../enpoints";
 import axios from "axios";
+import { getToken } from "@/utils/auth";
 
 export const apiService = async ({
   endpoint,
@@ -14,8 +15,7 @@ export const apiService = async ({
   signal,
 }) => {
   try {
-    const user = getItem("user");
-    const token = user?.token;
+    const token = getToken();
 
     const requestObj = {
       url: `${customUrl ? customUrl : BACKEND_URL}/${endpoint}`,
