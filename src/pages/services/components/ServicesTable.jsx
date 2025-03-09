@@ -5,7 +5,7 @@ import ActionMenu from "@/components/action_menu";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomDialog } from "@/components/custom_dialog";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -27,7 +27,6 @@ const ServicesTable = ({ setServiceLength }) => {
   const [serviceData, setServiceData] = useState(null);
 
   const onOpenDialog = (row) => {
-    console.log("Open Dialog", row);
     setOpenDelete(true);
     setServiceData(row);
   };
@@ -62,7 +61,9 @@ const ServicesTable = ({ setServiceLength }) => {
     navigate(`/dashboard/services/${service._id}`);
   };
 
-  setServiceLength(services?.length);
+  useEffect(() => {
+    setServiceLength(services?.length);
+  }, [services, setServiceLength]);
 
   const columns = [
     {

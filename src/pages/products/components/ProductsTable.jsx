@@ -1,14 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import { deleteProduct, fetchProducts } from "../helpers/fetchProducts";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchProducts } from "../helpers/fetchProducts";
 import { format, formatDistanceToNow } from "date-fns";
 import ActionMenu from "@/components/action_menu";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
 import { CustomDialog } from "@/components/custom_dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { deleteProduct } from "../helpers/deleteProduct";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 const ProductsTable = ({ setProductLength }) => {
+  const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+
   const {
     data: apiProductsResponse,
     isLoading,
@@ -19,29 +26,49 @@ const ProductsTable = ({ setProductLength }) => {
   });
 
   const [openDelete, setOpenDelete] = useState(false);
-  const [serviceData, setServiceData] = useState(null);
+  const [productData, setProductData] = useState(null);
 
   const onOpenDialog = (row) => {
-    console.log("Open Dialog", row);
     setOpenDelete(true);
-    setServiceData(row);
+    setProductData(row);
   };
 
   const onCloseDialog = () => {
     setOpenDelete(false);
-    setServiceData(null);
+    setProductData(null);
   };
 
-  const onDeleteClick = (id) => {
-    console.log("Delete Clicked", id);
-    useQuery({
-      queryKey: ["delete_products"],
-      queryFn: deleteProduct(id),
+  const { mutate: deleteProuductsMutation, isLoading: isDeleting } =
+    useMutation({
+      mutationFn: deleteProduct,
+      onSuccess: () => {
+        toast.success("Products deleted successfully.");
+        queryClient.invalidateQueries(["products"]);
+        onCloseDialog();
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("Failed to delete product.");
+      },
     });
+
+  const onDeleteClick = (id) => {
+    deleteProuductsMutation(id);
   };
 
   const products = apiProductsResponse?.data || [];
-  setProductLength(products?.length);
+
+  const onNavigateToEdit = (service) => {
+    navigate(`/dashboard/products/edit/${service._id}`);
+  };
+
+  const onNavigateDetails = (service) => {
+    navigate(`/dashboard/products/${service._id}`);
+  };
+
+  useEffect(() => {
+    setProductLength(products?.length);
+  }, [products, setProductLength]);
 
   const columns = [
     {
@@ -99,12 +126,12 @@ const ProductsTable = ({ setProductLength }) => {
             {
               label: "View Details",
               icon: Eye,
-              action: () => console.log("View Details Clicked"),
+              action: () => onNavigateDetails(row),
             },
             {
               label: "Edit",
               icon: Pencil,
-              action: () => console.log("Edit Clicked"),
+              action: () => onNavigateToEdit(row),
             },
             {
               label: "Delete",
@@ -129,10 +156,11 @@ const ProductsTable = ({ setProductLength }) => {
       <CustomDialog
         onOpen={openDelete}
         onClose={onCloseDialog}
-        title={serviceData?.name}
+        title={productData?.name}
         modalType="Delete"
         onDelete={onDeleteClick}
-        id={serviceData?._id}
+        id={productData?._id}
+        isLoading={isDeleting}
       />
     </>
   );

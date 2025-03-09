@@ -1,14 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteCategory, fetchCategories } from "../helpers/fetchCategories";
 import { format, formatDistanceToNow } from "date-fns";
 import ActionMenu from "@/components/action_menu";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomDialog } from "@/components/custom_dialog";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 const CategoriesTable = ({ setCategoryLength }) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const {
     data: apiCategoriesResponse,
     isLoading,
@@ -22,7 +27,6 @@ const CategoriesTable = ({ setCategoryLength }) => {
   const [serviceData, setServiceData] = useState(null);
 
   const onOpenDialog = (row) => {
-    console.log("Open Dialog", row);
     setOpenDelete(true);
     setServiceData(row);
   };
@@ -32,16 +36,38 @@ const CategoriesTable = ({ setCategoryLength }) => {
     setServiceData(null);
   };
 
+  const { mutate: deleteCategoryMutation, isLoading: isDeleting } = useMutation(
+    {
+      mutationFn: deleteCategory,
+      onSuccess: () => {
+        toast.success("Category deleted successfully.");
+        queryClient.invalidateQueries(["category"]);
+        onCloseDialog();
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("Failed to delete category.");
+      },
+    }
+  );
+
   const onDeleteClick = (id) => {
-    console.log("Delete Clicked", id);
-    useQuery({
-      queryKey: ["delete_categories"],
-      queryFn: deleteCategory(id),
-    });
+    deleteCategoryMutation(id);
   };
 
   const categories = apiCategoriesResponse?.categories || [];
-  setCategoryLength(categories?.length);
+
+  useEffect(() => {
+    setCategoryLength(categories?.length);
+  }, [categories, setCategoryLength]);
+
+  const onNavigateToEdit = (service) => {
+    navigate(`/dashboard/categories/edit/${service._id}`);
+  };
+
+  const onNavigateDetails = (service) => {
+    navigate(`/dashboard/categories/${service._id}`);
+  };
 
   const columns = [
     {
@@ -98,12 +124,12 @@ const CategoriesTable = ({ setCategoryLength }) => {
             {
               label: "View Details",
               icon: Eye,
-              action: () => console.log("View Details Clicked"),
+              action: () => onNavigateDetails(row),
             },
             {
               label: "Edit",
               icon: Pencil,
-              action: () => console.log("Edit Clicked"),
+              action: () => onNavigateToEdit(row),
             },
             {
               label: "Delete",
@@ -132,6 +158,7 @@ const CategoriesTable = ({ setCategoryLength }) => {
         modalType="Delete"
         onDelete={onDeleteClick}
         id={serviceData?._id}
+        isLoading={isDeleting}
       />
     </>
   );

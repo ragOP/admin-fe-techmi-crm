@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -11,36 +12,44 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ServicesFormSchema } from "@/pages/services/pages/services_editor/schema/serviceFormSchema";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { selectAdminId } from "@/redux/admin/adminSelector";
-import { updateService } from "../helper/updateService";
-import { createService } from "../helper/createService";
+import { createCategory } from "../helper/createCategory";
+import { updateCategory } from "../helper/updateCategory";
+import { fetchServices } from "@/pages/services/helpers/fetchServices";
 import { useEffect, useState } from "react";
 import { urlToFile } from "@/utils/file/urlToFile";
+import { toast } from "sonner";
+import { categoryFormSchema } from "../schema/categoryFormSchema";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { X } from "lucide-react";
 
-const ServicesForm = ({ initialData, isEditMode }) => {
+const CategoryForm = ({ initialData, isEditMode }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const reduxAdminId = useSelector(selectAdminId);
-  const [images, setImages] = useState([]); // State to track images
+  const [images, setImages] = useState([]);
+
+  const { data: services } = useQuery({
+    queryKey: ["services"],
+    queryFn: fetchServices,
+  });
 
   const form = useForm({
-    resolver: zodResolver(ServicesFormSchema),
+    resolver: zodResolver(categoryFormSchema),
     defaultValues: {
       name: initialData?.name || "",
-      slug: initialData?.slug || "",
       description: initialData?.description || "",
-      meta_data: initialData?.meta_data || {},
-      images: [], // Initialize as empty array
+      discount_label_text: initialData?.discount_label_text || "",
+      newly_launched: initialData?.newly_launched || false,
+      is_active: initialData?.is_active || true,
+      images: [],
+      service: initialData?.service,
     },
   });
 
-  // Convert URLs to files when the component mounts
   useEffect(() => {
     const convertUrlsToFiles = async () => {
       if (isEditMode && initialData?.images) {
@@ -49,76 +58,60 @@ const ServicesForm = ({ initialData, isEditMode }) => {
             async (url, index) => await urlToFile(url, `file_${index}.jpg`)
           )
         );
-        const validFiles = files.filter((file) => file !== null);
-        setImages(validFiles); // Set the images state
-        form.setValue("images", validFiles); // Update form field value
+        setImages(files.filter(Boolean));
+        form.setValue("images", files);
       }
     };
-
     convertUrlsToFiles();
   }, [isEditMode, initialData, form]);
 
-  // Mutation for creating a service
   const createMutation = useMutation({
-    mutationFn: createService,
+    mutationFn: createCategory,
     onSuccess: (res) => {
       if (res?.response?.success) {
-        toast.success("Service created successfully.");
+        toast.success("Category created successfully.");
         form.reset();
-        navigate("/dashboard/services");
+        navigate("/dashboard/categories");
       } else {
-        toast.error("Failed to create service. Please try again.");
+        toast.error("Failed to create category.");
       }
     },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to create service. Please try again.");
-    },
+    onError: () => toast.error("Failed to create category."),
   });
 
-  // Mutation for updating a service
   const updateMutation = useMutation({
-    mutationFn: (data) => updateService({ id, payload: data }),
+    mutationFn: (data) => updateCategory({ id, payload: data }),
     onSuccess: (res) => {
       if (res?.response?.success) {
-        toast.success("Service updated successfully.");
-        navigate("/dashboard/services");
+        toast.success("Category updated successfully.");
+        navigate("/dashboard/categories");
       } else {
-        toast.error("Failed to update service. Please try again.");
+        toast.error("Failed to update category.");
       }
     },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to update service. Please try again.");
-    },
+    onError: () => toast.error("Failed to update category."),
   });
 
   const onSubmit = async (data) => {
     const formData = new FormData();
 
     formData.append("name", data.name);
-    formData.append("slug", data.slug);
     formData.append("description", data.description);
+    formData.append("discount_label_text", data.discount_label_text || "");
+    formData.append("newly_launched", data.newly_launched);
+    formData.append("is_active", data.is_active);
     formData.append("created_by_admin", reduxAdminId);
+    formData.append("service[]", data.service);
+    images.forEach((file) => formData.append("images", file));
 
-    // Append images to form data
-    images.forEach((file) => {
-      formData.append("images", file);
-    });
-
-    if (isEditMode) {
-      // Edit mode: Call the update mutation
-      updateMutation.mutate(formData);
-    } else {
-      // Create mode: Call the create mutation
-      createMutation.mutate(formData);
-    }
+    isEditMode
+      ? updateMutation.mutate(formData)
+      : createMutation.mutate(formData);
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Name Field */}
         <FormField
           control={form.control}
           name="name"
@@ -126,27 +119,12 @@ const ServicesForm = ({ initialData, isEditMode }) => {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter service name" {...field} />
+                <Input placeholder="Enter category name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        {/* Slug Field */}
-        <FormField
-          control={form.control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Custom Link</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter custom link" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/* Description Field */}
         <FormField
           control={form.control}
           name="description"
@@ -154,13 +132,87 @@ const ServicesForm = ({ initialData, isEditMode }) => {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="Enter service description" {...field} />
+                <Textarea placeholder="Enter category description" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        {/* Images Field */}
+        <FormField
+          control={form.control}
+          name="discount_label_text"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Discount Label Text</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter discount label text" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="newly_launched"
+          render={({ field }) => (
+            <FormItem className="flex items-center space-x-2">
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+              <FormLabel>Newly Launched</FormLabel>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="is_active"
+          render={({ field }) => (
+            <FormItem className="flex items-center space-x-2">
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+              <FormLabel>Is Active</FormLabel>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="service"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Assigned Services</FormLabel>
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                className="space-y-3 mt-2"
+              >
+                {services?.map((service) => (
+                  <FormItem
+                    key={service._id}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <RadioGroupItem
+                      value={service._id}
+                      id={`service-${service._id}`}
+                    />
+                    <label
+                      htmlFor={`service-${service._id}`}
+                      className="text-sm font-medium leading-none"
+                    >
+                      {service.name}
+                    </label>
+                  </FormItem>
+                ))}
+              </RadioGroup>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="images"
@@ -182,7 +234,7 @@ const ServicesForm = ({ initialData, isEditMode }) => {
             </FormItem>
           )}
         />
-        {/* Display Images */}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           {images.map((file, index) => (
             <div key={index} className="relative">
@@ -200,27 +252,27 @@ const ServicesForm = ({ initialData, isEditMode }) => {
                 }}
                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
               >
-              <X size={16} />
+                <X size={16} />
               </button>
             </div>
           ))}
         </div>
-        {/* Submit Button */}
+
         <Button
           type="submit"
           disabled={createMutation.isPending || updateMutation.isPending}
         >
-          {createMutation.isPending || updateMutation.isPending
-            ? isEditMode
+          {isEditMode
+            ? updateMutation.isPending
               ? "Updating..."
-              : "Creating..."
-            : isEditMode
-            ? "Update Service"
-            : "Create Service"}
+              : "Update Category"
+            : createMutation.isPending
+            ? "Creating..."
+            : "Create Category"}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default ServicesForm;
+export default CategoryForm;

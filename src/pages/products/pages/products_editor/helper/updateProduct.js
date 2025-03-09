@@ -1,10 +1,10 @@
 import { apiService } from "@/api/api_services";
 import { endpoints } from "@/api/enpoints";
 
-export const updateService = async ({ id, payload }) => {
+export const updateProduct = async ({ id, payload }) => {
   try {
     const response = await apiService({
-      endpoint: `${endpoints.service}/${id}`,
+      endpoint: `${endpoints.product}/${id}`,
       method: "PUT",
       data: payload,
       headers: {

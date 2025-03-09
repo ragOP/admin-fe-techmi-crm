@@ -20,6 +20,8 @@ import { clearCredentials } from "@/redux/admin/adminSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAdmin } from "@/redux/admin/adminSelector";
 import ServiceDetails from "@/pages/services/pages/service_details";
+import CategoriesEditor from "@/pages/categories/pages/categories_editor";
+import ProductsEditor from "@/pages/products/pages/products_editor";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -80,13 +82,15 @@ const Router = () => {
 
         {/* Products Routes */}
         <Route path="products" element={<Products />} />
-        {/* <Route path="products/add" element={<AddProduct />} />
-        <Route path="products/:id" element={<ProductDetails />} /> */}
+        <Route path="products/add" element={<ProductsEditor />} />
+        <Route path="products/edit/:id" element={<ProductsEditor />} />
+        {/* <Route path="products/:id" element={<ProductDetails />} /> */}
 
         {/* Categories Routes */}
         <Route path="categories" element={<Categories />} />
-        {/* <Route path="categories/add" element={<AddCategory />} />
-        <Route path="categories/:id" element={<CategoryDetails />} /> */}
+        <Route path="categories/add" element={<CategoriesEditor />} />
+        <Route path="categories/edit/:id" element={<CategoriesEditor />} />
+        {/* <Route path="categories/:id" element={<CategoryDetails />} /> */}
       </Route>
       <Route path="*" element={<ErrorPage />} />
     </Routes>
