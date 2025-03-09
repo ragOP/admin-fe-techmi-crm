@@ -7,7 +7,6 @@ const Layout = () => {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-      
         <Outlet />
       </SidebarInset>
     </SidebarProvider>

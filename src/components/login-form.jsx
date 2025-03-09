@@ -7,8 +7,11 @@ import { Label } from "@/components/ui/label";
 import { loginUser } from "@/helpers/loginUser";
 import { useNavigate } from "react-router";
 import { setItem } from "@/utils/local_storage";
+import { setCredentials } from "@/redux/admin/adminSlice";
+import { useDispatch } from "react-redux";
 
 export function LoginForm({ className, ...props }) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -41,6 +44,18 @@ export function LoginForm({ className, ...props }) {
             userId: userId,
           };
           setItem(localStoragePayload);
+
+          dispatch(
+            setCredentials({
+              token: tokenData,
+              id: userId,
+              name: data.name,
+              email: data.email,
+              role: data.role,
+              is_super_admin: data.is_super_admin,
+              services: data.services || [],
+            })
+          );
         }
 
         toast.success("Login successful!");

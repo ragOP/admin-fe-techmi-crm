@@ -8,8 +8,10 @@ import Typography from "@/components/typography";
 import { useState } from "react";
 import { CustomDialog } from "@/components/custom_dialog";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 const ServicesTable = ({ setServiceLength }) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const {
@@ -52,6 +54,14 @@ const ServicesTable = ({ setServiceLength }) => {
     deleteServiceMutation(id);
   };
 
+  const onNavigateToEdit = (service) => {
+    navigate(`/dashboard/services/edit/${service._id}`);
+  };
+
+  const onNavigateDetails = (service) => {
+    navigate(`/dashboard/services/${service._id}`);
+  };
+
   setServiceLength(services?.length);
 
   const columns = [
@@ -69,7 +79,7 @@ const ServicesTable = ({ setServiceLength }) => {
         </div>
       ),
     },
-    { key: "slug", label: "Slug" },
+    { key: "slug", label: "Custom URL" },
     { key: "description", label: "Description" },
     {
       key: "createdAt",
@@ -99,12 +109,12 @@ const ServicesTable = ({ setServiceLength }) => {
             {
               label: "View Details",
               icon: Eye,
-              action: () => console.log("View Details Clicked"),
+              action: () => onNavigateDetails(row),
             },
             {
               label: "Edit",
               icon: Pencil,
-              action: () => console.log("Edit Clicked"),
+              action: () => onNavigateToEdit(row),
             },
             {
               label: "Delete",

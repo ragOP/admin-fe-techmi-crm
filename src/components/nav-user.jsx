@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  LogOut,
-} from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -23,14 +19,22 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router";
+import { clearCredentials } from "@/redux/admin/adminSlice";
+import { useDispatch } from "react-redux";
+import { removeItem } from "@/utils/local_storage";
 
 export function NavUser({ user }) {
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isMobile } = useSidebar();
 
   const onLogout = () => {
-    navigate('/login')
-  }
+    dispatch(clearCredentials());
+    removeItem("token");
+    removeItem("userId");
+
+    navigate("/login");
+  };
 
   return (
     <SidebarMenu>

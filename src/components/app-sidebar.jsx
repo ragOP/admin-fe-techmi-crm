@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   BellIcon,
   Briefcase,
+  CircleUserIcon,
   ContactIcon,
   Crown,
   FileText,
@@ -11,6 +12,7 @@ import {
   Package,
   Settings2,
   ShieldUserIcon,
+  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -26,122 +28,46 @@ import {
 } from "@/components/ui/sidebar";
 import { Input } from "./ui/input";
 import { NavProjects } from "./nav-projects";
-
-const data = {
-  user: {
-    name: "Kashif Deshmukh",
-    email: "kd@example.com",
-    avatar: "/user.jpg",
-  },
-  teams: [
-    {
-      name: "CRM",
-      logo: Crown,
-      plan: "Super Admin",
-    },
-    {
-      name: "CRM",
-      logo: ShieldUserIcon,
-      plan: "Admin",
-    },
-  ],
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboard,
-      isActive: true,
-      items: [],
-    },
-    {
-      title: "Services",
-      url: "/dashboard/services",
-      icon: Briefcase,
-      isActive: true,
-      items: [],
-    },
-    {
-      title: "Categories",
-      url: "/dashboard/categories",
-      icon: Layers,
-      items: [],
-    },
-    {
-      title: "Products",
-      url: "/dashboard/products",
-      icon: Package,
-      items: [],
-    },
-  ],
-  projects: [
-    {
-      title: "Forms",
-      name: "Forms",
-      url: "/forms",
-      icon: FormInput,
-      items: [
-        {
-          title: "Service",
-          url: "/forms/service",
-        },
-        {
-          title: "Product",
-          url: "/forms/product",
-        },
-      ]
-    },
-    {
-      title: "Blogs",
-      name: "Blogs",
-      url: "/blogs",
-      icon: FileText,
-    },
-    {
-      title: "Contact us form",
-      name: "Contact us form",
-      url: "/contact-us",
-      icon: ContactIcon,
-    },
-  ],
-  extra: [
-    {
-      title: "Forms",
-      name: "Forms",
-      url: "/forms",
-      icon: FormInput,
-    },
-  ],
-  more: [
-    {
-      title: "Notifications",
-      name: "Notifications",
-      url: "/notifications",
-      icon: BellIcon,
-    },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: Settings2,
-      items: [],
-    },
-  ],
-};
+import { useSelector } from "react-redux";
+import {
+  selectAdminEmail,
+  selectAdminName,
+  selectIsSuperAdmin,
+} from "@/redux/admin/adminSelector";
+import { filterItemsByRole } from "@/utils/sidebar/filterItemsByRole";
+import { data } from "@/utils/sidebar/sidebarData";
 
 export function AppSidebar({ ...props }) {
+  const isSuperAdmin = useSelector(selectIsSuperAdmin);
+  const role = isSuperAdmin ? "super_admin" : "admin";
+  const name = useSelector(selectAdminName);
+  const email = useSelector(selectAdminEmail);
+
+  const filteredNavMain = filterItemsByRole(data.navMain, role);
+  const filteredProjects = filterItemsByRole(data.projects, role);
+  const filteredExtra = filterItemsByRole(data.extra, role);
+  const filteredMore = filterItemsByRole(data.more, role);
+
+  const userInfo = {
+    name: name,
+    email: email,
+    avatar: "/user.jpg",
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={data.teams} role={role} />
         <Input placeholder="Search" className="bg-white" />
       </SidebarHeader>
       <SidebarContent className="overflow-y-auto [&::-webkit-scrollbar]:hidden">
-        <NavMain items={data.navMain} showHeader={false} />
-        <NavMain items={data.projects} showHeader={true} header={"More"} />
-        <NavProjects projects={data.extra} />
+        <NavMain items={filteredNavMain} showHeader={false} />
+        <NavMain items={filteredProjects} showHeader={true} header={"More"} />
+        <NavProjects projects={filteredExtra} />
       </SidebarContent>
       <SidebarFooter>
-        <NavMain items={data.more} />
-        <NavUser user={data.user} />
+        <NavMain items={filteredMore} />
+        <NavUser user={userInfo} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

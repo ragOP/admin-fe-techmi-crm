@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "@/layout";
 import Login from "@/pages/login";
@@ -11,8 +11,47 @@ import Categories from "@/pages/categories";
 import ServicesEditor from "@/pages/services/pages/services_editor";
 import ProtectedRoute from "@/auth/ProtectedRoute";
 import PublicRoute from "@/auth/PublicRoute";
+import Admins from "@/pages/admin";
+import { getItem, removeItem } from "@/utils/local_storage";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "sonner";
+import AdminEditor from "@/pages/admin/pages/admin_editor";
+import { clearCredentials } from "@/redux/admin/adminSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAdmin } from "@/redux/admin/adminSelector";
+import ServiceDetails from "@/pages/services/pages/service_details";
 
 const Router = () => {
+  const dispatch = useDispatch();
+
+  console.log(useSelector(selectAdmin))
+
+  const checkTokenExpiration = () => {
+    const storedToken = getItem("token");
+    if (!storedToken) return;
+
+    try {
+      const decodedToken = jwtDecode(storedToken);
+      const currentTime = Date.now() / 1000;
+
+      if (decodedToken.exp < currentTime) {
+        removeItem("token");
+        dispatch(clearCredentials());
+        toast.error("Your session has expired. Please login again.", {
+          autoClose: 3000,
+          theme: "colored",
+        });
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      removeItem("token");
+    }
+  };
+
+  useEffect(() => {
+    checkTokenExpiration();
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" />} />
@@ -24,16 +63,20 @@ const Router = () => {
         path="/dashboard"
         element={
           // <ProtectedRoute>
-            <Layout />
+          <Layout />
           // </ProtectedRoute>
         }
       >
         <Route index element={<Dashboard />} />
 
+        <Route path="admins" element={<Admins />} />
+        <Route path="admins/add" element={<AdminEditor />} />
+
         {/* Services Routes */}
         <Route path="services" element={<Services />} />
         <Route path="services/add" element={<ServicesEditor />} />
-        {/* <Route path="services/:id" element={<ServiceDetails />} /> */}
+        <Route path="services/edit/:id" element={<ServicesEditor />} />
+        <Route path="services/:id" element={<ServiceDetails />} />
 
         {/* Products Routes */}
         <Route path="products" element={<Products />} />
