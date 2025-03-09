@@ -36,6 +36,7 @@ export function SignupForm({ className, ...props }) {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        role: "admin"
       });
 
       if (response?.response?.success) {
