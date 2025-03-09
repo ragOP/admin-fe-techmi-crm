@@ -51,8 +51,8 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       name: initialData?.name || "",
       small_description: initialData?.small_description || "",
       full_description: initialData?.full_description || "",
-      price: initialData?.price || "",
-      discounted_price: initialData?.discounted_price || "",
+      price: initialData?.price || 0,
+      discounted_price: initialData?.discounted_price || 0,
       instock: initialData?.instock || true,
       manufacturer: initialData?.manufacturer || "",
       consumed_type: initialData?.consumed_type || "",
@@ -205,7 +205,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
                       type="number"
                       placeholder="Enter product price"
                       {...field}
-                      onChange={(e) => Number(e.target.value)}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   </FormControl>
                   <FormMessage />
@@ -227,6 +227,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
                       type="number"
                       placeholder="Enter discounted price"
                       {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   </FormControl>
                   <FormMessage />

@@ -1,5 +1,5 @@
-// export const BACKEND_URL = "https://techmi-crm-be.onrender.com";
-export const BACKEND_URL = "http://localhost:8000";
+export const BACKEND_URL = "https://techmi-crm-be.onrender.com";
+// export const BACKEND_URL = "http://localhost:8000";
 
 export const endpoints = {
   admin: "api/auth/admins",
