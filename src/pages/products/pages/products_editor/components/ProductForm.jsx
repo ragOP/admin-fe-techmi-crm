@@ -40,7 +40,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
   const categoryOptions =
     categoryData?.categories && categoryData.categories.length > 0
       ? categoryData.categories.map((cat) => ({
-          value: cat.id,
+          value: cat._id,
           label: cat.name,
         }))
       : [];
@@ -327,10 +327,14 @@ const ProductsForm = ({ initialData, isEditMode }) => {
                     <Select
                       isMulti
                       options={categoryOptions}
-                      value={field.value}
-                      onChange={(selected) =>
-                        field.onChange(selected.map((cat) => cat.value))
-                      }
+                      value={categoryOptions.filter((option) =>
+                        field.value.includes(option.value)
+                      )}
+                      onChange={(selected) => {
+                        field.onChange(
+                          selected ? selected.map((cat) => cat.value) : []
+                        );
+                      }}
                       placeholder="Select categories"
                     />
                   </FormControl>
@@ -426,7 +430,10 @@ const ProductsForm = ({ initialData, isEditMode }) => {
                           ? { value: true, label: "Yes" }
                           : { value: false, label: "No" }
                       }
-                      onChange={(selected) => field.onChange(selected.value)}
+                      onChange={(selected) => {
+                        console.log("selected", selected);
+                        field.onChange(selected.value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
