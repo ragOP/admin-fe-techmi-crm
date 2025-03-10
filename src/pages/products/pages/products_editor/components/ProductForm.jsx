@@ -129,6 +129,9 @@ const ProductsForm = ({ initialData, isEditMode }) => {
     images.forEach((file) => {
       formData.append("images", file);
     });
+    formData.category.forEach((cat) => {
+      formData.append("category", cat);
+    });
 
     if (isEditMode) {
       updateMutation.mutate(formData);

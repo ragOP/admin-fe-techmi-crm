@@ -22,6 +22,7 @@ import { selectAdmin } from "@/redux/admin/adminSelector";
 import ServiceDetails from "@/pages/services/pages/service_details";
 import CategoriesEditor from "@/pages/categories/pages/categories_editor";
 import ProductsEditor from "@/pages/products/pages/products_editor";
+import Users from "@/pages/users";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -91,6 +92,9 @@ const Router = () => {
         <Route path="categories/add" element={<CategoriesEditor />} />
         <Route path="categories/edit/:id" element={<CategoriesEditor />} />
         {/* <Route path="categories/:id" element={<CategoryDetails />} /> */}
+
+        <Route path="users" element={<Users />} />
+
       </Route>
       <Route path="*" element={<ErrorPage />} />
     </Routes>

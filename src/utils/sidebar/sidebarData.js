@@ -10,6 +10,7 @@ import {
   Package,
   Settings2,
   ShieldUserIcon,
+  User,
   Users,
 } from "lucide-react";
 
@@ -73,22 +74,30 @@ export const data = {
   ],
   projects: [
     {
-      title: "Forms",
-      name: "Forms",
-      url: "/forms",
-      icon: FormInput,
-      items: [
-        {
-          title: "Service",
-          url: "/forms/service",
-        },
-        {
-          title: "Product",
-          url: "/forms/product",
-        },
-      ],
+      title: "Users",
+      url: "/dashboard/users",
+      icon: User,
+      isActive: true,
+      items: [],
       roles: ["super_admin", "admin"],
     },
+    // {
+    //   title: "Forms",
+    //   name: "Forms",
+    //   url: "/forms",
+    //   icon: FormInput,
+    //   items: [
+    //     {
+    //       title: "Service",
+    //       url: "/forms/service",
+    //     },
+    //     {
+    //       title: "Product",
+    //       url: "/forms/product",
+    //     },
+    //   ],
+    //   roles: ["super_admin", "admin"],
+    // },
     {
       title: "Blogs",
       name: "Blogs",
