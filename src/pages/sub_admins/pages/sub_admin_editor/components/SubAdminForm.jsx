@@ -12,10 +12,9 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { fetchServices } from "@/pages/services/helpers/fetchServices";
-import { createAdmin } from "../helper/createAdmin";
+import { createSubAdmin } from "../helper/createSubAdmin";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -26,42 +25,34 @@ import {
 } from "@/components/ui/select";
 
 // Validation Schema
-const AdminFormSchema = z.object({
+const SubAdminFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  role: z.enum(["admin"]),
-  services: z.array(z.string()).min(1, "At least one service is required"), // Ensure at least one service is selected
+  role: z.enum(["sub_admin"]),
 });
 
-const AdminForm = ({ isEdit = false, initialData }) => {
+const SubAdminForm = ({ isEdit = false, initialData }) => {
   const navigate = useNavigate();
 
-  // Fetch services for dropdown
-  const { data: services } = useQuery({
-    queryKey: ["services"],
-    queryFn: fetchServices,
-  });
-
   const form = useForm({
-    resolver: zodResolver(AdminFormSchema),
+    resolver: zodResolver(SubAdminFormSchema),
     defaultValues: initialData || {
       name: "",
       email: "",
       password: "",
-      role: "admin",
-      services: [], // Initialize as empty array
+      role: "sub_admin",
     },
   });
 
   const mutation = useMutation({
-    mutationFn: createAdmin,
+    mutationFn: createSubAdmin,
     onSuccess: (res) => {
       if (res?.response?.success) {
         toast.success(`Admin ${isEdit ? "updated" : "created"} successfully`);
-        navigate("/dashboard/admins");
+        navigate("/dashboard/sub-admins");
       } else {
-        toast.error(res?.response?.message || "Failed to create admin");
+        toast.error(res?.response?.data?.message || "Failed to create admin");
       }
     },
     onError: (error) => {
@@ -72,16 +63,6 @@ const AdminForm = ({ isEdit = false, initialData }) => {
 
   const onSubmit = async (data) => {
     mutation.mutate(data);
-  };
-
-  // Handle service selection
-  const handleServiceChange = (serviceId, checked) => {
-    const currentServices = form.getValues("services") || [];
-    const updatedServices = checked
-      ? [...currentServices, serviceId] // Add service
-      : currentServices.filter((id) => id !== serviceId); // Remove service
-
-    form.setValue("services", updatedServices);
   };
 
   return (
@@ -95,7 +76,7 @@ const AdminForm = ({ isEdit = false, initialData }) => {
             <FormItem>
               <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter admin's full name" {...field} />
+                <Input placeholder="Enter sub admin's full name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -112,7 +93,7 @@ const AdminForm = ({ isEdit = false, initialData }) => {
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="Enter admin email"
+                  placeholder="Enter sub admin email"
                   {...field}
                 />
               </FormControl>
@@ -156,40 +137,9 @@ const AdminForm = ({ isEdit = false, initialData }) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="sub_admin">Sub Admin</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Services Field (Multi-Select) */}
-        <FormField
-          control={form.control}
-          name="services"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Assigned Services</FormLabel>
-              <div className="space-y-3 mt-2">
-                {services?.map((service) => (
-                  <div key={service._id} className="flex items-center gap-2">
-                    <Checkbox
-                      id={`service-${service._id}`}
-                      checked={field.value?.includes(service._id)}
-                      onCheckedChange={(checked) =>
-                        handleServiceChange(service._id, checked)
-                      }
-                    />
-                    <label
-                      htmlFor={`service-${service._id}`}
-                      className="text-sm font-medium leading-none"
-                    >
-                      {service.name}
-                    </label>
-                  </div>
-                ))}
-              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -199,12 +149,12 @@ const AdminForm = ({ isEdit = false, initialData }) => {
           {mutation.isPending
             ? "Processing..."
             : isEdit
-            ? "Update Admin"
-            : "Create Admin"}
+            ? "Update Sub Admin"
+            : "Create Sub Admin"}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default AdminForm;
+export default SubAdminForm;

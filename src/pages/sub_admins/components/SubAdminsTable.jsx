@@ -7,10 +7,10 @@ import Typography from "@/components/typography";
 import { useEffect, useState } from "react";
 import { CustomDialog } from "@/components/custom_dialog";
 import { toast } from "sonner";
-import { fetchAdmins } from "../helpers/fetchAdmins";
-import { deleteAdmins } from "../helpers/deleteAdmins";
+import { fetchSubAdmins } from "../helpers/fetchSubAdmins";
+import { deleteSubAdmins } from "../helpers/deleteSubAdmins";
 
-const AdminsTable = ({ setadminsLength }) => {
+const SubAdminsTable = ({ setSubAdminsLength }) => {
   const queryClient = useQueryClient();
 
   const {
@@ -19,7 +19,7 @@ const AdminsTable = ({ setadminsLength }) => {
     error,
   } = useQuery({
     queryKey: ["admins"],
-    queryFn: fetchAdmins,
+    queryFn: fetchSubAdmins,
   });
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -36,7 +36,7 @@ const AdminsTable = ({ setadminsLength }) => {
   };
 
   const { mutate: deleteAdminMutation, isLoading: isDeleting } = useMutation({
-    mutationFn: deleteAdmins,
+    mutationFn: deleteSubAdmins,
     onSuccess: () => {
       toast.success("Admin deleted successfully.");
       queryClient.invalidateQueries(["admins"]);
@@ -53,7 +53,7 @@ const AdminsTable = ({ setadminsLength }) => {
   };
 
   useEffect(() => {
-    setadminsLength(admins?.length);
+    setSubAdminsLength(admins?.length);
   }, []);
 
   const columns = [
@@ -79,31 +79,31 @@ const AdminsTable = ({ setadminsLength }) => {
         </div>
       ),
     },
-    {
-      key: "services",
-      label: "Services",
-      render: (value, row) => (
-        <div className="flex flex-col gap-1">
-          {row.services &&
-            row.services.length > 0 &&
-            row.services.map((service) => (
-              <Typography
-                key={service._id}
-                variant="p"
-                className="text-gray-600"
-              >
-                {service.name}
-              </Typography>
-            ))}
-        </div>
-      ),
-    },
+    // {
+    //   key: "services",
+    //   label: "Services",
+    //   render: (value, row) => (
+    //     <div className="flex flex-col gap-1">
+    //       {row.services &&
+    //         row.services.length > 0 &&
+    //         row.services.map((service) => (
+    //           <Typography
+    //             key={service._id}
+    //             variant="p"
+    //             className="text-gray-600"
+    //           >
+    //             {service.name}
+    //           </Typography>
+    //         ))}
+    //     </div>
+    //   ),
+    // },
     {
       key: "role",
       label: "Role",
       render: (value) => (
         <span className="capitalize bg-gray-100 px-3 py-1 rounded-full text-sm">
-          {value}
+          Sub Admin
         </span>
       ),
     },
@@ -126,32 +126,32 @@ const AdminsTable = ({ setadminsLength }) => {
         </div>
       ),
     },
-    // {
-    //   key: "actions",
-    //   label: "Actions",
-    //   render: (value, row) => (
-    //     <ActionMenu
-    //       options={[
-    //         {
-    //           label: "View Admin Details",
-    //           icon: Eye,
-    //           action: () => console.log("View admin details"),
-    //         },
-    //         {
-    //           label: "Edit Admin",
-    //           icon: Pencil,
-    //           action: () => console.log("Edit admin"),
-    //         },
-    //         {
-    //           label: "Delete Admin",
-    //           icon: Trash2,
-    //           action: () => handleOpenDialog(row),
-    //           className: "text-red-500",
-    //         },
-    //       ]}
-    //     />
-    //   ),
-    // },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (value, row) => (
+        <ActionMenu
+          options={[
+            {
+              label: "View Admin Details",
+              icon: Eye,
+              action: () => console.log("View admin details"),
+            },
+            {
+              label: "Edit Admin",
+              icon: Pencil,
+              action: () => console.log("Edit admin"),
+            },
+            // {
+            //   label: "Delete Admin",
+            //   icon: Trash2,
+            //   action: () => handleOpenDialog(row),
+            //   className: "text-red-500",
+            // },
+          ]}
+        />
+      ),
+    },
   ];
 
   return (
@@ -177,4 +177,4 @@ const AdminsTable = ({ setadminsLength }) => {
   );
 };
 
-export default AdminsTable;
+export default SubAdminsTable;

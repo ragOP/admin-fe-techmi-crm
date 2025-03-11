@@ -4,13 +4,15 @@ import ActionMenu from "@/components/action_menu";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { CustomDialog } from "@/components/custom_dialog";
 import { toast } from "sonner";
-import {  fetchUsers } from "../helpers/fetchUsers";
-import { deleteUser } from "../helpers/deleteAdmins";
+import { fetchUsers } from "../helpers/fetchUsers";
+import { deleteUser } from "../helpers/deleteUser";
+import { useNavigate } from "react-router";
 
 const UsersTable = ({ setUsersLength }) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const {
@@ -19,7 +21,7 @@ const UsersTable = ({ setUsersLength }) => {
     error,
   } = useQuery({
     queryKey: ["users"],
-    queryFn: fetchUsers
+    queryFn: fetchUsers,
   });
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -50,6 +52,10 @@ const UsersTable = ({ setUsersLength }) => {
 
   const handleDeleteAdmin = (id) => {
     deleteAdminMutation(id);
+  };
+
+  const onEditUser = (row) => {
+    navigate(`/dashboard/users/edit/${row._id}`);
   };
 
   useEffect(() => {
@@ -99,27 +105,36 @@ const UsersTable = ({ setUsersLength }) => {
       ),
     },
     {
+      key: "role",
+      label: "Role",
+      render: (value) => (
+        <span className="capitalize bg-gray-100 px-3 py-1 rounded-full text-sm">
+          {value}
+        </span>
+      ),
+    },
+    {
       key: "actions",
       label: "Actions",
       render: (value, row) => (
         <ActionMenu
           options={[
-            {
-              label: "View User Details",
-              icon: Eye,
-              action: () => console.log("View user details"),
-            },
+            // {
+            //   label: "View User Details",
+            //   icon: Eye,
+            //   action: () => console.log("View user details"),
+            // },
             {
               label: "Edit User",
               icon: Pencil,
-              action: () => console.log("Edit user"),
+              action: () => onEditUser(row),
             },
-            {
-              label: "Delete User",
-              icon: Trash2,
-              action: () => handleOpenDialog(row),
-              className: "text-red-500",
-            },
+            // {
+            //   label: "Delete User",
+            //   icon: Trash2,
+            //   action: () => handleOpenDialog(row),
+            //   className: "text-red-500",
+            // },
           ]}
         />
       ),

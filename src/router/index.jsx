@@ -27,11 +27,14 @@ import HomeConfig from "@/pages/configurables/home";
 import ServiceConfig from "@/pages/configurables/service";
 import HeaderConfig from "@/pages/configurables/header";
 import InternalConfig from "@/pages/configurables/internal_pages";
+import SubAdmins from "@/pages/sub_admins";
+import SubAdminEditor from "@/pages/sub_admins/pages/sub_admin_editor";
+import UserEditor from "@/pages/users/pages/user_editor";
 
 const Router = () => {
   const dispatch = useDispatch();
 
-  console.log(useSelector(selectAdmin))
+  console.log(useSelector(selectAdmin));
 
   const checkTokenExpiration = () => {
     const storedToken = getItem("token");
@@ -79,6 +82,9 @@ const Router = () => {
         <Route path="admins" element={<Admins />} />
         <Route path="admins/add" element={<AdminEditor />} />
 
+        <Route path="sub-admins" element={<SubAdmins />} />
+        <Route path="sub-admins/add" element={<SubAdminEditor />} />
+
         {/* Services Routes */}
         <Route path="services" element={<Services />} />
         <Route path="services/add" element={<ServicesEditor />} />
@@ -95,15 +101,17 @@ const Router = () => {
         <Route path="categories" element={<Categories />} />
         <Route path="categories/add" element={<CategoriesEditor />} />
         <Route path="categories/edit/:id" element={<CategoriesEditor />} />
-        
+
         {/* <Route path="categories/:id" element={<CategoryDetails />} /> */}
 
         <Route path="users" element={<Users />} />
-        <Route path="config/home" element={<HomeConfig />} />
-        <Route path="config/service" element={<ServiceConfig />} /> 
-        <Route path="config/header" element={<HeaderConfig />} /> 
-        <Route path="config/internal" element={<InternalConfig />} /> 
+        <Route path="users/add" element={<UserEditor />} />
+        <Route path="users/edit/:id" element={<UserEditor />} />
 
+        <Route path="config/home" element={<HomeConfig />} />
+        <Route path="config/service" element={<ServiceConfig />} />
+        <Route path="config/header" element={<HeaderConfig />} />
+        <Route path="config/internal" element={<InternalConfig />} />
       </Route>
       <Route path="*" element={<ErrorPage />} />
     </Routes>

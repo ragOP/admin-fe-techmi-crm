@@ -12,6 +12,7 @@ import {
   ShieldUserIcon,
   User,
   Users,
+  Users2,
 } from "lucide-react";
 
 export const data = {
@@ -50,6 +51,14 @@ export const data = {
       roles: ["super_admin"],
     },
     {
+      title: "Sub Admins",
+      url: "/dashboard/sub-admins",
+      icon: Users2,
+      isActive: true,
+      items: [],
+      roles: ["admin"],
+    },
+    {
       title: "Services",
       url: "/dashboard/services",
       icon: Briefcase,
@@ -79,7 +88,7 @@ export const data = {
       icon: User,
       isActive: true,
       items: [],
-      roles: ["super_admin", "admin"],
+      roles: ["super_admin"],
     },
     {
       title: "Congifuration",

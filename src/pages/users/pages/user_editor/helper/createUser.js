@@ -1,10 +1,10 @@
 import { apiService } from "@/api/api_services";
 import { endpoints } from "@/api/enpoints";
 
-export const createAdmin = async (payload) => {
+export const createUser = async (payload) => {
   try {
     const response = await apiService({
-      endpoint: endpoints.register,
+      endpoint: endpoints.admin_register,
       method: "POST",
       data: payload,
      
