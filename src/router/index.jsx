@@ -23,6 +23,10 @@ import ServiceDetails from "@/pages/services/pages/service_details";
 import CategoriesEditor from "@/pages/categories/pages/categories_editor";
 import ProductsEditor from "@/pages/products/pages/products_editor";
 import Users from "@/pages/users";
+import HomeConfig from "@/pages/configurables/home";
+import ServiceConfig from "@/pages/configurables/service";
+import HeaderConfig from "@/pages/configurables/header";
+import InternalConfig from "@/pages/configurables/internal_pages";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -91,9 +95,14 @@ const Router = () => {
         <Route path="categories" element={<Categories />} />
         <Route path="categories/add" element={<CategoriesEditor />} />
         <Route path="categories/edit/:id" element={<CategoriesEditor />} />
+        
         {/* <Route path="categories/:id" element={<CategoryDetails />} /> */}
 
         <Route path="users" element={<Users />} />
+        <Route path="config/home" element={<HomeConfig />} />
+        <Route path="config/service" element={<ServiceConfig />} /> 
+        <Route path="config/header" element={<HeaderConfig />} /> 
+        <Route path="config/internal" element={<InternalConfig />} /> 
 
       </Route>
       <Route path="*" element={<ErrorPage />} />

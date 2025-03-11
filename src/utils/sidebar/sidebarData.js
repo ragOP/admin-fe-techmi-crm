@@ -81,23 +81,31 @@ export const data = {
       items: [],
       roles: ["super_admin", "admin"],
     },
-    // {
-    //   title: "Forms",
-    //   name: "Forms",
-    //   url: "/forms",
-    //   icon: FormInput,
-    //   items: [
-    //     {
-    //       title: "Service",
-    //       url: "/forms/service",
-    //     },
-    //     {
-    //       title: "Product",
-    //       url: "/forms/product",
-    //     },
-    //   ],
-    //   roles: ["super_admin", "admin"],
-    // },
+    {
+      title: "Congifuration",
+      name: "Configuration",
+      url: "/config",
+      icon: FormInput,
+      items: [
+        {
+          title: "Home",
+          url: "config/home",
+        },
+        {
+          title: "Service",
+          url: "config/service",
+        },
+        {
+          title: "Header & Footer",
+          url: "config/header",
+        },
+        {
+          title: "Internal Pages",
+          url: "config/internal",
+        },
+      ],
+      roles: ["super_admin"],
+    },
     {
       title: "Blogs",
       name: "Blogs",
