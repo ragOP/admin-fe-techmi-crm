@@ -4,7 +4,7 @@ export const BACKEND_URL = "https://techmi-crm-be.onrender.com";
 export const endpoints = {
   admin: "api/auth/admins",
   users: "api/auth/users",
-  login: "api/auth/admin-login",
+  login: "api/auth/admin/login",
   register: "api/auth/register",
   signup: "api/auth/register",
   product: "api/product",

@@ -32,14 +32,15 @@ import { useSelector } from "react-redux";
 import {
   selectAdminEmail,
   selectAdminName,
-  selectIsSuperAdmin,
+  selectAdminRole,
 } from "@/redux/admin/adminSelector";
 import { filterItemsByRole } from "@/utils/sidebar/filterItemsByRole";
 import { data } from "@/utils/sidebar/sidebarData";
 
 export function AppSidebar({ ...props }) {
-  const isSuperAdmin = useSelector(selectIsSuperAdmin);
-  const role = isSuperAdmin ? "super_admin" : "admin";
+  // const isSuperAdmin = useSelector(selectIsSuperAdmin);
+  // const role = isSuperAdmin ? "super_admin" : "admin";
+  const role = useSelector(selectAdminRole)
   const name = useSelector(selectAdminName);
   const email = useSelector(selectAdminEmail);
 
