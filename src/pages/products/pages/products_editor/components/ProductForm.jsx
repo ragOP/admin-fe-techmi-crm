@@ -29,6 +29,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
   const { id } = useParams();
   const reduxAdminId = useSelector(selectAdminId);
   const [images, setImages] = useState([]);
+  const [bannerImage, setBannerImage] = useState();
 
   // Fetch categories
   const { data: categoryData, isLoading: isCategoriesLoading } = useQuery({
@@ -53,6 +54,9 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       full_description: initialData?.full_description || "",
       price: initialData?.price || 0,
       discounted_price: initialData?.discounted_price || 0,
+      dnd_discounted_price: initialData?.dnd_discounted_price || 0,
+      salesperson_discounted_price:
+        initialData?.salesperson_discounted_price || 0,
       instock: initialData?.instock || true,
       manufacturer: initialData?.manufacturer || "",
       consumed_type: initialData?.consumed_type || "",
@@ -74,8 +78,17 @@ const ProductsForm = ({ initialData, isEditMode }) => {
           )
         );
         const validFiles = files.filter((file) => file !== null);
-        setImages(validFiles);
         form.setValue("images", validFiles);
+      }
+
+      if (isEditMode && initialData?.banner_image) {
+        const bannerFile = await urlToFile(
+          initialData.banner_image,
+          "banner.jpg"
+        );
+        if (bannerFile) {
+          form.setValue("banner_image", bannerFile);
+        }
       }
     };
 
@@ -117,21 +130,33 @@ const ProductsForm = ({ initialData, isEditMode }) => {
 
   const onSubmit = async (data) => {
     const formData = new FormData();
+
     Object.entries(data).forEach(([key, value]) => {
+      console.log(key, value)
       if (key === "category") {
-        // Handle multi-select category field
-        value.forEach((cat) => formData.append("category", cat.value));
+        if (Array.isArray(value) && value.length > 0) {
+          value.forEach((cat) => formData.append("category", cat));
+        } else {
+          formData.append("category", "[]");
+        }
+      } else if (key === "images") {
+        if (Array.isArray(value) && value.length > 0) {
+          value.forEach((file) => formData.append("images", file));
+        }
+      } else if (key === "banner_image") {
+        if (value) {
+          formData.append("banner_image", value);
+        }
       } else {
         formData.append(key, value);
       }
     });
+
     formData.append("created_by_admin", reduxAdminId);
-    images.forEach((file) => {
-      formData.append("images", file);
-    });
-    formData.category.forEach((cat) => {
-      formData.append("category", cat);
-    });
+
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
 
     if (isEditMode) {
       updateMutation.mutate(formData);
@@ -225,6 +250,48 @@ const ProductsForm = ({ initialData, isEditMode }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Discounted Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter discounted price"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="col-span-3">
+            <FormField
+              control={form.control}
+              name="dnd_discounted_price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>DND Discounted Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter discounted price"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="col-span-3">
+            <FormField
+              control={form.control}
+              name="salesperson_discounted_price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Salesperson Discounted Price</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -348,7 +415,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
           </div>
 
           {/* Images Field */}
-          <div className="col-span-6">
+          {/* <div className="col-span-6">
             <FormField
               control={form.control}
               name="images"
@@ -370,10 +437,10 @@ const ProductsForm = ({ initialData, isEditMode }) => {
                 </FormItem>
               )}
             />
-          </div>
+          </div> */}
 
           {/* Banner Image Field */}
-          <div className="col-span-6">
+          {/* <div className="col-span-6">
             <FormField
               control={form.control}
               name="banner_image"
@@ -390,6 +457,109 @@ const ProductsForm = ({ initialData, isEditMode }) => {
                         }
                       }}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div> */}
+
+          <div className="col-span-6">
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Images</FormLabel>
+                  <FormControl>
+                    <div>
+                      <Input
+                        type="file"
+                        multiple
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files || []);
+                          const currentImages = field.value || [];
+                          const updatedImages = [...currentImages, ...files];
+                          field.onChange(updatedImages);
+                        }}
+                      />
+                      {/* Display selected images */}
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {field.value?.map((file, index) => (
+                          <div key={index} className="relative">
+                            <img
+                              src={
+                                file instanceof File
+                                  ? URL.createObjectURL(file)
+                                  : file
+                              }
+                              alt={`Preview ${index}`}
+                              className="w-24 h-24 object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updatedImages = field.value.filter(
+                                  (_, i) => i !== index
+                                );
+                                field.onChange(updatedImages);
+                              }}
+                              className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Banner Image Field */}
+          <div className="col-span-6">
+            <FormField
+              control={form.control}
+              name="banner_image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Banner Image</FormLabel>
+                  <FormControl>
+                    <div>
+                      <Input
+                        type="file"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            field.onChange(file);
+                          }
+                        }}
+                      />
+                      {/* Display selected banner image */}
+                      {field.value && (
+                        <div className="mt-4 relative">
+                          <img
+                            src={
+                              field.value instanceof File
+                                ? URL.createObjectURL(field.value)
+                                : field.value
+                            }
+                            alt="Banner Preview"
+                            className="w-full h-48 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => field.onChange("")}
+                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

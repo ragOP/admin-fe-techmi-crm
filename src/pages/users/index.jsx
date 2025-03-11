@@ -14,10 +14,10 @@ const Users = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <NavbarItem title="Users" />
 
-      <div className="p-4">
+      <div className="py-1 px-4">
         <CustomActionMenu
           title="Users"
           total={usersLength}

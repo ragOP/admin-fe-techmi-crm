@@ -1,4 +1,3 @@
-import { getItem } from "@/utils/local_storage";
 import { BACKEND_URL } from "../enpoints";
 import axios from "axios";
 import { getToken } from "@/utils/auth";

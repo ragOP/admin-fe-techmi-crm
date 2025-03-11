@@ -9,6 +9,14 @@ export const productsFormSchema = z.object({
     .number()
     .min(0, "Discounted price must be a positive number")
     .optional(),
+  dnd_discounted_price: z
+    .number()
+    .min(0, "DND Discounted price must be a positive number")
+    .optional(),
+  salesperson_discounted_price: z
+    .number()
+    .min(0, "Salesperson Discounted price must be a positive number")
+    .optional(),
   instock: z.boolean(),
   manufacturer: z.string().optional(),
   consumed_type: z.string().optional(),

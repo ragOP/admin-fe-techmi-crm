@@ -7,16 +7,17 @@ import { useNavigate } from "react-router";
 const Categories = () => {
   const navigate = useNavigate();
   const [categoryLength, setCategoryLength] = useState(0);
+  const [searchText, setSearchText] = useState("");
 
   const onAdd = () => {
     navigate("/dashboard/categories/add");
   };
   
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <NavbarItem title="Categories" />
 
-      <div className="p-4">
+      <div className="px-4">
         <CustomActionMenu
           title="categories"
           total={categoryLength}

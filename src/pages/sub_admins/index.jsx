@@ -14,10 +14,10 @@ const SubAdmins = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <NavbarItem title="Sub Admin" />
 
-      <div className="p-4">
+      <div className="px-4 py-0">
         <CustomActionMenu
           title="Sub Admin"
           total={subAdminsLength}
