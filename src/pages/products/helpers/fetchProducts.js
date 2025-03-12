@@ -4,16 +4,12 @@ import { endpoints } from "@/api/enpoints";
 export const fetchProducts = async ({ params }) => {
   try {
     const apiResponse = await apiService({
-      endpoint: endpoints.product,
+      endpoint: `${endpoints.product}/admin/`,
       method: "GET",
       params,
     });
 
-    if (apiResponse?.response?.success) {
-      return apiResponse?.response?.data;
-    }
-
-    return [];
+    return apiResponse
   } catch (error) {
     console.error(error);
   }

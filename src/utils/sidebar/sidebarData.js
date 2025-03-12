@@ -71,14 +71,14 @@ export const data = {
       url: "/dashboard/categories",
       icon: Layers,
       items: [],
-      roles: ["super_admin", "admin"],
+      roles: ["admin"],
     },
     {
       title: "Products",
       url: "/dashboard/products",
       icon: Package,
       items: [],
-      roles: ["super_admin", "admin"],
+      roles: ["admin"],
     },
   ],
   projects: [

@@ -54,8 +54,7 @@ const CategoriesTable = ({ setCategoryLength }) => {
   const onDeleteClick = (id) => {
     deleteCategoryMutation(id);
   };
-
-  const categories = apiCategoriesResponse?.categories || [];
+  const categories = apiCategoriesResponse?.response?.data || [];
 
   useEffect(() => {
     setCategoryLength(categories?.length);

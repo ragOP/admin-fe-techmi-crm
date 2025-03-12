@@ -38,9 +38,10 @@ const ProductsForm = ({ initialData, isEditMode }) => {
   });
 
   // Format categories for react-select
+  const categoriesData = categoryData?.response?.data || [];
   const categoryOptions =
-    categoryData?.categories && categoryData.categories.length > 0
-      ? categoryData.categories.map((cat) => ({
+    categoriesData && categoriesData.length > 0
+      ? categoriesData.map((cat) => ({
           value: cat._id,
           label: cat.name,
         }))
@@ -132,7 +133,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
-      console.log(key, value)
+      console.log(key, value);
       if (key === "category") {
         if (Array.isArray(value) && value.length > 0) {
           value.forEach((cat) => formData.append("category", cat));

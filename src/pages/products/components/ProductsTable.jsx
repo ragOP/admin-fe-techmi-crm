@@ -55,8 +55,7 @@ const ProductsTable = ({ setProductLength }) => {
   const onDeleteClick = (id) => {
     deleteProuductsMutation(id);
   };
-
-  const products = apiProductsResponse?.data || [];
+  const products = apiProductsResponse?.response?.data || [];
 
   const onNavigateToEdit = (service) => {
     navigate(`/dashboard/products/edit/${service._id}`);
