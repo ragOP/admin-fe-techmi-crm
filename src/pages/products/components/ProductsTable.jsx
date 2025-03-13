@@ -148,7 +148,7 @@ const ProductsTable = ({ setProductLength }) => {
     <>
       <CustomTable
         columns={columns}
-        data={products}
+        data={products || []}
         isLoading={isLoading}
         error={error}
       />

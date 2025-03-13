@@ -36,11 +36,13 @@ import {
 } from "@/redux/admin/adminSelector";
 import { filterItemsByRole } from "@/utils/sidebar/filterItemsByRole";
 import { data } from "@/utils/sidebar/sidebarData";
+import { useQuery } from "@tanstack/react-query";
+import { fetchServices } from "@/pages/services/helpers/fetchServices";
 
 export function AppSidebar({ ...props }) {
   // const isSuperAdmin = useSelector(selectIsSuperAdmin);
   // const role = isSuperAdmin ? "super_admin" : "admin";
-  const role = useSelector(selectAdminRole)
+  const role = useSelector(selectAdminRole);
   const name = useSelector(selectAdminName);
   const email = useSelector(selectAdminEmail);
 
@@ -48,6 +50,32 @@ export function AppSidebar({ ...props }) {
   const filteredProjects = filterItemsByRole(data.projects, role);
   const filteredExtra = filterItemsByRole(data.extra, role);
   const filteredMore = filterItemsByRole(data.more, role);
+
+  const {
+    data: services,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: fetchServices,
+  });
+
+  const orderManagement = [
+    {
+      title: "Orders",
+      url: "/dashboard/orders",
+      icon: Package,
+      isActive: true,
+      items: services?.map((service) => ({
+        title: service.name,
+        url: `/dashboard/orders/${service._id}`,
+        icon: Briefcase,
+        isActive: true,
+        roles: ["super_admin"],
+      })),
+      roles: ["super_admin"],
+    },
+  ];
 
   const userInfo = {
     name: name,
@@ -64,6 +92,11 @@ export function AppSidebar({ ...props }) {
       <SidebarContent className="overflow-y-auto [&::-webkit-scrollbar]:hidden">
         <NavMain items={filteredNavMain} showHeader={false} />
         <NavMain items={filteredProjects} showHeader={true} header={"More"} />
+        <NavMain
+          items={orderManagement}
+          showHeader={true}
+          header={"Management"}
+        />
         <NavProjects projects={filteredExtra} />
       </SidebarContent>
       <SidebarFooter>

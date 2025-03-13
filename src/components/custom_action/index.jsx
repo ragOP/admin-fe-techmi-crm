@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Typography from "../typography";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -6,7 +6,14 @@ import { PlusIcon } from "lucide-react";
 import { singularize } from "@/utils/singularizing_word";
 import { capitalize } from "@/utils/captilize";
 
-const CustomActionMenu = ({ title, total, onAdd }) => {
+const CustomActionMenu = ({
+  title,
+  total,
+  onAdd,
+  handleSearch,
+  disableAdd = false,
+  searchText,
+}) => {
   return (
     <div className="flex items-center justify-between w-full my-3">
       <div>
@@ -15,14 +22,21 @@ const CustomActionMenu = ({ title, total, onAdd }) => {
         </Typography>
       </div>
       <div className="flex items-center gap-4">
-        <Input placeholder="Search" />
-        <Button
-          onClick={onAdd}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <PlusIcon />
-          <span>Add {capitalize(singularize(title))}</span>
-        </Button>
+        <Input
+          placeholder="Search"
+          className="w-100"
+          value={searchText}
+          onChange={handleSearch}
+        />
+        {!disableAdd && (
+          <Button
+            onClick={onAdd}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <PlusIcon />
+            <span>Add {capitalize(singularize(title))}</span>
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -30,6 +30,7 @@ import InternalConfig from "@/pages/configurables/internal_pages";
 import SubAdmins from "@/pages/sub_admins";
 import SubAdminEditor from "@/pages/sub_admins/pages/sub_admin_editor";
 import UserEditor from "@/pages/users/pages/user_editor";
+import Orders from "@/pages/orders";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -102,7 +103,8 @@ const Router = () => {
         <Route path="categories/add" element={<CategoriesEditor />} />
         <Route path="categories/edit/:id" element={<CategoriesEditor />} />
 
-        {/* <Route path="categories/:id" element={<CategoryDetails />} /> */}
+        {/* <Route path="orders" element={<Orders />} /> */}
+        <Route path="orders/:serviceId" element={<Orders />} />
 
         <Route path="users" element={<Users />} />
         <Route path="users/add" element={<UserEditor />} />

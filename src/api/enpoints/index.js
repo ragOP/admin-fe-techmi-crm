@@ -1,6 +1,11 @@
+export const isDev = () => {
+  return import.meta.env.MODE === "development";
+};
 
-export const BACKEND_URL = "https://techmi-crm-be.onrender.com";
-// export const BACKEND_URL = "http://localhost:8000";
+
+export const BACKEND_URL = isDev()
+  ? "http://localhost:8000"
+  : "https://techmi-crm-be.onrender.com";
 
 export const endpoints = {
   // Admin
@@ -23,4 +28,7 @@ export const endpoints = {
   service: "api/service",
   cart: "api/cart",
   product_by_id: "api/product",
+
+  // Order
+  order: "api/order",
 };
