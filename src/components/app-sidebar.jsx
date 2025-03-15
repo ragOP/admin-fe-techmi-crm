@@ -1,18 +1,7 @@
 import * as React from "react";
 import {
-  BellIcon,
   Briefcase,
-  CircleUserIcon,
-  ContactIcon,
-  Crown,
-  FileText,
-  FormInput,
-  Layers,
-  LayoutDashboard,
   Package,
-  Settings2,
-  ShieldUserIcon,
-  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -53,8 +42,6 @@ export function AppSidebar({ ...props }) {
 
   const {
     data: services,
-    isLoading,
-    error,
   } = useQuery({
     queryKey: ["services"],
     queryFn: fetchServices,

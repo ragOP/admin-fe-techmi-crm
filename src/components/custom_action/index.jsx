@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Typography from "../typography";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { PlusIcon } from "lucide-react";
+import { CloudUpload, PlusIcon } from "lucide-react";
 import { singularize } from "@/utils/singularizing_word";
 import { capitalize } from "@/utils/captilize";
 
@@ -13,6 +13,7 @@ const CustomActionMenu = ({
   handleSearch,
   disableAdd = false,
   searchText,
+  setOpenDialog
 }) => {
   return (
     <div className="flex items-center justify-between w-full my-3">
@@ -28,6 +29,10 @@ const CustomActionMenu = ({
           value={searchText}
           onChange={handleSearch}
         />
+        <Button onClick={() => setOpenDialog(true)} className="flex items-center gap-2 cursor-pointer">
+          <CloudUpload />
+          <span>Bulk Upload</span>
+        </Button>
         {!disableAdd && (
           <Button
             onClick={onAdd}

@@ -3,10 +3,12 @@ import ProductsTable from "./components/ProductsTable";
 import CustomActionMenu from "@/components/custom_action";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import ExcelUploadDialog from "./components/ExcelUploadDialog";
 
 const Products = () => {
   const navigate = useNavigate();
   const [productLength, setProductLength] = useState(0);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const onAdd = () => {
     navigate("/dashboard/products/add");
@@ -21,8 +23,13 @@ const Products = () => {
           title="products"
           total={productLength}
           onAdd={onAdd}
+          setOpenDialog={setOpenDialog}
         />
         <ProductsTable setProductLength={setProductLength} />
+        <ExcelUploadDialog
+          openDialog={openDialog}
+          setOpenDialog={setOpenDialog}
+        />
       </div>
     </div>
   );

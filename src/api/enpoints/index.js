@@ -4,7 +4,7 @@ export const isDev = () => {
 
 
 export const BACKEND_URL = isDev()
-  ? "http://localhost:8000"
+  ? "https://techmi-crm-be.onrender.com"
   : "https://techmi-crm-be.onrender.com";
 
 export const endpoints = {
@@ -31,4 +31,7 @@ export const endpoints = {
 
   // Order
   order: "api/order",
+
+  // Bulk Upload
+  bulk_upload: "api/product/batch"
 };
