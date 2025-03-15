@@ -110,10 +110,10 @@ const Router = () => {
         <Route path="users/add" element={<UserEditor />} />
         <Route path="users/edit/:id" element={<UserEditor />} />
 
-        <Route path="config/home" element={<HomeConfig />} />
-        <Route path="config/service" element={<ServiceConfig />} />
-        <Route path="config/header" element={<HeaderConfig />} />
-        <Route path="config/internal" element={<InternalConfig />} />
+        <Route path="configuration/home" element={<HomeConfig />} />
+        <Route path="configuration/service" element={<ServiceConfig />} />
+        <Route path="configuration/header" element={<HeaderConfig />} />
+        <Route path="configuration/internal" element={<InternalConfig />} />
       </Route>
       <Route path="*" element={<ErrorPage />} />
     </Routes>

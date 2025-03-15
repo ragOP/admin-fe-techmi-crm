@@ -93,24 +93,24 @@ export const data = {
     {
       title: "Configuration",
       name: "Configuration",
-      url: "/config",
+      url: "/dashboard/configuration",
       icon: FormInput,
       items: [
         {
           title: "Home",
-          url: "config/home",
+          url: "/dashboard/configuration/home",
         },
         {
           title: "Service",
-          url: "config/service",
+          url: "/dashboard/configuration/service",
         },
         {
           title: "Header & Footer",
-          url: "config/header",
+          url: "/dashboard/configuration/header",
         },
         {
           title: "Internal Pages",
-          url: "config/internal",
+          url: "/dashboard/configuration/internal",
         },
       ],
       roles: ["super_admin"],
