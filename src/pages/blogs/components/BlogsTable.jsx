@@ -106,7 +106,7 @@ const BlogsTable = ({ setBlogsLength, params }) => {
       key: "service",
       label: "Service",
       render: (value, row) => {
-        return <Typography variant="p">{row.author?.name}</Typography>;
+        return <Typography variant="p">{row.service?.name || "-"}</Typography>;
       },
     },
     {

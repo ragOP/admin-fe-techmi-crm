@@ -148,11 +148,11 @@ const OrdersTable = ({ setOrdersLength, params }) => {
       render: (_, order) => (
         <ActionMenu
           options={[
-            {
-              label: "View Details",
-              icon: Eye,
-              action: () => onNavigateDetails(order),
-            },
+            // {
+            //   label: "View Details",
+            //   icon: Eye,
+            //   action: () => onNavigateDetails(order),
+            // },
             {
               label: "Edit Status",
               icon: Pencil,
