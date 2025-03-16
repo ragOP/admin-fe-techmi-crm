@@ -17,7 +17,7 @@ const BlogsEditor = () => {
   const initialData = initialDataRes?.response?.data;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <NavbarItem title="Admins" />
       <div className="px-8 py-4">
         {isLoading ? (

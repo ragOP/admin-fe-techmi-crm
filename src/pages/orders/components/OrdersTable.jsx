@@ -1,20 +1,43 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchOrders } from "../helpers/fetchOrders";
-import { format, formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
 import ActionMenu from "@/components/action_menu";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
 import { useEffect, useState } from "react";
-import { CustomDialog } from "@/components/custom_dialog";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { fetchOrders } from "../helpers/fetchOrders";
+import { updateOrderStatus } from "../helpers/updateOrderStatus";
+
+const ORDER_STATUSES = [
+  "pending",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+];
 
 const OrdersTable = ({ setOrdersLength, params }) => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { serviceId } = useParams();
 
   const {
     data: apiOrdersResponse,
@@ -25,50 +48,41 @@ const OrdersTable = ({ setOrdersLength, params }) => {
     queryFn: () => fetchOrders({ params }),
   });
 
-  const [openDelete, setOpenDelete] = useState(false);
+  const [openStatusDialog, setOpenStatusDialog] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [newStatus, setNewStatus] = useState("");
 
-  const onOpenDialog = (row) => {
-    setOpenDelete(true);
-    setSelectedOrder(row);
-  };
+  const { mutate: updateOrderStatusMutation, isLoading: isUpdating } =
+    useMutation({
+      mutationFn: ({ orderId, status }) =>
+        updateOrderStatus({ orderId, status }),
+      onSuccess: () => {
+        toast.success("Order status updated successfully.");
+        queryClient.invalidateQueries(["orders"]);
+        setOpenStatusDialog(false);
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("Failed to update order status.");
+      },
+    });
 
-  const onCloseDialog = () => {
-    setOpenDelete(false);
-    setSelectedOrder(null);
-  };
-
-  // const { mutate: deleteOrderMutation, isLoading: isDeleting } = useMutation({
-  //   mutationFn: deleteOrder,
-  //   onSuccess: () => {
-  //     toast.success("Order deleted successfully.");
-  //     queryClient.invalidateQueries(["orders"]);
-  //     onCloseDialog();
-  //   },
-  //   onError: (error) => {
-  //     console.error(error);
-  //     toast.error("Failed to delete order.");
-  //   },
-  // });
-  console.log(apiOrdersResponse?.response?.data?.data);
   const orders = Array.isArray(apiOrdersResponse?.response?.data?.data)
-    ? apiOrdersResponse?.response?.data?.data
+    ? apiOrdersResponse.response.data.data
     : [];
 
   useEffect(() => {
     setOrdersLength(orders?.length);
   }, [orders, setOrdersLength]);
 
-  const onNavigateToEdit = (order) => {
-    navigate(`/dashboard/orders/edit/${order._id}`);
-  };
-
-  const onNavigateDetails = (order) => {
-    navigate(`/dashboard/orders/${order._id}`);
+  const onOpenStatusDialog = (order) => {
+    setSelectedOrder(order);
+    setNewStatus(order.status);
+    setOpenStatusDialog(true);
   };
 
   const columns = [
-    { key: "sr_no", label: "Order Id", render: (value, row) => row?._id },
+    { key: "sr_no", label: "Order Id", render: (_, row) => row?._id },
     {
       key: "items",
       label: "Products",
@@ -112,23 +126,6 @@ const OrdersTable = ({ setOrdersLength, params }) => {
       ),
     },
     {
-      key: "address",
-      label: "Shipping Info",
-      render: (address) => (
-        <div className="space-y-1">
-          <Typography variant="p" className="font-medium">
-            {address.name}
-          </Typography>
-          <Typography variant="small" className="text-muted-foreground">
-            {address.city}, {address.state}
-          </Typography>
-          <Typography variant="small" className="text-muted-foreground">
-            {address.mobile}
-          </Typography>
-        </div>
-      ),
-    },
-    {
       key: "totalAmount",
       label: "Total",
       render: (amount) => (
@@ -148,22 +145,11 @@ const OrdersTable = ({ setOrdersLength, params }) => {
       render: (_, order) => (
         <ActionMenu
           options={[
-            // {
-            //   label: "View Details",
-            //   icon: Eye,
-            //   action: () => onNavigateDetails(order),
-            // },
             {
               label: "Edit Status",
               icon: Pencil,
-              action: () => onNavigateToEdit(order),
+              action: () => onOpenStatusDialog(order),
             },
-            // {
-            //   label: "Delete",
-            //   icon: Trash2,
-            //   action: () => onOpenDialog(order),
-            //   className: "text-destructive",
-            // },
           ]}
         />
       ),
@@ -178,16 +164,41 @@ const OrdersTable = ({ setOrdersLength, params }) => {
         isLoading={isLoading}
         error={error}
       />
-
-      {/* <CustomDialog
-        onOpen={openDelete}
-        onClose={onCloseDialog}
-        title={`Order #${selectedOrder?._id.slice(-6).toUpperCase()}`}
-        modalType="Delete"
-        onDelete={deleteOrderMutation}
-        id={selectedOrder?._id}
-        isLoading={isDeleting}
-      /> */}
+      <Dialog open={openStatusDialog} onOpenChange={setOpenStatusDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Order Status</DialogTitle>
+          </DialogHeader>
+          <Typography variant="p" className="font-medium">
+            Order ID: {selectedOrder?._id}
+          </Typography>
+          <Select value={newStatus} onValueChange={setNewStatus}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Status" />
+            </SelectTrigger>
+            <SelectContent>
+              {ORDER_STATUSES.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status.toUpperCase()}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <DialogFooter>
+            <Button
+              onClick={() =>
+                updateOrderStatusMutation({
+                  orderId: selectedOrder?._id,
+                  status: newStatus,
+                })
+              }
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Updating..." : "Update Status"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

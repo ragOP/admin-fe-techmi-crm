@@ -4,25 +4,30 @@ import JoditEditor from "jodit-react";
 const TextEditor = ({ onTextChange }) => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
+
   const config = {
     height: 400,
-    toolbarSticky: false,
     minHeight: 400,
     maxHeight: 600,
+    placeholder: "Start writing your blog...",
+    buttons: "bold,italic,underline,|,ul,ol,|,link,undo,redo", // Essential formatting tools
+    showXPathInStatusbar: false,
+    showCharsCounter: false,
+    showWordsCounter: false,
+    toolbarSticky: false,
+    toolbarAdaptive: false,
   };
 
   return (
-    <div className="border p-4 min-h-[400px]">
-      <JoditEditor
-        ref={editor}
-        value={content}
-        config={config}
-        onChange={(newContent) => {
-          setContent(newContent);
-          onTextChange(newContent);
-        }}
-      />
-    </div>
+    <JoditEditor
+      ref={editor}
+      value={content}
+      config={config}
+      onBlur={(newContent) => {
+        setContent(newContent);
+        onTextChange(newContent);
+      }}
+    />
   );
 };
 
