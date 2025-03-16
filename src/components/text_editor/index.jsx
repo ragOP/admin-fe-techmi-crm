@@ -1,56 +1,29 @@
-// import React, { forwardRef, useEffect, useLayoutEffect, useRef } from "react";
-// import { Quill } from "react-quill";
+import React, { useRef, useState } from "react";
+import JoditEditor from "jodit-react";
 
-// const TextEditor = forwardRef(
-//   ({ readOnly, defaultValue, onTextChange, onSelectionChange }, ref) => {
-//     const containerRef = useRef(null);
-//     const defaultValueRef = useRef(defaultValue);
-//     const onTextChangeRef = useRef(onTextChange);
-//     const onSelectionChangeRef = useRef(onSelectionChange);
+const TextEditor = ({ onTextChange }) => {
+  const editor = useRef(null);
+  const [content, setContent] = useState("");
+  const config = {
+    height: 400,
+    toolbarSticky: false,
+    minHeight: 400,
+    maxHeight: 600,
+  };
 
-//     useLayoutEffect(() => {
-//       onTextChangeRef.current = onTextChange;
-//       onSelectionChangeRef.current = onSelectionChange;
-//     });
+  return (
+    <div className="border p-4 min-h-[400px]">
+      <JoditEditor
+        ref={editor}
+        value={content}
+        config={config}
+        onChange={(newContent) => {
+          setContent(newContent);
+          onTextChange(newContent);
+        }}
+      />
+    </div>
+  );
+};
 
-//     useEffect(() => {
-//       ref.current?.enable(!readOnly);
-//     }, [ref, readOnly]);
-
-//     useEffect(() => {
-//       const container = containerRef.current;
-//       const editorContainer = container.appendChild(
-//         container.ownerDocument.createElement("div")
-//       );
-//       const quill = new Quill(editorContainer, {
-//         theme: "snow",
-//       });
-
-//       ref.current = quill;
-
-//       if (defaultValueRef.current) {
-//         quill.root.innerHTML = defaultValueRef.current;
-//       }
-
-//       quill.on(Quill.events.TEXT_CHANGE, () => {
-//         const htmlContent = quill.root.innerHTML; 
-//         onTextChangeRef.current?.(htmlContent);
-//       });
-
-//       quill.on(Quill.events.SELECTION_CHANGE, (...args) => {
-//         onSelectionChangeRef.current?.(...args);
-//       });
-
-//       return () => {
-//         ref.current = null;
-//         container.innerHTML = "";
-//       };
-//     }, [ref]);
-
-//     return <div className="h-[20rem]" ref={containerRef}></div>;
-//   }
-// );
-
-// TextEditor.displayName = "TextEditor";
-
-// export default TextEditor;
+export default TextEditor;

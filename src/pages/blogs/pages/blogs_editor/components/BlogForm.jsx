@@ -21,10 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import "react-quill/dist/quill.snow.css";
 import { createBlog } from "../helpers/createBlog";
 import { useEffect, useRef } from "react";
-// import TextEditor from "@/components/text_editor";
+import TextEditor from "@/components/text_editor";
 import { urlToFile } from "@/utils/file/urlToFile";
 import { X } from "lucide-react";
 import { fetchServices } from "@/pages/services/helpers/fetchServices";
@@ -283,7 +282,7 @@ const BlogForm = ({ isEdit = false, initialData }) => {
 
         {/* Content Field using Quill Editor */}
 
-        {/*<FormField
+        <FormField
           control={form.control}
           name="content"
           render={({ field }) => (
@@ -297,10 +296,7 @@ const BlogForm = ({ isEdit = false, initialData }) => {
                     <TextEditor
                       ref={quillRef}
                       defaultValue={field.value}
-                      readOnly={false}
-                      onTextChange={(content) => {
-                        field.onChange(content);
-                      }}
+                      onTextChange={field.onChange}
                     />
                   )}
                 />
@@ -308,7 +304,7 @@ const BlogForm = ({ isEdit = false, initialData }) => {
               <FormMessage />
             </FormItem>
           )}
-        />*/}
+        />
 
         <div className="mt-14">
           <Button type="submit" disabled={createMutation.isPending}>
