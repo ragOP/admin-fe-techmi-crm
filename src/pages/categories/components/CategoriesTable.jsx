@@ -10,7 +10,7 @@ import { CustomDialog } from "@/components/custom_dialog";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
-const CategoriesTable = ({ setCategoryLength }) => {
+const CategoriesTable = ({ setCategoryLength, params }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -19,8 +19,8 @@ const CategoriesTable = ({ setCategoryLength }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["categories"],
-    queryFn: fetchCategories,
+    queryKey: ["categories", params],
+    queryFn: () => fetchCategories({ params }),
   });
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -54,9 +54,11 @@ const CategoriesTable = ({ setCategoryLength }) => {
   const onDeleteClick = (id) => {
     deleteCategoryMutation(id);
   };
+
   const categories = Array.isArray(apiCategoriesResponse?.response?.data)
     ? apiCategoriesResponse?.response?.data
     : [];
+
   console.log(categories);
   useEffect(() => {
     setCategoryLength(categories?.length);

@@ -11,7 +11,7 @@ import { deleteProduct } from "../helpers/deleteProduct";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 
-const ProductsTable = ({ setProductLength }) => {
+const ProductsTable = ({ setProductLength, params }) => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -21,8 +21,8 @@ const ProductsTable = ({ setProductLength }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["products"],
-    queryFn: fetchProducts,
+    queryKey: ["products", params],
+    queryFn: () => fetchProducts({ params }),
   });
 
   const [openDelete, setOpenDelete] = useState(false);
