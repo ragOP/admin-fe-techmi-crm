@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import "react-quill/dist/quill.snow.css";
+// import "react-quill/dist/quill.snow.css";
 import { createBlog } from "../helpers/createBlog";
 import { useEffect, useRef } from "react";
 // import TextEditor from "@/components/text_editor";
