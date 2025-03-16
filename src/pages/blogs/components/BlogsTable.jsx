@@ -1,82 +1,83 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchProducts } from "../helpers/fetchProducts";
 import { format, formatDistanceToNow } from "date-fns";
 import ActionMenu from "@/components/action_menu";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
-import { CustomDialog } from "@/components/custom_dialog";
 import { useEffect, useState } from "react";
-import { deleteProduct } from "../helpers/deleteProduct";
-import { toast } from "sonner";
+import { CustomDialog } from "@/components/custom_dialog";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { fetchBlogs } from "../helpers/fetchBlogs";
+import { deleteBlogs } from "../helpers/deleteBlogs";
 
-const ProductsTable = ({ setProductLength }) => {
+const BlogsTable = ({ setBlogsLength }) => {
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
   const {
-    data: apiProductsResponse,
+    data: apiBlogsResponse,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["products"],
-    queryFn: fetchProducts,
+    queryKey: ["blogs"],
+    queryFn: fetchBlogs,
   });
 
   const [openDelete, setOpenDelete] = useState(false);
-  const [productData, setProductData] = useState(null);
+  const [selectedBlog, setSelectedBlog] = useState(null);
 
   const onOpenDialog = (row) => {
     setOpenDelete(true);
-    setProductData(row);
+    setSelectedBlog(row);
   };
 
   const onCloseDialog = () => {
     setOpenDelete(false);
-    setProductData(null);
+    setSelectedBlog(null);
   };
 
-  const { mutate: deleteProuductsMutation, isLoading: isDeleting } =
-    useMutation({
-      mutationFn: deleteProduct,
-      onSuccess: () => {
-        toast.success("Products deleted successfully.");
-        queryClient.invalidateQueries(["products"]);
-        onCloseDialog();
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error("Failed to delete product.");
-      },
-    });
+  const { mutate: deleteBlogMutation, isLoading: isDeleting } = useMutation({
+    mutationFn: deleteBlogs,
+    onSuccess: () => {
+      toast.success("Blog deleted successfully.");
+      queryClient.invalidateQueries(["blogs"]);
+      onCloseDialog();
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to delete blog.");
+    },
+  });
 
   const onDeleteClick = (id) => {
-    deleteProuductsMutation(id);
-  };
-  const products = apiProductsResponse?.response?.data || [];
-
-  const onNavigateToEdit = (service) => {
-    navigate(`/dashboard/products/edit/${service._id}`);
+    deleteBlogMutation(id);
   };
 
-  const onNavigateDetails = (service) => {
-    navigate(`/dashboard/products/${service._id}`);
-  };
+  const blogs = Array.isArray(apiBlogsResponse?.response?.data)
+    ? apiBlogsResponse?.response?.data
+    : [];
 
   useEffect(() => {
-    setProductLength(products?.length);
-  }, [products, setProductLength]);
+    setBlogsLength(blogs?.length);
+  }, [blogs, setBlogsLength]);
+
+  const onNavigateToEdit = (blog) => {
+    navigate(`/dashboard/blogs/edit/${blog._id}`);
+  };
+
+  const onNavigateDetails = (blog) => {
+    navigate(`/dashboard/blogs/${blog._id}`);
+  };
 
   const columns = [
     {
-      key: "name",
-      label: "Name",
+      key: "banner",
+      label: "Banner",
       render: (value, row) => (
         <div className="flex items-center gap-2">
           <img
-            src={row.banner_image || row.images?.[0]}
+            src={row.bannerImageUrl}
             alt={value}
             className="h-16 w-16 rounded-lg object-cover"
           />
@@ -84,22 +85,30 @@ const ProductsTable = ({ setProductLength }) => {
         </div>
       ),
     },
-    { key: "small_description", label: "Short Description" },
-    { key: "price", label: "Price", render: (value) => `₹${value}` },
     {
-      key: "discounted_price",
-      label: "Discounted Price",
-      render: (value) => `₹${value}`,
+      key: "title",
+      label: "Title",
+      render: (value, row) => (
+        <div>
+          <Typography variant="p">{value}</Typography>
+          <Typography
+            variant="span"
+            className="line-clamp-1 text-gray-500 overflow-hidden text-ellipsis"
+          >
+            {row.short_description}
+          </Typography>
+        </div>
+      ),
     },
+    { key: "category", label: "Category" },
     {
-      key: "instock",
-      label: "In Stock",
+      key: "isFeatured",
+      label: "Featured",
       render: (value) => (value ? "Yes" : "No"),
     },
-    { key: "manufacturer", label: "Manufacturer" },
     {
       key: "createdAt",
-      label: "Created At",
+      label: "Published At",
       render: (value, row) => (
         <div className="flex flex-col gap-1">
           <Typography>
@@ -148,21 +157,21 @@ const ProductsTable = ({ setProductLength }) => {
     <>
       <CustomTable
         columns={columns}
-        data={products || []}
+        data={blogs || []}
         isLoading={isLoading}
         error={error}
       />
       <CustomDialog
         onOpen={openDelete}
         onClose={onCloseDialog}
-        title={productData?.name}
+        title={selectedBlog?.title}
         modalType="Delete"
         onDelete={onDeleteClick}
-        id={productData?._id}
+        id={selectedBlog?._id}
         isLoading={isDeleting}
       />
     </>
   );
 };
 
-export default ProductsTable;
+export default BlogsTable;

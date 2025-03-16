@@ -24,6 +24,7 @@ const Products = () => {
           total={productLength}
           onAdd={onAdd}
           setOpenDialog={setOpenDialog}
+          disableBulkUpload={false}
         />
         <ProductsTable setProductLength={setProductLength} />
         <ExcelUploadDialog

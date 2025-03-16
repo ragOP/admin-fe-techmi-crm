@@ -118,14 +118,14 @@ export const data = {
     {
       title: "Blogs",
       name: "Blogs",
-      url: "/blogs",
+      url: "/dashboard/blogs",
       icon: FileText,
-      roles: ["super_admin", "admin"],
+      roles: ["super_admin"],
     },
     {
       title: "Contact us form",
       name: "Contact us form",
-      url: "/contact-us",
+      url: "/dashboard/contact-us",
       icon: ContactIcon,
       roles: ["super_admin", "admin"],
     },

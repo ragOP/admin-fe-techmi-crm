@@ -2,9 +2,8 @@ export const isDev = () => {
   return import.meta.env.MODE === "development";
 };
 
-
 export const BACKEND_URL = isDev()
-  ? "https://techmi-crm-be.onrender.com"
+  ? "http://localhost:8000"
   : "https://techmi-crm-be.onrender.com";
 
 export const endpoints = {
@@ -33,5 +32,11 @@ export const endpoints = {
   order: "api/order",
 
   // Bulk Upload
-  bulk_upload: "api/product/batch"
+  bulk_upload: "api/product/batch",
+
+  // blogs
+  blogs: "api/blog",
+
+  // contacts
+  contact: "api/contact",
 };

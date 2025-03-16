@@ -31,6 +31,9 @@ import SubAdmins from "@/pages/sub_admins";
 import SubAdminEditor from "@/pages/sub_admins/pages/sub_admin_editor";
 import UserEditor from "@/pages/users/pages/user_editor";
 import Orders from "@/pages/orders";
+import { Blogs } from "@/pages/blogs";
+import { ContactUs } from "@/pages/contact_us";
+import BlogsEditor from "@/pages/blogs/pages/blogs_editor";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -109,6 +112,11 @@ const Router = () => {
         <Route path="users" element={<Users />} />
         <Route path="users/add" element={<UserEditor />} />
         <Route path="users/edit/:id" element={<UserEditor />} />
+
+        <Route path="blogs" element={<Blogs />} />
+        <Route path="blogs/add" element={<BlogsEditor />} />
+
+        <Route path="contact-us" element={<ContactUs />} />
 
         <Route path="configuration/home" element={<HomeConfig />} />
         <Route path="configuration/service" element={<ServiceConfig />} />

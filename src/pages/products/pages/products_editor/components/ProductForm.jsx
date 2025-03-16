@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 import { selectAdminId } from "@/redux/admin/adminSelector";
 import { updateProduct } from "../helper/updateProduct";
 import { createProduct } from "../helper/createProduct";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { urlToFile } from "@/utils/file/urlToFile";
 import { X } from "lucide-react";
 import { productsFormSchema } from "../schema/productFormSchema";
@@ -28,8 +28,6 @@ const ProductsForm = ({ initialData, isEditMode }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const reduxAdminId = useSelector(selectAdminId);
-  const [images, setImages] = useState([]);
-  const [bannerImage, setBannerImage] = useState();
 
   // Fetch categories
   const { data: categoryData, isLoading: isCategoriesLoading } = useQuery({
