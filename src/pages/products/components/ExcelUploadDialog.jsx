@@ -1,4 +1,4 @@
-import {useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +10,11 @@ import { Input } from "@/components/ui/input";
 import { UploadCloud, FileCheck, X, Download, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { extractDataFromExcel } from "@/utils/excel_reader";
-import { generateExcel } from "@/utils/excel_generate";
+import { generateTemplate } from "@/utils/excel_generate";
 import { productBulkUpload } from "../helpers/bulkUpload";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchCategories } from "@/pages/categories/helpers/fetchCategories";
+import { columnMapper } from "@/constant";
 
 export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
   const [file, setFile] = useState(null);
@@ -21,21 +23,28 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
   const queryClient = useQueryClient();
 
   const bulkUploadMutation = useMutation({
-    mutationFn: (excelData) => productBulkUpload({payload: excelData}),
+    mutationFn: (excelData) => productBulkUpload({ payload: excelData }),
     onSuccess: (data) => {
-      if(data?.data?.failed?.length === 0){
+      if (data?.data?.failed?.length === 0) {
         toast.success("Products uploaded successfully!");
         setFile(null);
         setOpenDialog(false);
-      }else{
-        toast.error(`${data?.data?.failed?.length} failed to upload. Try again.`)
+      } else {
+        toast.error(
+          `${data?.data?.failed?.length} failed to upload. Try again.`
+        );
       }
       queryClient.invalidateQueries(["products"]);
     },
     onError: (error) => {
       toast.error(`Upload failed: ${error.message}`);
     },
-  })
+  });
+
+  const { data: apiCategoriesResponse } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -67,23 +76,43 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
       toast.error("Upload a file to proceed");
     } else {
       const excelData = await extractDataFromExcel(file);
-      console.log(excelData, ">>>>>>>>Excel dta")
-      bulkUploadMutation.mutate(excelData);
+      const categoryMap = new Map(
+        apiCategoriesResponse?.response?.data?.map((cat) => [cat.name, cat._id])
+      );
+      const transformedData = excelData.map((row) => {
+        const mappedRow = {};
+
+        Object.entries(row).forEach(([key, value]) => {
+          const newKey = columnMapper[key] || key;
+          mappedRow[newKey] =
+            newKey === "category" ? categoryMap.get(value) || value : value;
+        });
+
+        return mappedRow;
+      });
+      bulkUploadMutation.mutate(transformedData);
     }
   };
 
   const handleDownloadTemplate = () => {
     setIsGenerating(true);
-    const columns = [["ID", "Name", "Email", "Phone", "Address"]];
-    generateExcel(columns);
-    setIsGenerating(false);
+    const categoryDropdownOptions = apiCategoriesResponse?.response?.data?.map(
+      (cat) => {
+        return cat.name;
+      }
+    );
+    const transformedArray = Object.keys(columnMapper);
+    setTimeout(() => {
+      generateTemplate(transformedArray, categoryDropdownOptions);
+      setIsGenerating(false);
+    }, 1000)
   };
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-      <DialogContent className="p-6 rounded-xl shadow-lg bg-white border border-gray-400">
+      <DialogContent className="p-6 rounded-xl shadow-lg border border-gray-400">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-gray-900">
+          <DialogTitle className="text-lg font-semibold">
             Upload Excel File
           </DialogTitle>
         </DialogHeader>
@@ -98,14 +127,14 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
         >
-          <UploadCloud className="text-gray-700 mb-2" size={50} />
+          <UploadCloud className="mb-2" size={50} />
           <div className="flex items-center gap-1">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm">
               Drag & drop an Excel file here
             </p>
             <label
               htmlFor="fileInput"
-              className="cursor-pointer text-sm text-gray-700 underline"
+              className="cursor-pointer text-sm underline"
             >
               or select a file
             </label>
@@ -122,14 +151,13 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
         </div>
 
         {file && (
-          <div className="mt-4 flex items-center justify-between bg-gray-200 text-gray-900 p-3 rounded-lg shadow-md">
+          <div className="mt-4 flex items-center justify-between p-3 rounded-lg shadow-md">
             <div className="flex items-center gap-2">
-              <FileCheck size={20} className="text-gray-800" />
+              <FileCheck size={20} />
               <p className="text-sm font-medium">{file.name}</p>
             </div>
             <button
               onClick={() => setFile(null)}
-              className="text-gray-600 hover:text-gray-800"
             >
               <X size={18} />
             </button>
@@ -137,7 +165,7 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
         )}
         <Button
           className={`${
-            isGenerating ? "pointer-events-none bg-gray-700" : ""
+            isGenerating ? "pointer-events-none opacity-70" : ""
           } w-full transition cursor-pointer`}
           onClick={handleDownloadTemplate}
         >
@@ -146,11 +174,14 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
         </Button>
         <Button
           className={`${
-            bulkUploadMutation.isLoading ? "pointer-events-none bg-gray-700" : ""
+            bulkUploadMutation.isPending
+              ? "pointer-events-none opacity-70"
+              : ""
           } w-full transition cursor-pointer`}
           onClick={handleUploadBulk}
         >
-          <Upload size={18} /> {bulkUploadMutation.isLoading ? "Uploading..." : "Upload"}
+          {!bulkUploadMutation.isPending && <Upload size={18} />}{" "}
+          {bulkUploadMutation.isPending ? "Uploading..." : "Upload"}
         </Button>
       </DialogContent>
     </Dialog>
