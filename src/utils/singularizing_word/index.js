@@ -2,7 +2,6 @@ export const singularize = (word) => {
   const irregularPlurals = {
     services: "service",
   };
-  // test comment
 
   if (irregularPlurals[word.toLowerCase()]) {
     return irregularPlurals[word.toLowerCase()];
