@@ -10,7 +10,7 @@ import { CustomDialog } from "@/components/custom_dialog";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 
-const ServicesTable = ({ setServiceLength }) => {
+const ServicesTable = ({ setServiceLength, params }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -19,8 +19,8 @@ const ServicesTable = ({ setServiceLength }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["services"],
-    queryFn: fetchServices,
+    queryKey: ["services", params],
+    queryFn: () => fetchServices({ params }),
   });
 
   const [openDelete, setOpenDelete] = useState(false);

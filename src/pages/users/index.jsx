@@ -1,17 +1,40 @@
 import NavbarItem from "@/components/navbar/navbar_item";
 import CustomActionMenu from "@/components/custom_action";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import UsersTable from "./components/UsersTable";
+import { useDebounce } from "@uidotdev/usehooks";
 
 const Users = () => {
   const navigate = useNavigate();
 
+  const paramInitialState = {
+    page: 1,
+    per_page: 50,
+    search: "",
+  };
   const [usersLength, setUsersLength] = useState(0);
+  const [searchText, setSearchText] = useState("");
+  const [params, setParams] = useState(paramInitialState);
+
+  const debouncedSearch = useDebounce(searchText, 500);
 
   const onAdd = () => {
     navigate("/dashboard/users/add");
   };
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  useEffect(() => {
+    if (params.search !== debouncedSearch) {
+      setParams((prev) => ({
+        ...prev,
+        search: debouncedSearch,
+      }));
+    }
+  }, [debouncedSearch]);
 
   return (
     <div className="flex flex-col">
@@ -22,8 +45,10 @@ const Users = () => {
           title="Users"
           total={usersLength}
           onAdd={onAdd}
+          handleSearch={handleSearch}
+          searchText={searchText}
         />
-        <UsersTable setUsersLength={setUsersLength} />
+        <UsersTable setUsersLength={setUsersLength} params={params} />
       </div>
     </div>
   );

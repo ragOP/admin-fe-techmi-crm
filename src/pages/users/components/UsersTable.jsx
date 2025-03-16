@@ -11,7 +11,7 @@ import { fetchUsers } from "../helpers/fetchUsers";
 import { deleteUser } from "../helpers/deleteUser";
 import { useNavigate } from "react-router";
 
-const UsersTable = ({ setUsersLength }) => {
+const UsersTable = ({ setUsersLength, params }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -20,8 +20,8 @@ const UsersTable = ({ setUsersLength }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
+    queryKey: ["users", params],
+    queryFn: () => fetchUsers({ params }),
   });
 
   const [openDelete, setOpenDelete] = useState(false);

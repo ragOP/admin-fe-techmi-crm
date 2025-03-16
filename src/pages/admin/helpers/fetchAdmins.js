@@ -1,11 +1,12 @@
 import { apiService } from "@/api/api_services";
 import { endpoints } from "@/api/enpoints";
 
-export const fetchAdmins = async () => {
+export const fetchAdmins = async ({ params }) => {
   try {
     const apiResponse = await apiService({
       endpoint: endpoints.admin,
       method: "GET",
+      params,
     });
 
     if (apiResponse?.response?.success) {

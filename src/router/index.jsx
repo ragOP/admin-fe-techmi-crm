@@ -34,11 +34,10 @@ import Orders from "@/pages/orders";
 import { Blogs } from "@/pages/blogs";
 import { ContactUs } from "@/pages/contact_us";
 import BlogsEditor from "@/pages/blogs/pages/blogs_editor";
+import BlogsDetails from "@/pages/blogs/pages/blogs_details";
 
 const Router = () => {
   const dispatch = useDispatch();
-
-  console.log(useSelector(selectAdmin));
 
   const checkTokenExpiration = () => {
     const storedToken = getItem("token");
@@ -115,6 +114,8 @@ const Router = () => {
 
         <Route path="blogs" element={<Blogs />} />
         <Route path="blogs/add" element={<BlogsEditor />} />
+        <Route path="blogs/edit/:id" element={<BlogsEditor />} />
+        <Route path="blogs/:id" element={<BlogsDetails />} />
 
         <Route path="contact-us" element={<ContactUs />} />
 

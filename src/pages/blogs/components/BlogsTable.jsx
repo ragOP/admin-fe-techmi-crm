@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { fetchBlogs } from "../helpers/fetchBlogs";
 import { deleteBlogs } from "../helpers/deleteBlogs";
 
-const BlogsTable = ({ setBlogsLength }) => {
+const BlogsTable = ({ setBlogsLength, params }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -20,8 +20,8 @@ const BlogsTable = ({ setBlogsLength }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["blogs"],
-    queryFn: fetchBlogs,
+    queryKey: ["blogs", params],
+    queryFn: () => fetchBlogs({ params }),
   });
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -100,15 +100,26 @@ const BlogsTable = ({ setBlogsLength }) => {
         </div>
       ),
     },
-    { key: "category", label: "Category" },
+    {
+      key: "service",
+      label: "Service",
+      render: (value, row) => {
+        return <Typography variant="p">{row.author?.name}</Typography>;
+      },
+    },
     {
       key: "isFeatured",
       label: "Featured",
       render: (value) => (value ? "Yes" : "No"),
     },
     {
+      key: "published",
+      label: "Published",
+      render: (value) => (value ? "Yes" : "No"),
+    },
+    {
       key: "createdAt",
-      label: "Published At",
+      label: "Created at",
       render: (value, row) => (
         <div className="flex flex-col gap-1">
           <Typography>

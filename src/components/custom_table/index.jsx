@@ -35,13 +35,19 @@ const CustomTable = ({ columns, data, isLoading, error }) => {
     return (
       <Alert variant="destructive" className="mb-4">
         <AlertTitle>Error</AlertTitle>
-        <AlertDescription>Failed to load data. Please try again.</AlertDescription>
+        <AlertDescription>
+          Failed to load data. Please try again.
+        </AlertDescription>
       </Alert>
     );
   }
 
   if (!data || data.length === 0) {
-    return <Card className="p-4 text-center text-gray-500">No records available.</Card>;
+    return (
+      <Card className="p-4 text-center text-gray-500">
+        No records available.
+      </Card>
+    );
   }
 
   return (
@@ -50,17 +56,26 @@ const CustomTable = ({ columns, data, isLoading, error }) => {
         <Table className="min-w-full">
           <TableHeader>
             <TableRow>
-              {columns.map((col) => (
-                <TableHead key={col.key} className="whitespace-nowrap">{col.label}</TableHead>
+              {columns.map((col, index) => (
+                <TableHead
+                  key={`${col.key}_${index}`}
+                  className="whitespace-nowrap"
+                >
+                  {col.label}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((row) => (
-              <TableRow key={row.id}>
+            {data.map((row, index) => (
+              <TableRow key={`${row.key}_${index}`}>
                 {columns.map((col) => (
                   <TableCell key={col.key} className="whitespace-nowrap">
-                    {col.render ? col.render(row[col.key], row) : <Typography>{row[col.key]}</Typography>}
+                    {col.render ? (
+                      col.render(row[col.key], row)
+                    ) : (
+                      <Typography>{row[col.key]}</Typography>
+                    )}
                   </TableCell>
                 ))}
               </TableRow>

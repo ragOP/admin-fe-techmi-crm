@@ -13,7 +13,7 @@ import {
 import { z } from "zod";
 import { toast } from "sonner";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -28,6 +28,8 @@ import TextEditor from "@/components/text_editor";
 import { urlToFile } from "@/utils/file/urlToFile";
 import { X } from "lucide-react";
 import { fetchServices } from "@/pages/services/helpers/fetchServices";
+import { updateBlog } from "../helpers/updateBlog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const BlogFormSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters"),
@@ -42,6 +44,8 @@ const BlogFormSchema = z.object({
 });
 
 const BlogForm = ({ isEdit = false, initialData }) => {
+  const { id } = useParams();
+
   const quillRef = useRef();
   const navigate = useNavigate();
 
@@ -87,8 +91,35 @@ const BlogForm = ({ isEdit = false, initialData }) => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (data) => updateBlog({ payload: data, id }),
+    onSuccess: (res) => {
+      if (res?.response?.success) {
+        toast.success("Blog updated successfully.");
+        navigate("/dashboard/blogs");
+      } else {
+        toast.error("Failed to update blog. Please try again.");
+      }
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to update blog. Please try again.");
+    },
+  });
+
   const onSubmit = async (data) => {
-    createMutation.mutate({ payload: data });
+    const formData = new FormData();
+
+    console.log(formData, data);
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    if (isEdit) {
+      updateMutation.mutate(formData);
+    } else {
+      createMutation.mutate(formData);
+    }
   };
 
   useEffect(() => {
@@ -172,31 +203,68 @@ const BlogForm = ({ isEdit = false, initialData }) => {
           )}
         />
 
-        {/* Service Field */}
-        <FormField
-          control={form.control}
-          name="service"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Service</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+        <div className="flex flex-row items-center gap-12">
+          {/* Service Field */}
+          <FormField
+            control={form.control}
+            name="service"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Service</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select service" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {services?.map((service) => (
+                      <SelectItem key={service.value} value={service.value}>
+                        {service.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="published"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-4">
+                <FormLabel>Published</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select service" />
-                  </SelectTrigger>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
                 </FormControl>
-                <SelectContent>
-                  {services?.map((service) => (
-                    <SelectItem key={service.value} value={service.value}>
-                      {service.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Featured Field */}
+          <FormField
+            control={form.control}
+            name="isFeatured"
+            render={({ field }) => (
+              <FormItem className="flex flex-col  gap-4">
+                <FormLabel>Featured</FormLabel>
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* Short Description Field */}
         <FormField

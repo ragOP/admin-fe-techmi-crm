@@ -10,17 +10,20 @@ import { toast } from "sonner";
 import { fetchAdmins } from "../helpers/fetchAdmins";
 import { deleteAdmins } from "../helpers/deleteAdmins";
 
-const AdminsTable = ({ setadminsLength }) => {
+const AdminsTable = ({ setadminsLength, params }) => {
   const queryClient = useQueryClient();
 
   const {
-    data: admins,
+    data: adminsRes,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["admins"],
-    queryFn: fetchAdmins,
+    queryKey: ["admins", params],
+    queryFn: () => fetchAdmins({ params }),
   });
+
+  const admins = adminsRes?.data;
+  const totalAdmins = adminsRes?.total;
 
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
@@ -53,8 +56,8 @@ const AdminsTable = ({ setadminsLength }) => {
   };
 
   useEffect(() => {
-    setadminsLength(admins?.length);
-  }, []);
+    setadminsLength(totalAdmins);
+  }, [totalAdmins]);
 
   const columns = [
     {

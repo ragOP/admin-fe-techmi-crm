@@ -47,7 +47,7 @@ const TextEditor = forwardRef(
       };
     }, [ref]);
 
-    return <div className="h-[40rem]" ref={containerRef}></div>;
+    return <div className="h-[20rem]" ref={containerRef}></div>;
   }
 );
 

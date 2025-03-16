@@ -8,18 +8,17 @@ import { useDebounce } from "@uidotdev/usehooks";
 const Orders = () => {
   const { serviceId } = useParams();
 
-  const [searchText, setSearchText] = useState("");
-  const debouncedSearch = useDebounce(searchText, 500);
-
   const paramInitialState = {
     page: 1,
     per_page: 50,
     search: "",
     service_id: serviceId,
   };
-
-  const [ordersLength, setOrdersLength] = useState(0);
+  const [searchText, setSearchText] = useState("");
   const [params, setParams] = useState(paramInitialState);
+  const [ordersLength, setOrdersLength] = useState(0);
+
+  const debouncedSearch = useDebounce(searchText, 500);
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
