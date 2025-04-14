@@ -3,8 +3,8 @@ export const isDev = () => {
 };
 
 export const BACKEND_URL = isDev()
-  ? "http://localhost:8000"
-  : "https://techmi-crm-be.onrender.com";
+  ? "http://84.247.129.99:8000"
+  : "http://84.247.129.99:8000";
 
 export const endpoints = {
   // Admin
