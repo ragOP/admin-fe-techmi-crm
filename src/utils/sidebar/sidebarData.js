@@ -130,15 +130,15 @@ export const data = {
       roles: ["super_admin", "admin"],
     },
   ],
-  extra: [
-    {
-      title: "Forms",
-      name: "Forms",
-      url: "/forms",
-      icon: FormInput,
-      roles: ["super_admin", "admin"],
-    },
-  ],
+  // extra: [
+  //   {
+  //     title: "Forms",
+  //     name: "Forms",
+  //     url: "/forms",
+  //     icon: FormInput,
+  //     roles: ["super_admin", "admin"],
+  //   },
+  // ],
   more: [
     {
       title: "Notifications",

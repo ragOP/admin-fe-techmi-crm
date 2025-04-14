@@ -306,7 +306,7 @@ const BlogForm = ({ isEdit = false, initialData }) => {
           )}
         />
 
-        <div className="mt-14">
+        <div className="mt-2">
           <Button type="submit" disabled={createMutation.isPending}>
             {createMutation.isPending
               ? "Processing..."

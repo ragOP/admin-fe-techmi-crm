@@ -89,11 +89,13 @@ const BlogsTable = ({ setBlogsLength, params }) => {
       key: "title",
       label: "Title",
       render: (value, row) => (
-        <div>
-          <Typography variant="p">{value}</Typography>
+        <div className="w-96">
+          <Typography className="block line-clamp-2 text-wrap" variant="p">
+            {value}
+          </Typography>
           <Typography
             variant="span"
-            className="line-clamp-1 text-gray-500 overflow-hidden text-ellipsis"
+            className="block line-clamp-2 text-gray-500 text-wrap"
           >
             {row.short_description}
           </Typography>
@@ -104,7 +106,7 @@ const BlogsTable = ({ setBlogsLength, params }) => {
       key: "service",
       label: "Service",
       render: (value, row) => {
-        return <Typography variant="p">{row.author?.name}</Typography>;
+        return <Typography variant="p">{row.service?.name || "-"}</Typography>;
       },
     },
     {

@@ -105,7 +105,7 @@ const AdminsTable = ({ setadminsLength, params }) => {
       key: "role",
       label: "Role",
       render: (value) => (
-        <span className="capitalize bg-gray-100 px-3 py-1 rounded-full text-sm">
+        <span className="capitalize bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full text-sm">
           {value}
         </span>
       ),

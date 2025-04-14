@@ -37,7 +37,7 @@ export function AppSidebar({ ...props }) {
 
   const filteredNavMain = filterItemsByRole(data.navMain, role);
   const filteredProjects = filterItemsByRole(data.projects, role);
-  const filteredExtra = filterItemsByRole(data.extra, role);
+  // const filteredExtra = filterItemsByRole(data.extra, role);
   const filteredMore = filterItemsByRole(data.more, role);
 
   const {
@@ -84,7 +84,7 @@ export function AppSidebar({ ...props }) {
           showHeader={true}
           header={"Management"}
         />
-        <NavProjects projects={filteredExtra} />
+        {/* <NavProjects projects={filteredExtra} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavMain items={filteredMore} />
