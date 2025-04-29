@@ -1,4 +1,4 @@
-import { BACKEND_URL } from "../enpoints";
+import { BACKEND_URL } from "../enpoints"; 
 import axios from "axios";
 import { getToken } from "@/utils/auth";
 
@@ -8,7 +8,7 @@ export const apiService = async ({
   data,
   params,
   token: _token,
-  headers,
+  headers = {},
   customUrl,
   removeToken = false,
   signal,
@@ -16,22 +16,23 @@ export const apiService = async ({
   try {
     const token = getToken();
 
-    const requestObj = {
-      url: `${customUrl ? customUrl : BACKEND_URL}/${endpoint}`,
-      params,
-      method,
-      data,
-      signal,
+    const requestHeaders = {
+      "ngrok-skip-browser-warning": "true",
+      ...headers,
     };
 
-    if (token || _token) {
-      // Merge custom headers with the Authorization header
-      requestObj.headers = {
-        ...headers,
-        "ngrok-skip-browser-warning": "xyz",
-        ...(!removeToken ? { Authorization: `Bearer ${_token || token}` } : {}),
-      };
+    if (!removeToken && (token || _token)) {
+      requestHeaders.Authorization = `Bearer ${_token || token}`;
     }
+
+    const requestObj = {
+      url: `${customUrl ? customUrl : BACKEND_URL}/${endpoint}`,
+      method,
+      params,
+      data,
+      signal,
+      headers: requestHeaders,
+    };
 
     const { data: res } = await axios(requestObj);
     return { response: res };

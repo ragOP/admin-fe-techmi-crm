@@ -3,8 +3,8 @@ export const isDev = () => {
 };
 
 export const BACKEND_URL = isDev()
-  ? "http://84.247.129.99:8000"
-  : "http://84.247.129.99:8000";
+  ? "https://2c66-84-247-129-99.ngrok-free.app"
+  : "https://2c66-84-247-129-99.ngrok-free.app";
 
 export const endpoints = {
   // Admin
@@ -39,4 +39,9 @@ export const endpoints = {
 
   // contacts
   contact: "api/contact",
+
+  header: "api/header",
+  home: "api/home",
+  internal: "api/internal",
+  service_page: "api/service-page",
 };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { toast } from "sonner";
+import { fetchInternal, postInternal } from "../helper";
 
 const InternalConfig = () => {
   const [config, setConfig] = useState({
@@ -15,9 +15,11 @@ const InternalConfig = () => {
   const [preview, setPreview] = useState({});
 
   useEffect(() => {
-    axios.get("https://techmi-crm-be.onrender.com/api/internal").then((res) => {
-      setConfig(res.data.data || {});
-    });
+    const fetchData = async () => {
+      const data = await fetchInternal({});
+      setConfig(data.response.data || {});
+    };
+    fetchData();
   }, []);
 
   const handleFileUpload = async (field, file) => {
@@ -31,7 +33,9 @@ const InternalConfig = () => {
     setPreview((prev) => ({ ...prev, [field]: fileURL }));
 
     try {
-      const response = await axios.post("https://techmi-crm-be.onrender.com/api/internal", formData);
+      const response = await postInternal({
+        data: formData,
+      });
       setConfig((prev) => ({ ...prev, [field]: response.data.url }));
       toast.success(`${field} uploaded successfully!`);
     } catch (error) {

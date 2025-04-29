@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { toast } from "sonner";
+import { fetchHeader, postHeader } from "../helper";
 
 const HeaderConfig = () => {
   const [config, setConfig] = useState({
@@ -21,9 +21,12 @@ const HeaderConfig = () => {
   const [logoFile, setLogoFile] = useState(null);
 
   useEffect(() => {
-    axios.get("https://techmi-crm-be.onrender.com/api/header").then((res) => {
-      setConfig(res.data.data || {});
-    });
+
+    const fetchData = async () => {
+      const data = await fetchHeader({});
+      setConfig(data.response.data || {});
+    };
+    fetchData();
   }, []);
 
   const handleUpdate = async (field, value) => {
@@ -43,7 +46,8 @@ const HeaderConfig = () => {
     }
 
     try {
-      const response = await axios.post("https://techmi-crm-be.onrender.com/api/header", formData);
+      const response = await postHeader({
+        data: formData,})
       if (field === "logo") {
         setConfig((prev) => ({ ...prev, logo: response.data.url }));
       } else {

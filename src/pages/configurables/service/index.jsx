@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { fetchServicePage, postServicePage } from "../helper";
 
 const ServiceConfig = () => {
   const [config, setConfig] = useState({
@@ -23,11 +23,11 @@ const ServiceConfig = () => {
   const [loading, setLoading] = useState({});
 
   useEffect(() => {
-    axios
-      .get("https://techmi-crm-be.onrender.com/api/service-page")
-      .then((res) => {
-        setConfig(res.data.data || {});
-      });
+    const fetchData = async () => {
+      const response = await fetchServicePage({});
+      setConfig(response.response.data || {});
+    };
+    fetchData();
   }, []);
 
   const handleUpdate = async (field, value) => {
@@ -41,10 +41,9 @@ const ServiceConfig = () => {
     formData.append("value", value);
 
     try {
-      await axios.post(
-        "https://techmi-crm-be.onrender.com/api/service-page",
-        formData
-      );
+      await postServicePage({
+        data: formData,
+      });
       setConfig((prev) => ({ ...prev, [field]: value }));
       toast.success(`${field} updated successfully!`);
     } catch (error) {
@@ -64,10 +63,9 @@ const ServiceConfig = () => {
     setPreview((prev) => ({ ...prev, [field]: fileURL }));
 
     try {
-      const response = await axios.post(
-        "https://techmi-crm-be.onrender.com/api/service-page",
-        formData
-      );
+      const response = await postServicePage({
+        data: formData,
+      });
       setConfig((prev) => ({ ...prev, [field]: response.data.url }));
       toast.success(`${field} uploaded successfully!`);
     } catch (error) {
