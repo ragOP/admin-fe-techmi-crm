@@ -10,6 +10,8 @@ import {
   Package,
   Settings2,
   ShieldUserIcon,
+  Tag,
+  TicketPercent,
   User,
   Users,
   Users2,
@@ -80,6 +82,13 @@ export const data = {
       items: [],
       roles: ["admin", "sub_admin"],
     },
+    {
+      title: "Coupons",
+      url: "/dashboard/coupons",
+      icon: TicketPercent,
+      items: [],
+      roles: ["admin", "sub_admin"],
+    },
   ],
   projects: [
     {
@@ -113,6 +122,13 @@ export const data = {
           url: "/dashboard/configuration/internal",
         },
       ],
+      roles: ["super_admin"],
+    },
+    {
+      title: "Coupons",
+      name: "Coupons",
+      url: "/dashboard/coupons",
+      icon: Tag,
       roles: ["super_admin"],
     },
     {

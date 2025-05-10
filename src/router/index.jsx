@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Layout from "@/layout";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
@@ -35,13 +35,20 @@ import { Blogs } from "@/pages/blogs";
 import { ContactUs } from "@/pages/contact_us";
 import BlogsEditor from "@/pages/blogs/pages/blogs_editor";
 import BlogsDetails from "@/pages/blogs/pages/blogs_details";
+import Coupons from "@/pages/coupons";
+import CouponEditor from "@/pages/coupons/pages/coupon_editor";
 
 const Router = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const checkTokenExpiration = () => {
     const storedToken = getItem("token");
-    if (!storedToken) return;
+    console.log("Stored Token:", storedToken);
+    if (!storedToken) {
+      navigate("/login");
+      return;
+    }
 
     try {
       const decodedToken = jwtDecode(storedToken);
@@ -116,6 +123,12 @@ const Router = () => {
         <Route path="blogs/add" element={<BlogsEditor />} />
         <Route path="blogs/edit/:id" element={<BlogsEditor />} />
         <Route path="blogs/:id" element={<BlogsDetails />} />
+
+        <Route path="coupons" element={<Coupons />} />
+        <Route path="coupons/:add" element={<CouponEditor />} />
+        <Route path="coupons/edit/:id" element={<CouponEditor />} />
+
+        {/* <Route path="coupons/add" element={<Coupons />} /> */}
 
         <Route path="contact-us" element={<ContactUs />} />
 

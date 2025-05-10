@@ -1,16 +1,16 @@
 import NavbarItem from "@/components/navbar/navbar_item";
-import UserForm from "./components/UserForm";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CustomSpinner } from "@/components/loaders/CustomSpinner";
-import { getUserById } from "./helper/getUserById";
+import { getCouponById } from "./helper/getCouponById";
+import CouponForm from "./components/CouponForm";
 
-const UserEditor = () => {
+const CouponEditor = () => {
   const { id } = useParams();
 
-  const { data: initialDataRes, isLoading } = useQuery({
-    queryKey: ["user", id],
-    queryFn: () => getUserById({ id }),
+  const { data: initialDataRes = {}, isLoading } = useQuery({
+    queryKey: ["coupons", id],
+    queryFn: () => getCouponById({ id }),
     enabled: !!id,
   });
 
@@ -25,11 +25,11 @@ const UserEditor = () => {
             <CustomSpinner />
           </div>
         ) : (
-          <UserForm initialData={initialData} isEdit={!!id} />
+          <CouponForm initialData={initialData} isEdit={!!id} />
         )}
       </div>
     </div>
   );
 };
 
-export default UserEditor;
+export default CouponEditor;
