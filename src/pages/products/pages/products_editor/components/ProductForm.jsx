@@ -14,25 +14,35 @@ import { toast } from "sonner";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { useSelector } from "react-redux";
-import { selectAdminId } from "@/redux/admin/adminSelector";
+import { selectAdminId, selectAdminRole } from "@/redux/admin/adminSelector";
 import { updateProduct } from "../helper/updateProduct";
 import { createProduct } from "../helper/createProduct";
-import { useEffect } from "react";
+import { use, useEffect, useState } from "react";
 import { urlToFile } from "@/utils/file/urlToFile";
 import { X } from "lucide-react";
 import { productsFormSchema } from "../schema/productFormSchema";
 import Select from "react-select";
 import { fetchCategories } from "@/pages/categories/helpers/fetchCategories";
+import AdminsDropdown from "@/components/admins_dropdown";
 
 const ProductsForm = ({ initialData, isEditMode }) => {
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const role = useSelector(selectAdminRole);
   const reduxAdminId = useSelector(selectAdminId);
 
+  const [currentAdmin, setCurrentAdmin] = useState(null);
+
   // Fetch categories
-  const { data: categoryData, isLoading: isCategoriesLoading } = useQuery({
-    queryKey: ["categories"],
-    queryFn: fetchCategories,
+  const { data: categoryData = [], isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["categories", currentAdmin],
+    queryFn: () =>
+      fetchCategories({
+        params: {
+          ...(currentAdmin ? { admin_id: currentAdmin } : {}),
+        },
+      }),
   });
 
   // Format categories for react-select
@@ -94,6 +104,15 @@ const ProductsForm = ({ initialData, isEditMode }) => {
     convertUrlsToFiles();
   }, [isEditMode, initialData, form]);
 
+  useEffect(() => {
+    if (role === "super_admin") {
+      console.log(initialData);
+      setCurrentAdmin(initialData?.created_by_admin);
+    }
+  }, [isEditMode, initialData]);
+
+  console.log("currentAdmin", currentAdmin);
+
   const createMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: (res) => {
@@ -112,7 +131,11 @@ const ProductsForm = ({ initialData, isEditMode }) => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => updateProduct({ id, payload: data }),
+    mutationFn: (data) =>
+      updateProduct({
+        id: role === "super_admin" ? id : currentAdmin,
+        payload: data,
+      }),
     onSuccess: (res) => {
       if (res?.response?.success) {
         toast.success("Product updated successfully.");
@@ -129,6 +152,11 @@ const ProductsForm = ({ initialData, isEditMode }) => {
 
   const onSubmit = async (data) => {
     const formData = new FormData();
+
+    if (role === "super_admin" && !currentAdmin) {
+      toast.error("Please select an admin to upload the product.");
+      return;
+    }
 
     Object.entries(data).forEach(([key, value]) => {
       console.log(key, value);
@@ -151,7 +179,10 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       }
     });
 
-    formData.append("created_by_admin", reduxAdminId);
+    formData.append(
+      "created_by_admin",
+      role === "super_admin" ? currentAdmin : reduxAdminId
+    );
 
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
@@ -160,7 +191,12 @@ const ProductsForm = ({ initialData, isEditMode }) => {
     if (isEditMode) {
       updateMutation.mutate(formData);
     } else {
-      createMutation.mutate(formData);
+      const params = {
+        ...(role === "super_admin" && currentAdmin
+          ? { is_created_by_super_admin: true }
+          : {}),
+      };
+      createMutation.mutate(formData, params);
     }
   };
 
@@ -383,6 +419,14 @@ const ProductsForm = ({ initialData, isEditMode }) => {
               )}
             />
           </div>
+
+          {role === "super_admin" && (
+            <AdminsDropdown
+              currentAdmin={currentAdmin}
+              setCurrentAdmin={setCurrentAdmin}
+              isDisabled={isEditMode}
+            />
+          )}
 
           {/* Category Field */}
           <div className="col-span-6">

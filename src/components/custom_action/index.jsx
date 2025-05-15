@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { CloudUpload, PlusIcon } from "lucide-react";
 import { singularize } from "@/utils/singularizing_word";
 import { capitalize } from "@/utils/captilize";
+import { DateRangePicker } from "../date_filter";
 
 const CustomActionMenu = ({
   title,
@@ -15,6 +16,8 @@ const CustomActionMenu = ({
   disableBulkUpload = true,
   searchText,
   setOpenDialog,
+  showDateRangePicker = false,
+  handleDateRangeChange,
 }) => {
   return (
     <div className="flex items-center justify-between w-full my-3">
@@ -30,6 +33,9 @@ const CustomActionMenu = ({
           value={searchText}
           onChange={handleSearch}
         />
+        {showDateRangePicker && (
+          <DateRangePicker onChange={handleDateRangeChange} />
+        )}
         {!disableBulkUpload && (
           <Button
             onClick={() => setOpenDialog(true)}

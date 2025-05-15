@@ -12,7 +12,7 @@ const Products = () => {
 
   const paramInitialState = {
     page: 1,
-    per_page: 50,
+    per_page: 10,
     search: "",
   };
   const [searchText, setSearchText] = useState("");
@@ -23,6 +23,28 @@ const Products = () => {
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
+  };
+
+  const handleDateRangeChange = (range) => {
+    if (!range || !range.from || !range.to) {
+      setParams((prev) => {
+        if (prev.start_date === undefined && prev.end_date === undefined) {
+          return prev;
+        }
+        return { ...prev, start_date: undefined, end_date: undefined };
+      });
+      return;
+    }
+
+    setParams((prev) => {
+      const isSame =
+        prev.start_date?.toString() === range.from.toString() &&
+        prev.end_date?.toString() === range.to.toString();
+
+      if (isSame) return prev;
+
+      return { ...prev, start_date: range.from, end_date: range.to };
+    });
   };
 
   const onAdd = () => {
@@ -51,8 +73,15 @@ const Products = () => {
           disableBulkUpload={false}
           searchText={searchText}
           handleSearch={handleSearch}
+          setParams={setParams}
+          showDateRangePicker={true}
+          handleDateRangeChange={handleDateRangeChange}
         />
-        <ProductsTable setProductLength={setProductLength} params={params} />
+        <ProductsTable
+          setProductLength={setProductLength}
+          params={params}
+          setParams={setParams}
+        />
         <ExcelUploadDialog
           openDialog={openDialog}
           setOpenDialog={setOpenDialog}

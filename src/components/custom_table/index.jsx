@@ -1,99 +1,8 @@
-// import { Card } from "@/components/ui/card";
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from "@/components/ui/table";
-// import { Skeleton } from "@/components/ui/skeleton";
-// import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-// import Typography from "@/components/typography";
-
-// /**
-//  * CustomTable Component
-//  * @param {Array} columns - Array of column headers
-//  * @param {Array} data - Array of objects representing table rows
-//  * @param {boolean} isLoading - Loading state
-//  * @param {Error | null} error - Error state
-//  * @param {Function} fetchData - Function to refetch data (optional)
-//  */
-// const CustomTable = ({ columns, data, isLoading, error }) => {
-//   if (isLoading) {
-//     return (
-//       <Card className="p-4">
-//         <Skeleton className="h-10 w-full mb-4" />
-//         {[...Array(5)].map((_, i) => (
-//           <Skeleton key={i} className="h-6 w-full mb-2" />
-//         ))}
-//       </Card>
-//     );
-//   }
-
-//   if (error) {
-//     return (
-//       <Alert variant="destructive" className="mb-4">
-//         <AlertTitle>Error</AlertTitle>
-//         <AlertDescription>
-//           Failed to load data. Please try again.
-//         </AlertDescription>
-//       </Alert>
-//     );
-//   }
-
-//   if (!data || data.length === 0) {
-//     return (
-//       <Card className="p-4 text-center text-gray-500">
-//         No records available.
-//       </Card>
-//     );
-//   }
-
-//   return (
-//     <Card className="p-4">
-//       <div className="">
-//         <Table className="min-w-full">
-//           <TableHeader>
-//             <TableRow>
-//               {columns.map((col, index) => (
-//                 <TableHead
-//                   key={`${col.key}_${index}`}
-//                   className="whitespace-nowrap"
-//                 >
-//                   {col.label}
-//                 </TableHead>
-//               ))}
-//             </TableRow>
-//           </TableHeader>
-//           <TableBody>
-//             {data.map((row, index) => (
-//               <TableRow key={`${row.key}_${index}`}>
-//                 {columns.map((col) => (
-//                   <TableCell key={col.key} className="whitespace-nowrap">
-//                     {col.render ? (
-//                       col.render(row[col.key], row)
-//                     ) : (
-//                       <Typography>{row[col.key]}</Typography>
-//                     )}
-//                   </TableCell>
-//                 ))}
-//               </TableRow>
-//             ))}
-//           </TableBody>
-//         </Table>
-//       </div>
-//     </Card>
-//   );
-// };
-
-// export default CustomTable;
-
 import React, { useState, useMemo } from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
+  // getPaginationRowModel,
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
@@ -108,20 +17,31 @@ import {
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import Typography from "@/components/typography";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 
 function CustomTable({
-  columns: rawColumns, // original input format: { label, key, render? }
+  columns: rawColumns,
   data,
   isLoading,
   error,
+  totalPages = 1,
+  currentPage = 1,
+  perPage = 10,
+  onPageChange,
   emptyStateMessage = "No records available.",
 }) {
   const [sorting, setSorting] = useState([]);
 
-  // 🔁 Transform raw columns into TanStack format
   const columns = useMemo(() => {
     return rawColumns.map((col) => ({
       id: col.key,
@@ -141,11 +61,16 @@ function CustomTable({
     columns,
     state: {
       sorting,
+      pagination: {
+        pageIndex: currentPage - 1,
+        pageSize: perPage,
+      },
     },
+    manualPagination: true,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
   });
 
   if (isLoading) {
@@ -188,16 +113,18 @@ function CustomTable({
                   onClick={header.column.getToggleSortingHandler()}
                   className="cursor-pointer select-none"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                  {header.column.getIsSorted() === "asc" && (
-                    <ArrowUp size={14} />
-                  )}
-                  {header.column.getIsSorted() === "desc" && (
-                    <ArrowDown size={14} />
-                  )}
+                  <div className="flex items-center gap-1">
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    {header.column.getIsSorted() === "asc" && (
+                      <ArrowUp size={14} />
+                    )}
+                    {header.column.getIsSorted() === "desc" && (
+                      <ArrowDown size={14} />
+                    )}
+                  </div>
                 </TableHead>
               ))}
             </TableRow>
@@ -216,26 +143,105 @@ function CustomTable({
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-between mt-4">
-        <Button
-          variant="outline"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Typography>
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </Typography>
-        <Button
-          variant="outline"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
+      <Pagination>
+        <PaginationContent>
+          {/* Previous Button */}
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (currentPage > 1) onPageChange(currentPage - 1);
+              }}
+              className={
+                currentPage === 1 ? "pointer-events-none opacity-50" : ""
+              }
+            />
+          </PaginationItem>
+
+          {/* First Page */}
+          {currentPage > 3 && (
+            <>
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(1);
+                  }}
+                  isActive={currentPage === 1}
+                >
+                  1
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            </>
+          )}
+
+          {/* Page Range */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter((page) => {
+              return (
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 2 && page <= currentPage + 2)
+              );
+            })
+            .map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(page);
+                  }}
+                  isActive={page === currentPage}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+          {/* Last Ellipsis */}
+          {currentPage < totalPages - 2 && (
+            <>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(totalPages);
+                  }}
+                  isActive={currentPage === totalPages}
+                >
+                  {totalPages}
+                </PaginationLink>
+              </PaginationItem>
+            </>
+          )}
+
+          {/* Next Button */}
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (currentPage < totalPages) onPageChange(currentPage + 1);
+              }}
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none opacity-50"
+                  : ""
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </Card>
   );
 }

@@ -4,7 +4,7 @@ import { endpoints } from "@/api/enpoints";
 export const fetchCoupons = async ({ params }) => {
   try {
     const apiResponse = await apiService({
-      endpoint: endpoints.coupons,
+      endpoint: endpoints.allCoupons,
       method: "GET",
       params,
     });

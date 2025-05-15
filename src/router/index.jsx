@@ -44,7 +44,7 @@ const Router = () => {
 
   const checkTokenExpiration = () => {
     const storedToken = getItem("token");
-    console.log("Stored Token:", storedToken);
+
     if (!storedToken) {
       navigate("/login");
       return;

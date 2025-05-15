@@ -41,8 +41,8 @@ const CouponFormSchema = z
   })
   .refine(
     (data) =>
-      data.discountType !== "percentage" ||
-      (data.discountValue >= 1 && data.discountValue <= 100),
+      (data.discountType === "percentage" && data.discountValue >= 1) ||
+      (data.discountType === "percentage" && data.discountValue <= 100),
     {
       message: "Percentage discount must be between 1 and 100",
       path: ["discountValue"],

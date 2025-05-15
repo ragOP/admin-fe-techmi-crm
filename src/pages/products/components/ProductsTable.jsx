@@ -10,19 +10,22 @@ import { useEffect, useState } from "react";
 import { deleteProduct } from "../helpers/deleteProduct";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import { selectAdminRole } from "@/redux/admin/adminSelector";
 
-const ProductsTable = ({ setProductLength, params }) => {
+const ProductsTable = ({ setProductLength, params, setParams }) => {
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
+  const role = useSelector(selectAdminRole);
+
   const {
-    data: apiProductsResponse,
+    data: apiProductsResponse = [],
     isLoading,
     error,
   } = useQuery({
     queryKey: ["products", params],
-    queryFn: () => fetchProducts({ params }),
+    queryFn: () => fetchProducts({ params, role }),
   });
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -38,6 +41,13 @@ const ProductsTable = ({ setProductLength, params }) => {
     setProductData(null);
   };
 
+  const onPageChange = (page) => {
+    setParams((prev) => ({
+      ...prev,
+      page,
+    }));
+    // window.scrollTo(0, 0);
+  };
   const { mutate: deleteProuductsMutation, isLoading: isDeleting } =
     useMutation({
       mutationFn: deleteProduct,
@@ -55,7 +65,8 @@ const ProductsTable = ({ setProductLength, params }) => {
   const onDeleteClick = (id) => {
     deleteProuductsMutation(id);
   };
-  const products = apiProductsResponse?.response?.data || [];
+  const products = apiProductsResponse?.response?.data?.data || [];
+  const total = apiProductsResponse?.response?.data?.total || 0;
 
   const onNavigateToEdit = (service) => {
     navigate(`/dashboard/products/edit/${service._id}`);
@@ -69,6 +80,10 @@ const ProductsTable = ({ setProductLength, params }) => {
     setProductLength(products?.length);
   }, [products, setProductLength]);
 
+  const perPage = params.per_page;
+  const totalPages = Math.ceil(total / perPage);
+  const currentPage = params.page;
+
   const columns = [
     {
       key: "name",
@@ -80,11 +95,21 @@ const ProductsTable = ({ setProductLength, params }) => {
             alt={value}
             className="h-16 w-16 rounded-lg object-cover"
           />
-          <Typography variant="p">{value}</Typography>
+          <Typography variant="p" className="text-wrap w-[15rem]">
+            {value}
+          </Typography>
         </div>
       ),
     },
-    { key: "small_description", label: "Short Description" },
+    {
+      key: "small_description",
+      label: "Short Description",
+      render: (value) => (
+        <Typography variant="p" className="text-sm w-[20rem] text-wrap">
+          {value}
+        </Typography>
+      ),
+    },
     { key: "price", label: "Price", render: (value) => `₹${value}` },
     {
       key: "discounted_price",
@@ -151,6 +176,10 @@ const ProductsTable = ({ setProductLength, params }) => {
         data={products || []}
         isLoading={isLoading}
         error={error}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        perPage={perPage}
+        onPageChange={onPageChange}
       />
       <CustomDialog
         onOpen={openDelete}

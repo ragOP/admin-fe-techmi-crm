@@ -16,7 +16,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Input } from "./ui/input";
-import { NavProjects } from "./nav-projects";
+// import { NavProjects } from "./nav-projects";
 import { useSelector } from "react-redux";
 import {
   selectAdminEmail,
@@ -29,8 +29,6 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchServices } from "@/pages/services/helpers/fetchServices";
 
 export function AppSidebar({ ...props }) {
-  // const isSuperAdmin = useSelector(selectIsSuperAdmin);
-  // const role = isSuperAdmin ? "super_admin" : "admin";
   const role = useSelector(selectAdminRole);
   const name = useSelector(selectAdminName);
   const email = useSelector(selectAdminEmail);

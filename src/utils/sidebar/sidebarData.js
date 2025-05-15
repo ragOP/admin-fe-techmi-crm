@@ -80,7 +80,7 @@ export const data = {
       url: "/dashboard/products",
       icon: Package,
       items: [],
-      roles: ["admin", "sub_admin"],
+      roles: ["super_admin", "admin", "sub_admin"],
     },
     {
       title: "Coupons",

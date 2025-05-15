@@ -1,7 +1,7 @@
 import { apiService } from "@/api/api_services";
 import { endpoints } from "@/api/enpoints";
 
-export const createProduct = async (formData) => {
+export const createProduct = async (formData, params) => {
   try {
     const response = await apiService({
       endpoint: endpoints.product,
@@ -10,6 +10,7 @@ export const createProduct = async (formData) => {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      params: params
     });
 
     return response;
