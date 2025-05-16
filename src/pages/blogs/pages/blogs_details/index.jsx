@@ -21,9 +21,14 @@ const BlogsDetails = () => {
 
   const blog = blogRes?.response?.data;
 
+  const breadcrumbs = [
+    { title: "Blog", navigate: "/dashboard/blogs", isNavigation: true },
+    { title: blog.title, navigate: "/dashboard/blogs", isNavigation: true },
+  ];
+
   return (
     <div className="min-h-screen">
-      <NavbarItem title="Blogs" />
+      <NavbarItem title={"Blogs"} breadcrumbs={breadcrumbs} />
 
       <Button
         variant="ghost"

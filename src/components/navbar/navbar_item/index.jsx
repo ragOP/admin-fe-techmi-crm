@@ -8,15 +8,16 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import React from "react";
 
-const NavbarItem = ({ title, customBox}) => {
+const NavbarItem = ({ title, customBox, breadcrumbs = [] }) => {
   return (
     <div className="flex md:flex-row justify-between md:items-center p-4">
       <div className="flex flex-row mb-4 md:mb-0 gap-6">
         <SidebarTrigger className="-ml-1" />
         <div className="flex flex-col gap-1">
           <h1 className="text-xl md:text-xl font-semibold">{title}</h1>
-          <NavbarBreadcrumb title={title} />
+          <NavbarBreadcrumb title={title} breadcrumbs={breadcrumbs} />
         </div>
       </div>
 
@@ -30,7 +31,7 @@ const NavbarItem = ({ title, customBox}) => {
 
 export default NavbarItem;
 
-export const NavbarBreadcrumb = ({ title }) => {
+export const NavbarBreadcrumb = ({ title, breadcrumbs = [] }) => {
   return (
     <header className="flex shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-6">
       <div className="flex items-center gap-2">
@@ -39,6 +40,16 @@ export const NavbarBreadcrumb = ({ title }) => {
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
+            {breadcrumbs.map((item) => (
+              <React.Fragment key={item.navigate || item.title}>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href={item.navigate}>
+                    {item.title}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+              </React.Fragment>
+            ))}
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
               <BreadcrumbPage>{title}</BreadcrumbPage>

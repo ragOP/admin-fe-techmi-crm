@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, formatDistanceToNow } from "date-fns";
 import ActionMenu from "@/components/action_menu";
-import { Eye, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
 import { useEffect, useState } from "react";
@@ -96,11 +96,11 @@ const ContactUsTable = ({ setContactUsLength }) => {
       render: (value, row) => (
         <ActionMenu
           options={[
-            {
-              label: "View Details",
-              icon: Eye,
-              action: () => console.log("Viewing", row),
-            },
+            // {
+            //   label: "View Details",
+            //   icon: Eye,
+            //   action: () => console.log("Viewing", row),
+            // },
             {
               label: "Delete",
               icon: Trash2,

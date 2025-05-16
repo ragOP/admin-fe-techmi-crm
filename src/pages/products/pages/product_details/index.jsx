@@ -31,19 +31,24 @@ const ProductDetails = () => {
     );
   }
 
+  const breadcrumbs = [
+    { title: "Products", navigate: "/dashboard/products", isNavigation: true },
+    { title: product?.name, navigate: "", isNavigation: true },
+  ];
+
   return (
-    <div className="px-8 py-2 space-y-8">
-      <NavbarItem title="Products" />
+    <div className="px-8 py-2 space-y-2">
+      <NavbarItem title={"Products"} breadcrumbs={breadcrumbs} />
 
       <Button
         variant="ghost"
-        className="flex items-center gap-2 text-sm px-0"
+        className="flex items-center gap-2 text-sm px-0 mb-4"
         onClick={() => navigate(-1)}
       >
         <ArrowLeft className="w-4 h-4" /> Back to Products
       </Button>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-4">
         {/* Product Images */}
         <div className="flex flex-col gap-4">
           <Dialog open={!!previewImg} onOpenChange={() => setPreviewImg(null)}>
