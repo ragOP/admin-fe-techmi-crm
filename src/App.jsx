@@ -1,7 +1,7 @@
 import { Toaster } from "sonner";
 import Router from "./router";
 import { ThemeProvider } from "./theme";
-// con
+
 function App() {
   return (
     <>
