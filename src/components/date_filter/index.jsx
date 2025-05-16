@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   addDays,
@@ -12,15 +10,15 @@ import {
   startOfYear,
 } from "date-fns";
 import { CalendarIcon, ChevronDown } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const predefinedRanges = {
   "All Time": null,
@@ -42,14 +40,14 @@ const rangeLabels = Object.keys(predefinedRanges).concat("Custom");
 
 export function DateRangePicker({ className, onChange }) {
   const [selectedLabel, setSelectedLabel] = React.useState("All Time");
-  const [customRange, setCustomRange] = React.useState();
+  const [customRange, setCustomRange] = React.useState([null, null]);
   const [open, setOpen] = React.useState(false);
 
   const displayValue = React.useMemo(() => {
     if (selectedLabel === "All Time") return "All Time";
-    if (selectedLabel === "Custom" && customRange?.from && customRange?.to)
-      return `${format(customRange.from, "LLL dd, y")} - ${format(
-        customRange.to,
+    if (selectedLabel === "Custom" && customRange[0] && customRange[1])
+      return `${format(customRange[0], "LLL dd, y")} - ${format(
+        customRange[1],
         "LLL dd, y"
       )}`;
     const range = predefinedRanges[selectedLabel];
@@ -65,7 +63,11 @@ export function DateRangePicker({ className, onChange }) {
   React.useEffect(() => {
     if (onChange) {
       if (selectedLabel === "Custom") {
-        onChange(customRange || null);
+        onChange(
+          customRange[0] && customRange[1]
+            ? { from: customRange[0], to: customRange[1] }
+            : null
+        );
       } else {
         onChange(predefinedRanges[selectedLabel] || null);
       }
@@ -114,12 +116,15 @@ export function DateRangePicker({ className, onChange }) {
             ))}
             {selectedLabel === "Custom" && (
               <div className="mt-2 border rounded-md p-2">
-                <Calendar
-                  mode="range"
-                  numberOfMonths={2}
-                  selected={customRange}
-                  onSelect={(range) => setCustomRange(range)}
-                  initialFocus
+                <DatePicker
+                  selectsRange
+                  startDate={customRange[0]}
+                  endDate={customRange[1]}
+                  onChange={(update) => setCustomRange(update)}
+                  inline
+                  monthsShown={2}
+                  maxDate={new Date()}
+                  isClearable
                 />
               </div>
             )}
