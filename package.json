@@ -37,6 +37,7 @@
     "date-fns": "^2.30.0",
     "encrypt-storage": "^2.14.6",
     "exceljs": "^4.4.0",
+    "is-odd": "^3.0.1",
     "jodit-react": "^5.2.15",
     "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
