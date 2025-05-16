@@ -36,9 +36,14 @@ export default function ServiceDetail() {
     return <p className="text-center text-gray-600">Service not found.</p>;
   }
 
+  const breadcrumbs = [
+    // { title: "Service", navigate: "/dashboard/blogs", isNavigation: true },
+    { title: service.name, navigate: "/dashboard/blogs", isNavigation: true },
+  ];
+
   return (
     <div>
-      <NavbarItem title="Services" />
+      <NavbarItem title="Services" breadcrumbs={breadcrumbs} />
 
       <Button
         variant="ghost"

@@ -40,6 +40,8 @@ export const NavbarBreadcrumb = ({ title, breadcrumbs = [] }) => {
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+
             {breadcrumbs.map((item) => (
               <React.Fragment key={item.navigate || item.title}>
                 <BreadcrumbSeparator className="hidden md:block" />
