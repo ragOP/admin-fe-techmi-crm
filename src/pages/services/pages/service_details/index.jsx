@@ -1,12 +1,14 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getServiceById } from "../services_editor/helper/getServiceById";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import NavbarItem from "@/components/navbar/navbar_item";
+import { ArrowLeft } from "lucide-react";
 
 export default function ServiceDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const {
     data: serviceRes,
@@ -37,7 +39,15 @@ export default function ServiceDetail() {
   return (
     <div>
       <NavbarItem title="Services" />
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
+
+      <Button
+        variant="ghost"
+        className="flex items-center gap-2 text-sm px- ml-10"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="w-4 h-4" /> Back to Blogs
+      </Button>
+      <div className="max-w-full mx-auto px-12 py-6 space-y-6">
         {/* Service Header */}
         <div className="relative w-full h-[15rem] rounded-2xl overflow-hidden shadow-lg">
           <img
@@ -110,16 +120,6 @@ export default function ServiceDetail() {
               </span>
             </div>
           </div>
-        </div>
-
-        {/* Call to Action */}
-        <div className="flex justify-end">
-          <Button
-            variant="primary"
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 transition-all duration-200 text-white px-5 py-3 rounded-lg shadow-md"
-          >
-            Contact Us <ArrowRightIcon className="w-5 h-5" />
-          </Button>
         </div>
       </div>
     </div>

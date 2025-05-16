@@ -1,10 +1,13 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { fetchBlogById } from "./helpers/fetchBlogById";
 import NavbarItem from "@/components/navbar/navbar_item";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const BlogsDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const {
     data: blogRes,
@@ -21,6 +24,14 @@ const BlogsDetails = () => {
   return (
     <div className="min-h-screen">
       <NavbarItem title="Blogs" />
+
+      <Button
+        variant="ghost"
+        className="flex items-center gap-2 text-sm px- ml-10"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="w-4 h-4" /> Back to Blogs
+      </Button>
       <div className="max-w-7xl mx-auto px-4 py-8">
         {isLoading ? (
           <div className="flex items-center justify-center h-96">

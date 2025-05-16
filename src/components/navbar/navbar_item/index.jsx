@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-const NavbarItem = ({ title }) => {
+const NavbarItem = ({ title, customBox}) => {
   return (
     <div className="flex md:flex-row justify-between md:items-center p-4">
       <div className="flex flex-row mb-4 md:mb-0 gap-6">
@@ -20,7 +20,8 @@ const NavbarItem = ({ title }) => {
         </div>
       </div>
 
-      <div className="flex flex-row items-center">
+      <div className="flex flex-row items-center gap-4">
+        {customBox && customBox}
         <ModeToggle />
       </div>
     </div>

@@ -48,4 +48,7 @@ export const endpoints = {
   // coupons
   coupons: "api/coupon",
   allCoupons: "api/coupon/all/admin",
+
+  // dashboard
+  dashboard: "api/dashboard",
 };

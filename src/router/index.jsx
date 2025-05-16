@@ -37,6 +37,7 @@ import BlogsEditor from "@/pages/blogs/pages/blogs_editor";
 import BlogsDetails from "@/pages/blogs/pages/blogs_details";
 import Coupons from "@/pages/coupons";
 import CouponEditor from "@/pages/coupons/pages/coupon_editor";
+import ProductDetails from "@/pages/products/pages/product_details";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -105,7 +106,7 @@ const Router = () => {
         <Route path="products" element={<Products />} />
         <Route path="products/add" element={<ProductsEditor />} />
         <Route path="products/edit/:id" element={<ProductsEditor />} />
-        {/* <Route path="products/:id" element={<ProductDetails />} /> */}
+        <Route path="products/:id" element={<ProductDetails />} />
 
         {/* Categories Routes */}
         <Route path="categories" element={<Categories />} />

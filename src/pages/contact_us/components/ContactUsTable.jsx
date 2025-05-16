@@ -69,13 +69,13 @@ const ContactUsTable = ({ setContactUsLength }) => {
         <Typography className="line-clamp-1 text-gray-600">{value}</Typography>
       ),
     },
-    {
-      key: "message",
-      label: "Message",
-      render: (value) => (
-        <Typography className="line-clamp-2 text-gray-500">{value}</Typography>
-      ),
-    },
+    // {
+    //   key: "message",
+    //   label: "Message",
+    //   render: (value) => (
+    //     <Typography className="line-clamp-2 text-gray-500">{value}</Typography>
+    //   ),
+    // },
     {
       key: "createdAt",
       label: "Received At",
