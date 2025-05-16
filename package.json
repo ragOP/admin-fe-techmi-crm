@@ -34,7 +34,7 @@
     "axios": "^1.8.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
+    "date-fns": "^2.30.0",
     "encrypt-storage": "^2.14.6",
     "exceljs": "^4.4.0",
     "jodit-react": "^5.2.15",
