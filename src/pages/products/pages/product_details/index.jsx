@@ -119,7 +119,7 @@ const ProductDetails = () => {
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
             <Detail label="Manufacturer" value={product.manufacturer} />
-            <Detail label="Type" value={product.consumed_type} />
+            <Detail label="Type" value={product.medicine_type?.name} />
             <Detail label="Brand" value={product.uploaded_by_brand} />
             <Detail
               label="Expiry Date"
@@ -133,6 +133,11 @@ const ProductDetails = () => {
               label="Created At"
               value={dayjs(product.createdAt).format("DD MMM, YYYY")}
             />
+            <Detail label="Inventory" value={product.inventory || 0} />
+            <Detail label="GST" value={product.gst} />
+            <Detail label="CGST" value={product.cgst} />
+            <Detail label="SGST" value={product.sgst} />
+            <Detail label="IGST" value={product.igst} />
           </div>
 
           <div>

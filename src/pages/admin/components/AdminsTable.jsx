@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { fetchAdmins } from "../helpers/fetchAdmins";
 import { deleteAdmins } from "../helpers/deleteAdmins";
 
-const AdminsTable = ({ setadminsLength, params }) => {
+const AdminsTable = ({ setadminsLength, params, setParams }) => {
   const queryClient = useQueryClient();
 
   const {
@@ -157,6 +157,17 @@ const AdminsTable = ({ setadminsLength, params }) => {
     // },
   ];
 
+  const onPageChange = (page) => {
+    setParams((prev) => ({
+      ...prev,
+      page: page + 1,
+    }));
+  };
+
+  const perPage = params.per_page;
+  const currentPage = params.page;
+  const totalPages = Math.ceil(totalAdmins / perPage);
+
   return (
     <>
       <CustomTable
@@ -165,6 +176,10 @@ const AdminsTable = ({ setadminsLength, params }) => {
         isLoading={isLoading}
         error={error}
         emptyStateMessage="No admins found"
+        perPage={perPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
 
       <CustomDialog

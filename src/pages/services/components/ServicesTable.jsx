@@ -10,7 +10,7 @@ import { CustomDialog } from "@/components/custom_dialog";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 
-const ServicesTable = ({ setServiceLength, params }) => {
+const ServicesTable = ({ setServiceLength, params, setParams }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -22,6 +22,9 @@ const ServicesTable = ({ setServiceLength, params }) => {
     queryKey: ["services", params],
     queryFn: () => fetchServices({ params }),
   });
+
+  const totalServices = services?.total || 1;
+  console.log("totalServices", totalServices);
 
   const [openDelete, setOpenDelete] = useState(false);
   const [serviceData, setServiceData] = useState(null);
@@ -129,6 +132,17 @@ const ServicesTable = ({ setServiceLength, params }) => {
     },
   ];
 
+  const onPageChange = (page) => {
+    setParams((prev) => ({
+      ...prev,
+      page: page + 1,
+    }));
+  };
+
+  const perPage = params.per_page;
+  const currentPage = params.page;
+  const totalPages = Math.ceil(totalServices / perPage);
+
   return (
     <>
       <CustomTable
@@ -136,6 +150,10 @@ const ServicesTable = ({ setServiceLength, params }) => {
         data={services}
         isLoading={isLoading}
         error={error}
+        perPage={perPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
       <CustomDialog
         onOpen={openDelete}

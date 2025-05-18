@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { fetchBlogs } from "../helpers/fetchBlogs";
 import { deleteBlogs } from "../helpers/deleteBlogs";
 
-const BlogsTable = ({ setBlogsLength, params }) => {
+const BlogsTable = ({ setBlogsLength, params, setParams }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -57,6 +57,7 @@ const BlogsTable = ({ setBlogsLength, params }) => {
   const blogs = Array.isArray(apiBlogsResponse?.response?.data)
     ? apiBlogsResponse?.response?.data
     : [];
+  const blogsTotal = apiBlogsResponse?.response?.total;
 
   useEffect(() => {
     setBlogsLength(blogs?.length);
@@ -166,6 +167,17 @@ const BlogsTable = ({ setBlogsLength, params }) => {
     },
   ];
 
+  const onPageChange = (page) => {
+    setParams((prev) => ({
+      ...prev,
+      page: page + 1,
+    }));
+  };
+
+  const perPage = params.per_page;
+  const currentPage = params.page;
+  const totalPages = Math.ceil(blogsTotal / perPage);
+
   return (
     <>
       <CustomTable
@@ -173,6 +185,10 @@ const BlogsTable = ({ setBlogsLength, params }) => {
         data={blogs || []}
         isLoading={isLoading}
         error={error}
+        perPage={perPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
       <CustomDialog
         onOpen={openDelete}

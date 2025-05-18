@@ -28,6 +28,17 @@ const Admins = () => {
     navigate("/dashboard/admins/add");
   };
 
+  const breadcrumbs = [
+    { title: "Admins", isNavigation: false },
+  ];
+
+  const onRowsPerPageChange = (value) => {
+    setParams((prev) => ({
+      ...prev,
+      per_page: value,
+    }));
+  }
+
   useEffect(() => {
     if (params.search !== debouncedSearch) {
       setParams((prev) => ({
@@ -38,16 +49,23 @@ const Admins = () => {
   }, [debouncedSearch]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <NavbarItem title="Admin" handleSearch={handleSearch} />
+    <div className="flex flex-col">
+      <NavbarItem
+        title="Admin"
+        handleSearch={handleSearch}
+        breadcrumbs={breadcrumbs}
+      />
 
-      <div className="p-4">
+      <div className="px-4">
         <CustomActionMenu
           title="Admin"
           total={adminsLength}
           onAdd={onAdd}
           searchText={searchText}
           handleSearch={handleSearch}
+          showRowSelection={true}
+          rowsPerPage={params.per_page}
+          onRowsPerPageChange={onRowsPerPageChange}
         />
         <AdminsTable setadminsLength={setAdminsLength} params={params} />
       </div>

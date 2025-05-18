@@ -101,16 +101,20 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
         </div>
       ),
     },
-    {
-      key: "small_description",
-      label: "Short Description",
-      render: (value) => (
-        <Typography variant="p" className="text-sm w-[20rem] text-wrap">
-          {value}
-        </Typography>
-      ),
-    },
-    { key: "price", label: "Price", render: (value) => `₹${value}` },
+    // {
+    //   key: "small_description",
+    //   label: "Short Description",
+    //   render: (value) => (
+    //     <Typography variant="p" className="text-sm w-[20rem] text-wrap line-clamp-2">
+    //       {value}
+    //     </Typography>
+    //   ),
+    // },
+    { 
+      key: "price", 
+      label: "Price", 
+      render: (value) => `₹${value}`
+     },
     {
       key: "discounted_price",
       label: "Discounted Price",
@@ -120,6 +124,10 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
       key: "instock",
       label: "In Stock",
       render: (value) => (value ? "Yes" : "No"),
+    },
+    {
+      key: "inventory",
+      label: "Inventory",
     },
     { key: "manufacturer", label: "Manufacturer" },
     {

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import ActionMenu from "@/components/action_menu";
-import { Pencil } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
 import CustomTable from "@/components/custom_table";
 import Typography from "@/components/typography";
 import { useEffect, useState } from "react";
@@ -34,7 +34,7 @@ const ORDER_STATUSES = [
   "cancelled",
 ];
 
-const OrdersTable = ({ setOrdersLength, params }) => {
+const OrdersTable = ({ setOrdersLength, params, setParams }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -70,6 +70,7 @@ const OrdersTable = ({ setOrdersLength, params }) => {
   const orders = Array.isArray(apiOrdersResponse?.response?.data?.data)
     ? apiOrdersResponse.response.data.data
     : [];
+  const orderTotal = apiOrdersResponse?.response?.data?.total || 0;
 
   useEffect(() => {
     setOrdersLength(orders?.length);
@@ -118,7 +119,11 @@ const OrdersTable = ({ setOrdersLength, params }) => {
               ? "success"
               : status === "cancelled"
               ? "destructive"
-              : "secondary"
+              : status === "pending"
+              ? "outline"
+              : status === "processing" || status === "in_progress"
+              ? "secondary"
+              : "default"
           }
         >
           {status.toUpperCase()}
@@ -146,6 +151,11 @@ const OrdersTable = ({ setOrdersLength, params }) => {
         <ActionMenu
           options={[
             {
+              label: "View Details",
+              icon: Eye,
+              action: () => navigate(`/dashboard/orders/details/${order._id}`),
+            },
+            {
               label: "Edit Status",
               icon: Pencil,
               action: () => onOpenStatusDialog(order),
@@ -156,6 +166,17 @@ const OrdersTable = ({ setOrdersLength, params }) => {
     },
   ];
 
+  const onPageChange = (page) => {
+    setParams((prev) => ({
+      ...prev,
+      page: page + 1,
+    }));
+  };
+
+  const perPage = params.per_page;
+  const currentPage = params.page;
+  const totalPages = Math.ceil(orderTotal / perPage);
+
   return (
     <>
       <CustomTable
@@ -163,6 +184,10 @@ const OrdersTable = ({ setOrdersLength, params }) => {
         data={orders || []}
         isLoading={isLoading}
         error={error}
+        perPage={perPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
       <Dialog open={openStatusDialog} onOpenChange={setOpenStatusDialog}>
         <DialogContent>

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import React from "react";
+import { useNavigate } from "react-router";
 
 const NavbarItem = ({ title, customBox, breadcrumbs = [] }) => {
   return (
@@ -31,16 +32,21 @@ const NavbarItem = ({ title, customBox, breadcrumbs = [] }) => {
 
 export default NavbarItem;
 
-export const NavbarBreadcrumb = ({ title, breadcrumbs = [] }) => {
+export const NavbarBreadcrumb = ({ breadcrumbs = [] }) => {
+  const navigate = useNavigate();
+
+  const onNavigateToDashboard = () => {
+    navigate("/dashboard");
+  }
   return (
     <header className="flex shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-6">
       <div className="flex items-center gap-2">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink href={onNavigateToDashboard}>Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
+            {/* <BreadcrumbSeparator className="hidden md:block" /> */}
 
             {breadcrumbs.map((item) => (
               <React.Fragment key={item.navigate || item.title}>
@@ -52,10 +58,9 @@ export const NavbarBreadcrumb = ({ title, breadcrumbs = [] }) => {
                 </BreadcrumbItem>
               </React.Fragment>
             ))}
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
+            {/* <BreadcrumbItem>
               <BreadcrumbPage>{title}</BreadcrumbPage>
-            </BreadcrumbItem>
+            </BreadcrumbItem> */}
           </BreadcrumbList>
         </Breadcrumb>
       </div>

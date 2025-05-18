@@ -26,4 +26,11 @@ export const productsFormSchema = z.object({
   uploaded_by_brand: z.string().optional(),
   is_best_seller: z.boolean().optional(),
   category: z.array(z.string()).optional(),
+  medicine_type: z.string().optional(),
+  gst: z.number().optional(),
+  cgst: z.number().optional(),
+  sgst: z.number().optional(),
+  igst: z.number().optional(),
+  is_active: z.boolean().default(true),
+  quantity: z.number().optional(),
 });

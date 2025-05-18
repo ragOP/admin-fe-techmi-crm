@@ -42,6 +42,10 @@ function CustomTable({
 }) {
   const [sorting, setSorting] = useState([]);
 
+  console.log("perPage", perPage);
+  console.log("currentPage", currentPage);
+  console.log("totalPages", totalPages);
+
   const columns = useMemo(() => {
     return rawColumns.map((col) => ({
       id: col.key,
@@ -195,7 +199,7 @@ function CustomTable({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    onPageChange(page);
+                    onPageChange(page - 1);
                   }}
                   isActive={page === currentPage}
                 >
@@ -231,7 +235,7 @@ function CustomTable({
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                if (currentPage < totalPages) onPageChange(currentPage + 1);
+                if (currentPage < totalPages) onPageChange(currentPage);
               }}
               className={
                 currentPage === totalPages

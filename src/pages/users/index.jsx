@@ -27,6 +27,15 @@ const Users = () => {
     setSearchText(e.target.value);
   };
 
+  const onRowsPerPageChange = (newRowsPerPage) => {
+    setParams((prev) => ({
+      ...prev,
+      per_page: newRowsPerPage,
+    }));
+  };
+
+  const breadcrumbs = [{ title: "Users", isNavigation: false }];
+
   useEffect(() => {
     if (params.search !== debouncedSearch) {
       setParams((prev) => ({
@@ -38,7 +47,7 @@ const Users = () => {
 
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Users" />
+      <NavbarItem title="Users" breadcrumbs={breadcrumbs} />
 
       <div className="py-1 px-4">
         <CustomActionMenu
@@ -47,8 +56,15 @@ const Users = () => {
           onAdd={onAdd}
           handleSearch={handleSearch}
           searchText={searchText}
+          onRowsPerPageChange={onRowsPerPageChange}
+          showRowSelection={true}
+          rowsPerPage={params.per_page}
         />
-        <UsersTable setUsersLength={setUsersLength} params={params} />
+        <UsersTable
+          setUsersLength={setUsersLength}
+          params={params}
+          setParams={setParams}
+        />
       </div>
     </div>
   );

@@ -9,16 +9,13 @@ import Services from "@/pages/services";
 import Products from "@/pages/products";
 import Categories from "@/pages/categories";
 import ServicesEditor from "@/pages/services/pages/services_editor";
-import ProtectedRoute from "@/auth/ProtectedRoute";
-import PublicRoute from "@/auth/PublicRoute";
 import Admins from "@/pages/admin";
 import { getItem, removeItem } from "@/utils/local_storage";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 import AdminEditor from "@/pages/admin/pages/admin_editor";
 import { clearCredentials } from "@/redux/admin/adminSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAdmin } from "@/redux/admin/adminSelector";
+import { useDispatch } from "react-redux";
 import ServiceDetails from "@/pages/services/pages/service_details";
 import CategoriesEditor from "@/pages/categories/pages/categories_editor";
 import ProductsEditor from "@/pages/products/pages/products_editor";
@@ -38,6 +35,11 @@ import BlogsDetails from "@/pages/blogs/pages/blogs_details";
 import Coupons from "@/pages/coupons";
 import CouponEditor from "@/pages/coupons/pages/coupon_editor";
 import ProductDetails from "@/pages/products/pages/product_details";
+import Brands from "@/pages/brand";
+import BrandEditor from "@/pages/brand/pages/brand_editor";
+import MedicineType from "@/pages/medicine_type";
+import MedicineTypeEditor from "@/pages/medicine_type/pages/medicine_type_editor";
+import OrderDetails from "@/pages/orders/pages/order_details";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -113,8 +115,8 @@ const Router = () => {
         <Route path="categories/add" element={<CategoriesEditor />} />
         <Route path="categories/edit/:id" element={<CategoriesEditor />} />
 
-        {/* <Route path="orders" element={<Orders />} /> */}
         <Route path="orders/:serviceId" element={<Orders />} />
+        <Route path="orders/details/:id" element={<OrderDetails />} />
 
         <Route path="users" element={<Users />} />
         <Route path="users/add" element={<UserEditor />} />
@@ -132,6 +134,14 @@ const Router = () => {
         {/* <Route path="coupons/add" element={<Coupons />} /> */}
 
         <Route path="contact-us" element={<ContactUs />} />
+
+        <Route path="brands" element={<Brands />} />
+        <Route path="brands/add" element={<BrandEditor />} />
+        <Route path="brands/edit/:id" element={<BrandEditor />} />
+
+        <Route path="medicine-type" element={<MedicineType />} />
+        <Route path="medicine-type/add" element={<MedicineTypeEditor />} />
+        <Route path="medicine-type/edit/:id" element={<MedicineTypeEditor />} />
 
         <Route path="configuration/home" element={<HomeConfig />} />
         <Route path="configuration/service" element={<ServiceConfig />} />

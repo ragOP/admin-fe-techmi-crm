@@ -11,18 +11,21 @@ import { fetchUsers } from "../helpers/fetchUsers";
 import { deleteUser } from "../helpers/deleteUser";
 import { useNavigate } from "react-router";
 
-const UsersTable = ({ setUsersLength, params }) => {
+const UsersTable = ({ setUsersLength, params, setParams }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const {
-    data: users,
+    data: usersRes,
     isLoading,
     error,
   } = useQuery({
     queryKey: ["users", params],
     queryFn: () => fetchUsers({ params }),
   });
+
+  const total = usersRes?.total;
+  const users = usersRes?.data;
 
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
@@ -141,6 +144,17 @@ const UsersTable = ({ setUsersLength, params }) => {
     },
   ];
 
+  const onPageChange = (page) => {
+    setParams((prev) => ({
+      ...prev,
+      page: page + 1,
+    }));
+  };
+
+  const perPage = params.per_page;
+  const currentPage = params.page;
+  const totalPages = Math.ceil(total / perPage);
+
   return (
     <>
       <CustomTable
@@ -149,6 +163,10 @@ const UsersTable = ({ setUsersLength, params }) => {
         isLoading={isLoading}
         error={error}
         emptyStateMessage="No users found"
+        perPage={perPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
 
       <CustomDialog

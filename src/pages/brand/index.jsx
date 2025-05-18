@@ -1,31 +1,26 @@
 import NavbarItem from "@/components/navbar/navbar_item";
-import ServicesTable from "./components/ServicesTable";
 import CustomActionMenu from "@/components/custom_action";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDebounce } from "@uidotdev/usehooks";
+import BrandsTable from "./components/BrandTable";
 
-const Services = () => {
+const Brands = () => {
   const navigate = useNavigate();
 
   const paramInitialState = {
     page: 1,
-    per_page: 25,
+    per_page: 50,
     search: "",
   };
-
-  const [serviceLength, setServiceLength] = useState(0);
+  const [brandsLength, setBrandsLength] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [params, setParams] = useState(paramInitialState);
 
   const debouncedSearch = useDebounce(searchText, 500);
 
-  const handleSearch = (e) => {
-    setSearchText(e.target.value);
-  };
-
   const onAdd = () => {
-    navigate("/dashboard/services/add");
+    navigate("/dashboard/brands/add");
   };
 
   const onRowsPerPageChange = (newRowsPerPage) => {
@@ -35,7 +30,11 @@ const Services = () => {
     }));
   };
 
-  const breadcrumbs = [{ title: "Services", isNavigation: false }];
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const breadcrumbs = [{ title: "Brands", isNavigation: false }];
 
   useEffect(() => {
     if (params.search !== debouncedSearch) {
@@ -48,27 +47,23 @@ const Services = () => {
 
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Services" breadcrumbs={breadcrumbs} />
+      <NavbarItem title="Brands" breadcrumbs={breadcrumbs} />
 
       <div className="px-4">
         <CustomActionMenu
-          title="services"
-          total={serviceLength}
+          title="Brands"
+          total={brandsLength}
           onAdd={onAdd}
-          searchText={searchText}
           handleSearch={handleSearch}
+          searchText={searchText}
           onRowsPerPageChange={onRowsPerPageChange}
           showRowSelection={true}
           rowsPerPage={params.per_page}
         />
-        <ServicesTable
-          setServiceLength={setServiceLength}
-          params={params}
-          setParams={setParams}
-        />
+        <BrandsTable setBrandsLength={setBrandsLength} params={params} />
       </div>
     </div>
   );
 };
 
-export default Services;
+export default Brands;

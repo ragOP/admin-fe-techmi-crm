@@ -27,6 +27,15 @@ const Coupons = () => {
     setSearchText(e.target.value);
   };
 
+  const onRowsPerPageChange = (newRowsPerPage) => {
+    setParams((prev) => ({
+      ...prev,
+      per_page: newRowsPerPage,
+    }));
+  };
+  
+  const breadcrumbs = [{ title: "Coupons", isNavigation: false }];
+
   useEffect(() => {
     if (params.search !== debouncedSearch) {
       setParams((prev) => ({
@@ -38,7 +47,7 @@ const Coupons = () => {
 
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Coupons" />
+      <NavbarItem title="Coupons" breadcrumbs={breadcrumbs} />
 
       <div className="py-1 px-4">
         <CustomActionMenu
@@ -48,6 +57,9 @@ const Coupons = () => {
           onAdd={onAdd}
           handleSearch={handleSearch}
           searchText={searchText}
+          onRowsPerPageChange={onRowsPerPageChange}
+          showRowSelection={true}
+          rowsPerPage={params.per_page}
         />
         <CouponsTable setCouponsLength={setCouponsLength} params={params} />
       </div>

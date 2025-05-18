@@ -27,6 +27,15 @@ export const Blogs = () => {
     navigate("/dashboard/blogs/add");
   };
 
+  const onRowsPerPageChange = (newRowsPerPage) => {
+    setParams((prev) => ({
+      ...prev,
+      per_page: newRowsPerPage,
+    }));
+  };
+
+  const breadcrumbs = [{ title: "Blogs", isNavigation: false }];
+
   useEffect(() => {
     if (params.search !== debouncedSearch) {
       setParams((prev) => ({
@@ -38,7 +47,7 @@ export const Blogs = () => {
 
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Blogs" />
+      <NavbarItem title="Blogs" breadcrumbs={breadcrumbs} />
 
       <div className="px-4">
         <CustomActionMenu
@@ -47,8 +56,15 @@ export const Blogs = () => {
           onAdd={onAdd}
           searchText={searchText}
           handleSearch={handleSearch}
+          onRowsPerPageChange={onRowsPerPageChange}
+          showRowSelection={true}
+          rowsPerPage={params.per_page}
         />
-        <BlogsTable setBlogsLength={setBlogsLength} params={params} />
+        <BlogsTable
+          setBlogsLength={setBlogsLength}
+          params={params}
+          setParams={setParams}
+        />
       </div>
     </div>
   );

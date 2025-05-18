@@ -6,6 +6,7 @@ import { CloudUpload, PlusIcon } from "lucide-react";
 import { singularize } from "@/utils/singularizing_word";
 import { capitalize } from "@/utils/captilize";
 import { DateRangePicker } from "../date_filter";
+import SelectRowsPerPage from "../select_rows_per_page";
 
 const CustomActionMenu = ({
   title,
@@ -18,23 +19,32 @@ const CustomActionMenu = ({
   setOpenDialog,
   showDateRangePicker = false,
   handleDateRangeChange,
+  showRowSelection = false,
+  onRowsPerPageChange,
+  rowsPerPage = 25,
 }) => {
   return (
-    <div className="flex items-center justify-between w-full my-3">
+    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full my-3">
       <div>
-        <Typography variant="p">
+        <Typography variant="p" className="whitespace-nowrap">
           Showing {total} {title}
         </Typography>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap gap-2 md:gap-4 items-center">
         <Input
           placeholder="Search"
-          className="w-100"
+          className={`min-w-[150px] ${disableBulkUpload ? "w-80" : "w-48"}`}
           value={searchText}
           onChange={handleSearch}
         />
         {showDateRangePicker && (
           <DateRangePicker onChange={handleDateRangeChange} />
+        )}
+        {showRowSelection && (
+          <SelectRowsPerPage
+            onRowsPerPageChange={onRowsPerPageChange}
+            rowsPerPage={rowsPerPage}
+          />
         )}
         {!disableBulkUpload && (
           <Button

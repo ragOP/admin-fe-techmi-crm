@@ -3,7 +3,7 @@ export const isDev = () => {
 };
 
 export const BACKEND_URL = isDev()
-  ? "https://393d-84-247-129-99.ngrok-free.app"
+  ? "http://localhost:8000"
   : "https://393d-84-247-129-99.ngrok-free.app";
 
 export const endpoints = {
@@ -51,4 +51,10 @@ export const endpoints = {
 
   // dashboard
   dashboard: "api/dashboard",
+
+  // brands
+  brands: "api/brand",
+
+  // Medicine type
+  medicine_type: "api/medicine-type",
 };

@@ -12,7 +12,7 @@ const Products = () => {
 
   const paramInitialState = {
     page: 1,
-    per_page: 10,
+    per_page: 25,
     search: "",
   };
   const [searchText, setSearchText] = useState("");
@@ -51,6 +51,16 @@ const Products = () => {
     navigate("/dashboard/products/add");
   };
 
+  const onRowsPerPageChange = (value) => {
+    console.log("Rows per page", value);
+    setParams((prev) => ({
+      ...prev,
+      per_page: value,
+    }));
+  };
+
+  const breadcrumbs = [{ title: "Products", isNavigation: false }];
+
   useEffect(() => {
     if (params.search !== debouncedSearch) {
       setParams((prev) => ({
@@ -61,10 +71,10 @@ const Products = () => {
   }, [debouncedSearch]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <NavbarItem title="Products" />
+    <div className="flex flex-col">
+      <NavbarItem title="Products" breadcrumbs={breadcrumbs} />
 
-      <div className="p-4">
+      <div className="px-4">
         <CustomActionMenu
           title="products"
           total={productLength}
@@ -76,6 +86,9 @@ const Products = () => {
           setParams={setParams}
           showDateRangePicker={true}
           handleDateRangeChange={handleDateRangeChange}
+          showRowSelection={true}
+          onRowsPerPageChange={onRowsPerPageChange}
+          rowsPerPage={params.per_page}
         />
         <ProductsTable
           setProductLength={setProductLength}
