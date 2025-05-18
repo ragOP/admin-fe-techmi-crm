@@ -133,9 +133,9 @@ const OrdersTable = ({ setOrdersLength, params, setParams }) => {
     {
       key: "totalAmount",
       label: "Total",
-      render: (amount) => (
+      render: (_,row) => (
         <Typography variant="p" className="font-medium">
-          ₹{amount.toFixed(2)}
+          ₹{row?.discountedPriceAfterCoupon.toFixed(2)}
         </Typography>
       ),
     },
