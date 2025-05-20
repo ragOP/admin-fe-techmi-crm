@@ -2,7 +2,7 @@ import React from "react";
 import Typography from "../typography";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { CloudUpload, PlusIcon } from "lucide-react";
+import { CloudDownload, CloudUpload, PlusIcon } from "lucide-react";
 import { singularize } from "@/utils/singularizing_word";
 import { capitalize } from "@/utils/captilize";
 import { DateRangePicker } from "../date_filter";
@@ -22,6 +22,8 @@ const CustomActionMenu = ({
   showRowSelection = false,
   onRowsPerPageChange,
   rowsPerPage = 25,
+  disableBulkExport = false,
+  onBulkExport,
 }) => {
   return (
     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full my-3">
@@ -45,6 +47,16 @@ const CustomActionMenu = ({
             onRowsPerPageChange={onRowsPerPageChange}
             rowsPerPage={rowsPerPage}
           />
+        )}
+        {!disableBulkExport && (
+          <Button
+            onClick={onBulkExport}
+            variant="outline"
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <CloudDownload />
+            <span>Bulk Export</span>
+          </Button>
         )}
         {!disableBulkUpload && (
           <Button

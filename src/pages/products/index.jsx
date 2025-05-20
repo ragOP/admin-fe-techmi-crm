@@ -5,10 +5,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ExcelUploadDialog from "./components/ExcelUploadDialog";
 import { useDebounce } from "@uidotdev/usehooks";
+import { DateRangePicker } from "@/components/date_filter";
+import ExportProductDialog from "./components/ExportProductDialog";
 
 const Products = () => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const [openBulkExportDialog, setOpenBulkExportDialog] = useState(false);
 
   const paramInitialState = {
     page: 1,
@@ -23,6 +26,14 @@ const Products = () => {
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
+  };
+
+  const onOpenBulkExportDialog = () => {
+    setOpenBulkExportDialog(true);
+  };
+
+  const onCloseBulkExportDialog = () => {
+    setOpenBulkExportDialog(false);
   };
 
   const handleDateRangeChange = (range) => {
@@ -72,7 +83,11 @@ const Products = () => {
 
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Products" breadcrumbs={breadcrumbs} />
+      <NavbarItem
+        title="Products"
+        breadcrumbs={breadcrumbs}
+        customBox={<DateRangePicker onChange={handleDateRangeChange} />}
+      />
 
       <div className="px-4">
         <CustomActionMenu
@@ -84,8 +99,10 @@ const Products = () => {
           searchText={searchText}
           handleSearch={handleSearch}
           setParams={setParams}
-          showDateRangePicker={true}
-          handleDateRangeChange={handleDateRangeChange}
+          // showDateRangePicker={true}
+          // handleDateRangeChange={handleDateRangeChange}
+          disableBulkExport={false}
+          onBulkExport={onOpenBulkExportDialog}
           showRowSelection={true}
           onRowsPerPageChange={onRowsPerPageChange}
           rowsPerPage={params.per_page}
@@ -98,6 +115,11 @@ const Products = () => {
         <ExcelUploadDialog
           openDialog={openDialog}
           setOpenDialog={setOpenDialog}
+        />
+
+         <ExportProductDialog
+          openDialog={openBulkExportDialog}
+          onClose={onCloseBulkExportDialog}
         />
       </div>
     </div>

@@ -16,7 +16,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCategories } from "@/pages/categories/helpers/fetchCategories";
 import { columnMapper } from "@/constant";
 
-export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
+const ExcelUploadDialog = ({ openDialog, setOpenDialog }) => {
   const [file, setFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -105,7 +105,7 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
     setTimeout(() => {
       generateTemplate(transformedArray, categoryDropdownOptions);
       setIsGenerating(false);
-    }, 1000)
+    }, 1000);
   };
 
   return (
@@ -129,9 +129,7 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
         >
           <UploadCloud className="mb-2" size={50} />
           <div className="flex items-center gap-1">
-            <p className="text-sm">
-              Drag & drop an Excel file here
-            </p>
+            <p className="text-sm">Drag & drop an Excel file here</p>
             <label
               htmlFor="fileInput"
               className="cursor-pointer text-sm underline"
@@ -156,9 +154,7 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
               <FileCheck size={20} />
               <p className="text-sm font-medium">{file.name}</p>
             </div>
-            <button
-              onClick={() => setFile(null)}
-            >
+            <button onClick={() => setFile(null)}>
               <X size={18} />
             </button>
           </div>
@@ -174,9 +170,7 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
         </Button>
         <Button
           className={`${
-            bulkUploadMutation.isPending
-              ? "pointer-events-none opacity-70"
-              : ""
+            bulkUploadMutation.isPending ? "pointer-events-none opacity-70" : ""
           } w-full transition cursor-pointer`}
           onClick={handleUploadBulk}
         >
@@ -186,4 +180,6 @@ export default function ExcelUploadDialog({ openDialog, setOpenDialog }) {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default ExcelUploadDialog;
