@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import AdminsTable from "./components/AdminsTable";
 import { useDebounce } from "@uidotdev/usehooks";
 import { DateRangePicker } from "@/components/date_filter";
+import ExportAdminDialog from "./components/ExportAdminDialog";
 
 const Admins = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const Admins = () => {
   const [adminsLength, setAdminsLength] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [params, setParams] = useState(paramInitialState);
+  const [openBulkExportDialog, setOpenBulkExportDialog] = useState(false);
 
   const debouncedSearch = useDebounce(searchText, 500);
 
@@ -27,6 +29,14 @@ const Admins = () => {
 
   const onAdd = () => {
     navigate("/dashboard/admins/add");
+  };
+
+  const onOpenBulkExportDialog = () => {
+    setOpenBulkExportDialog(true);
+  };
+
+  const onCloseBulkExportDialog = () => {
+    setOpenBulkExportDialog(false);
   };
 
   const breadcrumbs = [{ title: "Admins", isNavigation: false }];
@@ -88,8 +98,15 @@ const Admins = () => {
           showRowSelection={true}
           rowsPerPage={params.per_page}
           onRowsPerPageChange={onRowsPerPageChange}
+          disableBulkExport={false}
+          onBulkExport={onOpenBulkExportDialog}
         />
         <AdminsTable setadminsLength={setAdminsLength} params={params} />
+        <ExportAdminDialog
+          openDialog={openBulkExportDialog}
+          onClose={onCloseBulkExportDialog}
+          params={params}
+        />
       </div>
     </div>
   );

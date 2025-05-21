@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import UsersTable from "./components/UsersTable";
 import { useDebounce } from "@uidotdev/usehooks";
 import { DateRangePicker } from "@/components/date_filter";
+import ExportUserDialog from "./components/ExportUserDialog";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Users = () => {
   const [usersLength, setUsersLength] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [params, setParams] = useState(paramInitialState);
+  const [openBulkExportDialog, setOpenBulkExportDialog] = useState(false);
 
   const debouncedSearch = useDebounce(searchText, 500);
 
@@ -26,6 +28,14 @@ const Users = () => {
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
+  };
+
+    const onOpenBulkExportDialog = () => {
+    setOpenBulkExportDialog(true);
+  };
+
+  const onCloseBulkExportDialog = () => {
+    setOpenBulkExportDialog(false);
   };
 
   const onRowsPerPageChange = (newRowsPerPage) => {
@@ -86,11 +96,18 @@ const Users = () => {
           onRowsPerPageChange={onRowsPerPageChange}
           showRowSelection={true}
           rowsPerPage={params.per_page}
+          disableBulkExport={false}
+          onBulkExport={onOpenBulkExportDialog}
         />
         <UsersTable
           setUsersLength={setUsersLength}
           params={params}
           setParams={setParams}
+        />
+        <ExportUserDialog
+          openDialog={openBulkExportDialog}
+          onClose={onCloseBulkExportDialog}
+          params={params}
         />
       </div>
     </div>
