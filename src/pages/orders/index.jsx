@@ -6,6 +6,8 @@ import { useParams } from "react-router";
 import { useDebounce } from "@uidotdev/usehooks";
 import OrderStats from "./components/OrderStats";
 import { DateRangePicker } from "@/components/date_filter";
+import ExportUserDialog from "../users/components/ExportUserDialog";
+import ExportOrderDialog from "./components/ExportOrderDialog";
 
 const Orders = () => {
   const { serviceId } = useParams();
@@ -19,11 +21,20 @@ const Orders = () => {
   const [searchText, setSearchText] = useState("");
   const [params, setParams] = useState(paramInitialState);
   const [ordersLength, setOrdersLength] = useState(0);
+  const [openBulkExportDialog, setOpenBulkExportDialog] = useState(false);
 
   const debouncedSearch = useDebounce(searchText, 500);
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
+  };
+
+  const onOpenBulkExportDialog = () => {
+    setOpenBulkExportDialog(true);
+  };
+
+  const onCloseBulkExportDialog = () => {
+    setOpenBulkExportDialog(false);
   };
 
   useEffect(() => {
@@ -93,11 +104,18 @@ const Orders = () => {
           onRowsPerPageChange={onRowsPerPageChange}
           showRowSelection={true}
           rowsPerPage={params.per_page}
+          disableBulkExport={false}
+          onBulkExport={onOpenBulkExportDialog}
         />
         <OrdersTable
           setOrdersLength={setOrdersLength}
           params={params}
           setParams={setParams}
+        />
+        <ExportOrderDialog
+          openDialog={openBulkExportDialog}
+          onClose={onCloseBulkExportDialog}
+          params={params}
         />
       </div>
     </div>
