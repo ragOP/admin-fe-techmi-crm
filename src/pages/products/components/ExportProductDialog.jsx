@@ -12,7 +12,7 @@ import { exportProducts } from "../helpers/exportProducts";
 
 const ExportProductDialog = ({
   openDialog,
-  onCloseBulkExportDialog,
+  onClose,
   params,
 }) => {
   const { mutate: exportMutation, isPending } = useMutation({
@@ -47,7 +47,10 @@ const ExportProductDialog = ({
   };
 
   return (
-    <Dialog open={openDialog} onOpenChange={onCloseBulkExportDialog}>
+    <Dialog
+      open={openDialog}
+      onOpenChange={onClose}
+    >
       <DialogContent className="p-6 rounded-xl shadow-lg border border-gray-400">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">

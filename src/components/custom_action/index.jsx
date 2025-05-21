@@ -22,7 +22,7 @@ const CustomActionMenu = ({
   showRowSelection = false,
   onRowsPerPageChange,
   rowsPerPage = 25,
-  disableBulkExport = false,
+  disableBulkExport = true,
   onBulkExport,
 }) => {
   return (

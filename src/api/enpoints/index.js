@@ -57,4 +57,7 @@ export const endpoints = {
 
   // Medicine type
   medicine_type: "api/medicine-type",
+
+  // Hsn Codes
+  hsn_codes: "api/hsn-codes",
 };

@@ -59,6 +59,10 @@ const MedicineTypeEditor = lazy(() =>
   import("@/pages/medicine_type/pages/medicine_type_editor")
 );
 const OrderDetails = lazy(() => import("@/pages/orders/pages/order_details"));
+const HsnCodes = lazy(() => import("@/pages/hsn_codes"));
+const HsnCodesEditor = lazy(() =>
+  import("@/pages/hsn_codes/pages/hsn_codes_editor")
+);
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -171,6 +175,10 @@ const Router = () => {
             path="medicine-type/edit/:id"
             element={<MedicineTypeEditor />}
           />
+
+          <Route path="hsn-codes" element={<HsnCodes />} />
+          <Route path="hsn-codes/add" element={<HsnCodesEditor />} />
+          <Route path="hsn-codes/edit/:id" element={<HsnCodesEditor />} />
 
           <Route path="configuration/home" element={<HomeConfig />} />
           <Route path="configuration/service" element={<ServiceConfig />} />
