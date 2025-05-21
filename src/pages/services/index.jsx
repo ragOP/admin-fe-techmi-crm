@@ -4,6 +4,7 @@ import CustomActionMenu from "@/components/custom_action";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDebounce } from "@uidotdev/usehooks";
+import { DateRangePicker } from "@/components/date_filter";
 
 const Services = () => {
   const navigate = useNavigate();
@@ -37,6 +38,28 @@ const Services = () => {
 
   const breadcrumbs = [{ title: "Services", isNavigation: false }];
 
+  const handleDateRangeChange = (range) => {
+    if (!range || !range.from || !range.to) {
+      setParams((prev) => {
+        if (prev.start_date === undefined && prev.end_date === undefined) {
+          return prev;
+        }
+        return { ...prev, start_date: undefined, end_date: undefined };
+      });
+      return;
+    }
+
+    setParams((prev) => {
+      const isSame =
+        prev.start_date?.toString() === range.from.toString() &&
+        prev.end_date?.toString() === range.to.toString();
+
+      if (isSame) return prev;
+
+      return { ...prev, start_date: range.from, end_date: range.to };
+    });
+  };
+
   useEffect(() => {
     if (params.search !== debouncedSearch) {
       setParams((prev) => ({
@@ -48,7 +71,11 @@ const Services = () => {
 
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Services" breadcrumbs={breadcrumbs} />
+      <NavbarItem
+        title="Services"
+        breadcrumbs={breadcrumbs}
+        customBox={<DateRangePicker onChange={handleDateRangeChange} />}
+      />
 
       <div className="px-4">
         <CustomActionMenu

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import UsersTable from "./components/UsersTable";
 import { useDebounce } from "@uidotdev/usehooks";
+import { DateRangePicker } from "@/components/date_filter";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -36,6 +37,28 @@ const Users = () => {
 
   const breadcrumbs = [{ title: "Users", isNavigation: false }];
 
+  const handleDateRangeChange = (range) => {
+    if (!range || !range.from || !range.to) {
+      setParams((prev) => {
+        if (prev.start_date === undefined && prev.end_date === undefined) {
+          return prev;
+        }
+        return { ...prev, start_date: undefined, end_date: undefined };
+      });
+      return;
+    }
+
+    setParams((prev) => {
+      const isSame =
+        prev.start_date?.toString() === range.from.toString() &&
+        prev.end_date?.toString() === range.to.toString();
+
+      if (isSame) return prev;
+
+      return { ...prev, start_date: range.from, end_date: range.to };
+    });
+  };
+
   useEffect(() => {
     if (params.search !== debouncedSearch) {
       setParams((prev) => ({
@@ -47,7 +70,11 @@ const Users = () => {
 
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Users" breadcrumbs={breadcrumbs} />
+      <NavbarItem
+        title="Users"
+        breadcrumbs={breadcrumbs}
+        customBox={<DateRangePicker onChange={handleDateRangeChange} />}
+      />
 
       <div className="py-1 px-4">
         <CustomActionMenu

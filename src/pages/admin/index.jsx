@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import AdminsTable from "./components/AdminsTable";
 import { useDebounce } from "@uidotdev/usehooks";
+import { DateRangePicker } from "@/components/date_filter";
 
 const Admins = () => {
   const navigate = useNavigate();
@@ -28,16 +29,36 @@ const Admins = () => {
     navigate("/dashboard/admins/add");
   };
 
-  const breadcrumbs = [
-    { title: "Admins", isNavigation: false },
-  ];
+  const breadcrumbs = [{ title: "Admins", isNavigation: false }];
 
   const onRowsPerPageChange = (value) => {
     setParams((prev) => ({
       ...prev,
       per_page: value,
     }));
-  }
+  };
+
+  const handleDateRangeChange = (range) => {
+    if (!range || !range.from || !range.to) {
+      setParams((prev) => {
+        if (prev.start_date === undefined && prev.end_date === undefined) {
+          return prev;
+        }
+        return { ...prev, start_date: undefined, end_date: undefined };
+      });
+      return;
+    }
+
+    setParams((prev) => {
+      const isSame =
+        prev.start_date?.toString() === range.from.toString() &&
+        prev.end_date?.toString() === range.to.toString();
+
+      if (isSame) return prev;
+
+      return { ...prev, start_date: range.from, end_date: range.to };
+    });
+  };
 
   useEffect(() => {
     if (params.search !== debouncedSearch) {
@@ -54,6 +75,7 @@ const Admins = () => {
         title="Admin"
         handleSearch={handleSearch}
         breadcrumbs={breadcrumbs}
+        customBox={<DateRangePicker onChange={handleDateRangeChange} />}
       />
 
       <div className="px-4">
