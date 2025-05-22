@@ -3,6 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { fetchInternal, postInternal } from "../helper";
+import NavbarItem from "@/components/navbar/navbar_item";
 
 const InternalConfig = () => {
   const [config, setConfig] = useState({
@@ -13,6 +14,8 @@ const InternalConfig = () => {
   });
   const [loading, setLoading] = useState({});
   const [preview, setPreview] = useState({});
+
+  const breadcrumbs = [{ title: "Internal", isNavigation: true }];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,12 +56,14 @@ const InternalConfig = () => {
   };
 
   return (
+   <>
+   <NavbarItem title="Internal Configuration" breadcrumbs={breadcrumbs} />
     <div className="p-10 max-w-4xl mx-auto w-full space-y-1">
-      <h2 className="text-3xl font-bold text-white text-center">Internal Configuration</h2>
+      <h2 className="text-3xl font-bold text-foreground text-center">Internal Configuration</h2>
 
       <div className="space-y-6">
         <div className="space-y-3">
-          <label className="font-semibold text-lg text-white capitalize">About Description</label>
+          <label className="font-semibold text-lg text-foreground capitalize">About Description</label>
           <Textarea
             className="w-full bg-gray-800 border-gray-700 text-white px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
             value={config.aboutDescription || ""}
@@ -71,7 +76,7 @@ const InternalConfig = () => {
 
         {["aboutUsImage", "flyer1"].map((field) => (
           <div key={field} className="space-y-3">
-            <label className="font-semibold text-lg text-white capitalize">{field.replace(/([A-Z])/g, ' $1')}</label>
+            <label className="font-semibold text-lg text-foreground capitalize">{field.replace(/([A-Z])/g, ' $1')}</label>
             <input 
               type="file" 
               className="w-full bg-gray-800 border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" 
@@ -89,7 +94,7 @@ const InternalConfig = () => {
         ))}
 
         <div className="space-y-3">
-          <label className="font-semibold text-lg text-white capitalize">Slider Images</label>
+          <label className="font-semibold text-lg text-foreground capitalize">Slider Images</label>
           <input 
             type="file" 
             className="w-full bg-gray-800 border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" 
@@ -111,6 +116,7 @@ const InternalConfig = () => {
         </div>
       </div>
     </div>
+   </>
   );
 };
 
