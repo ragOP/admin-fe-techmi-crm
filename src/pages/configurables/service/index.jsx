@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { fetchServicePage, postServicePage } from "../helper";
+import NavbarItem from "@/components/navbar/navbar_item";
 
 const ServiceConfig = () => {
   const [config, setConfig] = useState({
@@ -21,6 +22,8 @@ const ServiceConfig = () => {
   });
   const [preview, setPreview] = useState({});
   const [loading, setLoading] = useState({});
+
+  const breadcrumbs = [{ title: "Service", isNavigation: true }];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,14 +78,16 @@ const ServiceConfig = () => {
   };
 
   return (
+   <>
+   <NavbarItem title="Services" breadcrumbs={breadcrumbs} />
     <div className="p-10 max-w-4xl mx-auto w-full space-y-10">
-      <h2 className="text-2xl font-semibold text-white text-center">
+      <h2 className="text-2xl font-semibold text-foreground text-center">
         Service Page Configuration
       </h2>
       <div className="grid grid-cols-2 gap-6">
         {["heading", "subheading"].map((field) => (
           <div key={field} className="space-y-3">
-            <label className="font-medium text-lg text-white capitalize">
+            <label className="font-medium text-lg text-foreground capitalize">
               {field}
             </label>
             <Input
@@ -106,7 +111,7 @@ const ServiceConfig = () => {
       <div className="grid grid-cols-2 gap-6">
         {["houseCleaningImage", "pharmaImage", "laundryImage"].map((field) => (
           <div key={field} className="space-y-3">
-            <label className="font-medium text-lg text-white capitalize">
+            <label className="font-medium text-lg text-foreground capitalize">
               {field}
             </label>
             <input
@@ -135,7 +140,7 @@ const ServiceConfig = () => {
       <div className="grid grid-cols-3 gap-6">
         {["houseCleaningReviews", "pharmaReviews", "laundryReviews"].map((field) => (
           <div key={field} className="space-y-3">
-            <label className="font-medium text-lg text-white capitalize">
+            <label className="font-medium text-lg text-foreground capitalize">
               {field}
             </label>
             <Input
@@ -163,7 +168,7 @@ const ServiceConfig = () => {
           "laundryDescription",
         ].map((field) => (
           <div key={field} className="space-y-3">
-            <label className="font-medium text-lg text-white capitalize">
+            <label className="font-medium text-lg text-foreground capitalize">
               {field}
             </label>
             <Textarea
@@ -184,6 +189,7 @@ const ServiceConfig = () => {
           </div>
         ))}
     </div>
+   </>
   );
 };
 

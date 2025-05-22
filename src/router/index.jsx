@@ -39,6 +39,7 @@ const HeaderConfig = lazy(() => import("@/pages/configurables/header"));
 const InternalConfig = lazy(() =>
   import("@/pages/configurables/internal_pages")
 );
+const AppBanners = lazy(() => import("@/pages/configurables/app_banners"));
 const SubAdmins = lazy(() => import("@/pages/sub_admins"));
 const SubAdminEditor = lazy(() =>
   import("@/pages/sub_admins/pages/sub_admin_editor")
@@ -202,6 +203,7 @@ const Router = () => {
           <Route path="configuration/service" element={<ServiceConfig />} />
           <Route path="configuration/header" element={<HeaderConfig />} />
           <Route path="configuration/internal" element={<InternalConfig />} />
+          <Route path="configuration/app-banners" element={<AppBanners />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>

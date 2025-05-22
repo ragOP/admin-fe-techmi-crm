@@ -145,6 +145,10 @@ export const data = {
           title: "Internal Pages",
           url: "/dashboard/configuration/internal",
         },
+        {
+          title: "App Banners",
+          url: "/dashboard/configuration/app-banners",
+        }
       ],
       roles: ["super_admin"],
     },

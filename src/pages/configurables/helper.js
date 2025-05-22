@@ -15,20 +15,19 @@ export const fetchHeader = async ({ params }) => {
 };
 
 export const postHeader = async ({ data, params }) => {
-    try {
-      const apiResponse = await apiService({
-        endpoint: endpoints.header,
-        method: "POST",
-        data,
-        params,
-      });
-  
-      return apiResponse;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  
+  try {
+    const apiResponse = await apiService({
+      endpoint: endpoints.header,
+      method: "POST",
+      data,
+      params,
+    });
+
+    return apiResponse;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const fetchInternal = async ({ params }) => {
   try {
@@ -44,19 +43,19 @@ export const fetchInternal = async ({ params }) => {
 };
 
 export const postInternal = async ({ data, params }) => {
-    try {
-      const apiResponse = await apiService({
-        endpoint: endpoints.internal,
-        method: "POST",
-        data,
-        params,
-      });
-  
-      return apiResponse;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    const apiResponse = await apiService({
+      endpoint: endpoints.internal,
+      method: "POST",
+      data,
+      params,
+    });
+
+    return apiResponse;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const fetchServicePage = async ({ params }) => {
   try {
@@ -72,19 +71,19 @@ export const fetchServicePage = async ({ params }) => {
 };
 
 export const postServicePage = async ({ data, params }) => {
-    try {
-      const apiResponse = await apiService({
-        endpoint: endpoints.service_page,
-        method: "POST",
-        data,
-        params,
-      });
-  
-      return apiResponse;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    const apiResponse = await apiService({
+      endpoint: endpoints.service_page,
+      method: "POST",
+      data,
+      params,
+    });
+
+    return apiResponse;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const fetchHome = async ({ params }) => {
   try {
@@ -100,16 +99,44 @@ export const fetchHome = async ({ params }) => {
 };
 
 export const postHome = async ({ data, params }) => {
-    try {
-      const apiResponse = await apiService({
-        endpoint: endpoints.home,
-        method: "POST",
-        data,
-        params,
-      });
-  
-      return apiResponse;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    const apiResponse = await apiService({
+      endpoint: endpoints.home,
+      method: "POST",
+      data,
+      params,
+    });
+
+    return apiResponse;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const fetchAppBanners = async ({ params }) => {
+  try {
+    const apiResponse = await apiService({
+      endpoint: endpoints.app_banners,
+      params,
+    });
+
+    return apiResponse;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const postAppBanners = async ({ data, params }) => {
+  try {
+    const apiResponse = await apiService({
+      endpoint: endpoints.app_banners,
+      method: "POST",
+      data,
+      params,
+    });
+
+    return apiResponse;
+  } catch (error) {
+    console.error(error);
+  }
+};

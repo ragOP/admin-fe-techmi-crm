@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { fetchHome, postHeader } from "../helper";
+import NavbarItem from "@/components/navbar/navbar_item";
 
 const HomeConfig = () => {
   const [config, setConfig] = useState({
@@ -16,6 +17,8 @@ const HomeConfig = () => {
   });
   const [preview, setPreview] = useState({});
   const [loading, setLoading] = useState({});
+
+  const breadcrumbs = [{ title: "Home", isNavigation: true }];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,14 +74,16 @@ const HomeConfig = () => {
   };
 
   return (
+   <>
+   <NavbarItem title="Home" breadcrumbs={breadcrumbs} />
     <div className="p-10 max-w-4xl mx-auto w-full space-y-10">
-      <h2 className="text-2xl font-semibold text-white text-center">
+      <h2 className="text-2xl font-semibold text-foreground text-center">
         Homepage Configuration
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {["heading", "subheading"].map((field) => (
           <div key={field} className="space-y-3">
-            <label className="font-medium text-lg text-white capitalize">
+            <label className="font-medium text-lg text-foreground capitalize">
               {field}
             </label>
             <Input
@@ -105,7 +110,7 @@ const HomeConfig = () => {
           const field = `banner${index + 1}`;
           return (
             <div key={field} className="space-y-3">
-              <label className="font-medium text-lg text-white capitalize">
+              <label className="font-medium text-lg text-foreground capitalize">
                 {field}
               </label>
               <Input
@@ -133,6 +138,7 @@ const HomeConfig = () => {
         })}
       </div>
     </div>
+   </>
   );
 };
 
