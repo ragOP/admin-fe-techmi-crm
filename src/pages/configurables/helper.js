@@ -140,3 +140,16 @@ export const postAppBanners = async ({ data, params }) => {
     console.error(error);
   }
 };
+
+export const deleteAppBanner = async ({ id }) => {
+  try {
+    const apiResponse = await apiService({
+      endpoint: `${endpoints.app_banners}/${id}`, //endpoints.app_banners,
+      method: "DELETE",
+    });
+
+    return apiResponse;
+  } catch (error) {
+    console.error(error);
+  }
+};
