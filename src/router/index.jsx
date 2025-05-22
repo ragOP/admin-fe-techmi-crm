@@ -16,6 +16,8 @@ const ErrorPage = lazy(() => import("@/components/errors/404"));
 const Services = lazy(() => import("@/pages/services"));
 const Products = lazy(() => import("@/pages/products"));
 const Categories = lazy(() => import("@/pages/categories"));
+const ForgetPassword = lazy(() => import("@/pages/forget_password"));
+const ResetPassword = lazy(() => import("@/pages/reset_password"));
 const ServicesEditor = lazy(() =>
   import("@/pages/services/pages/services_editor")
 );
@@ -69,6 +71,18 @@ const Router = () => {
   const navigate = useNavigate();
 
   const checkTokenExpiration = () => {
+    const publicRoutes = ['/login', '/signup', '/forgot-password'];
+    const publicPathPrefixes = ['/reset-password/'];
+    
+    if (publicRoutes.includes(window.location.pathname)) {
+      return;
+    }
+
+    // Check routes with dynamic parameters
+    if (publicPathPrefixes.some(prefix => window.location.pathname.startsWith(prefix))) {
+      return;
+    }
+
     const storedToken = getItem("token");
 
     if (!storedToken) {
@@ -111,6 +125,8 @@ const Router = () => {
 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgetPassword />} />
+        <Route path="/reset-password/:id" element={<ResetPassword />} />
 
         <Route
           path="/dashboard"
