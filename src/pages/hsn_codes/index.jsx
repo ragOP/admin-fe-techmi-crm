@@ -78,7 +78,7 @@ const HsnCodes = () => {
 
       <div className="px-4">
         <CustomActionMenu
-          title="HSN Codes"
+          title="HSN Code"
           total={hsnCodesLength}
           onAdd={onAdd}
           handleSearch={handleSearch}

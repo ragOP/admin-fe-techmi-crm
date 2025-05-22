@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { fetchContacts } from "../helpers/fetchContacts";
 import { deleteContacts } from "../helpers/deleteContacts";
 
-const ContactUsTable = ({ setContactUsLength }) => {
+const ContactUsTable = ({ setContactUsLength, params, setParams }) => {
   const queryClient = useQueryClient();
 
   const {
@@ -18,8 +18,8 @@ const ContactUsTable = ({ setContactUsLength }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["contacts"],
-    queryFn: fetchContacts,
+    queryKey: ["contacts", params],
+    queryFn: () => fetchContacts({ params }),
   });
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -51,9 +51,10 @@ const ContactUsTable = ({ setContactUsLength }) => {
     deleteContactMutation(id);
   };
 
-  const contacts = Array.isArray(apiContactsResponse?.response?.data)
-    ? apiContactsResponse?.response?.data
+  const contacts = Array.isArray(apiContactsResponse?.response?.data?.data)
+    ? apiContactsResponse?.response?.data?.data
     : [];
+  const contactsTotal = apiContactsResponse?.response?.data?.total;
 
   useEffect(() => {
     setContactUsLength(contacts?.length);
@@ -113,6 +114,17 @@ const ContactUsTable = ({ setContactUsLength }) => {
     },
   ];
 
+  const onPageChange = (page) => {
+    setParams((prev) => ({
+      ...prev,
+      page: page + 1,
+    }));
+  };
+
+  const perPage = params.per_page;
+  const currentPage = params.page;
+  const totalPages = Math.ceil(contactsTotal / perPage);
+
   return (
     <>
       <CustomTable
@@ -120,6 +132,10 @@ const ContactUsTable = ({ setContactUsLength }) => {
         data={contacts || []}
         isLoading={isLoading}
         error={error}
+        perPage={perPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
       <CustomDialog
         onOpen={openDelete}

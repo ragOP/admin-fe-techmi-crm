@@ -110,11 +110,11 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
     //     </Typography>
     //   ),
     // },
-    { 
-      key: "price", 
-      label: "Price", 
-      render: (value) => `₹${value}`
-     },
+    {
+      key: "price",
+      label: "Price",
+      render: (value) => `₹${value}`,
+    },
     {
       key: "discounted_price",
       label: "Discounted Price",
@@ -130,6 +130,19 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
       label: "Inventory",
     },
     { key: "manufacturer", label: "Manufacturer" },
+    {
+      key: "is_active",
+      label: "Status",
+      render: (value) => (
+        <span
+          className={`px-2 py-1 rounded-full text-sm ${
+            value ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          }`}
+        >
+          {value ? "Active" : "Inactive"}
+        </span>
+      ),
+    },
     {
       key: "createdAt",
       label: "Created At",

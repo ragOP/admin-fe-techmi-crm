@@ -103,6 +103,7 @@ const MedicineTypeForm = ({ isEdit = false, initialData }) => {
                 <Input
                   placeholder="Enter description"
                   {...field}
+                  rows={3}
                   maxLength={200}
                 />
               </FormControl>

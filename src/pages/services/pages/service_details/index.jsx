@@ -37,8 +37,8 @@ export default function ServiceDetail() {
   }
 
   const breadcrumbs = [
-    // { title: "Service", navigate: "/dashboard/blogs", isNavigation: true },
-    { title: service.name, navigate: "/dashboard/blogs", isNavigation: true },
+    { title: "Service", path: "/dashboard/services", isNavigation: true },
+    { title: service.name, isNavigation: false },
   ];
 
   return (
@@ -50,7 +50,7 @@ export default function ServiceDetail() {
         className="flex items-center gap-2 text-sm px- ml-10"
         onClick={() => navigate(-1)}
       >
-        <ArrowLeft className="w-4 h-4" /> Back to Blogs
+        <ArrowLeft className="w-4 h-4" /> Back to services
       </Button>
       <div className="max-w-full mx-auto px-12 py-6 space-y-6">
         {/* Service Header */}

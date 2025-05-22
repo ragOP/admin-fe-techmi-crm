@@ -9,10 +9,7 @@ import { getProductById } from "./helper/getProductById";
 const ProductsEditor = () => {
   const { id } = useParams();
 
-  const {
-    data: initialDataRes,
-    isLoading,
-  } = useQuery({
+  const { data: initialDataRes, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: () => getProductById({ id }),
     enabled: !!id,
@@ -20,10 +17,18 @@ const ProductsEditor = () => {
 
   const initialData = initialDataRes?.response?.data;
 
+  const breadcrumbs = [
+    { title: "Products", isNavigation: true, path: "/dashboard/products" },
+    { title: id ? "Edit Product" : "Add Product", isNavigation: false },
+  ];
+
   return (
-    <div className="flex flex-col gap-4">
-      <NavbarItem title={id ? "Edit Product" : "Add Product"} />
-      <div className="px-8 py-4">
+    <div className="flex flex-col gap-2">
+      <NavbarItem
+        title={id ? "Edit Product" : "Add Product"}
+        breadcrumbs={breadcrumbs}
+      />
+      <div className="px-8 pb-8">
         {isLoading ? (
           <div className="flex flex-1 justify-center items-center ">
             <CustomSpinner />

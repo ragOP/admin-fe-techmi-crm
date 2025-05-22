@@ -42,10 +42,6 @@ function CustomTable({
 }) {
   const [sorting, setSorting] = useState([]);
 
-  console.log("perPage", perPage);
-  console.log("currentPage", currentPage);
-  console.log("totalPages", totalPages);
-
   const columns = useMemo(() => {
     return rawColumns.map((col) => ({
       id: col.key,

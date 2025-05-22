@@ -15,10 +15,19 @@ const UserEditor = () => {
   });
   const initialData = initialDataRes?.response?.data;
 
+  const breadcrumbs = [
+    {
+      title: "Users",
+      isNavigation: true,
+      path: "/dashboard/users",
+    },
+    { title: id ? "Edit User" : "Add User", isNavigation: false },
+  ];
+
   return (
-    <div className="flex flex-col gap-4">
-      <NavbarItem title="User" />
-      <div className="px-4 py-4">
+    <div className="flex flex-col">
+      <NavbarItem title="User" breadcrumbs={breadcrumbs} />
+      <div className="px-8 py-4">
         {isLoading ? (
           <div className="flex flex-1 justify-center items-center ">
             <CustomSpinner />

@@ -16,10 +16,18 @@ const BrandEditor = () => {
 
   const initialData = initialDataRes?.response?.data;
 
+  const breadcrumbs = [
+    { title: "Brands", isNavigation: true, path: "/dashboard/brands" },
+    { title: id ? "Edit Brand" : "Add Brand", isNavigation: false },
+  ];
+
   return (
-    <div className="flex flex-col gap-4">
-      <NavbarItem title={id ? "Edit Brand" : "Add Brand"} />
-      <div className="px-4 py-4">
+    <div className="flex flex-col">
+      <NavbarItem
+        title={id ? "Edit Brand" : "Add Brand"}
+        breadcrumbs={breadcrumbs}
+      />
+      <div className="px-8 py-4">
         {isLoading ? (
           <div className="flex flex-1 justify-center items-center">
             <CustomSpinner />

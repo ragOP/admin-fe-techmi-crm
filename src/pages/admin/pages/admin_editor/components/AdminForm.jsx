@@ -26,30 +26,28 @@ import {
 } from "@/components/ui/select";
 import { updateAdmin } from "../helper/updateAdmin";
 
-// Validation Schema
-const AdminFormSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .optional(),
-  role: z.enum(["admin"]),
-  services: z.array(z.string()).min(1, "At least one service is required"),
-  is_active: z.boolean().default(true),
-});
+const getAdminFormSchema = (isEdit) =>
+  z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    password: isEdit
+      ? z.string().optional() // Not required on edit
+      : z.string().min(6, "Password must be at least 6 characters"), // Required on create
+    role: z.enum(["admin"]),
+    services: z.array(z.string()).min(1, "At least one service is required"),
+    is_active: z.boolean().default(true),
+  });
 
 const AdminForm = ({ isEdit = false, initialData }) => {
   const navigate = useNavigate();
-  console.log("AdminForm", initialData);
-  // Fetch services for dropdown
+
   const { data: services } = useQuery({
     queryKey: ["services"],
     queryFn: fetchServices,
   });
 
   const form = useForm({
-    resolver: zodResolver(AdminFormSchema),
+    resolver: zodResolver(getAdminFormSchema(isEdit)),
     defaultValues: initialData
       ? {
           ...initialData,
@@ -72,24 +70,24 @@ const AdminForm = ({ isEdit = false, initialData }) => {
   });
 
   const mutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (data) => {
       if (isEdit) {
         const payload = {
-          name: form.getValues("name"),
-          email: form.getValues("email"),
-          role: form.getValues("role"),
-          services: form.getValues("services"),
-          is_active: form.getValues("is_active"),
+          name: data.name,
+          email: data.email,
+          role: data.role,
+          services: data.services,
+          is_active: data.is_active,
         };
         return await updateAdmin({ id: initialData._id, payload });
       } else {
         const payload = {
-          name: form.getValues("name"),
-          email: form.getValues("email"),
-          password: form.getValues("password"),
-          role: form.getValues("role"),
-          services: form.getValues("services"),
-          is_active: form.getValues("is_active"),
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role: data.role,
+          services: data.services,
+          is_active: data.is_active,
         };
         return await createAdmin(payload);
       }
@@ -109,7 +107,7 @@ const AdminForm = ({ isEdit = false, initialData }) => {
   });
 
   const onSubmit = async (data) => {
-    // Remove password if editing and password is empty
+    console.log("CLICKED");
     if (isEdit && !data.password) {
       const { password, ...rest } = data;
       mutation.mutate(rest);
@@ -117,6 +115,8 @@ const AdminForm = ({ isEdit = false, initialData }) => {
       mutation.mutate(data);
     }
   };
+
+  console.log(form.getValues());
 
   // Handle service selection
   const handleServiceChange = (serviceId, checked) => {

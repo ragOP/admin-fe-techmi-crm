@@ -22,8 +22,8 @@ const BlogsDetails = () => {
   const blog = blogRes?.response?.data;
 
   const breadcrumbs = [
-    { title: "Blog", navigate: "/dashboard/blogs", isNavigation: true },
-    { title: blog.title, navigate: "/dashboard/blogs", isNavigation: true },
+    { title: "Blog", path: "/dashboard/blogs", isNavigation: true },
+    { title: blog.title, path: "/dashboard/blogs", isNavigation: true },
   ];
 
   return (
@@ -37,7 +37,7 @@ const BlogsDetails = () => {
       >
         <ArrowLeft className="w-4 h-4" /> Back to Blogs
       </Button>
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {isLoading ? (
           <div className="flex items-center justify-center h-96">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>

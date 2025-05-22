@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import BlogsTable from "./components/BlogsTable";
 import { useDebounce } from "@uidotdev/usehooks";
 
-export const Blogs = () => {
+const Blogs = () => {
   const navigate = useNavigate();
 
   const paramInitialState = {
@@ -69,3 +69,5 @@ export const Blogs = () => {
     </div>
   );
 };
+
+export default Blogs;

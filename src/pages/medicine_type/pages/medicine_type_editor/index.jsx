@@ -16,10 +16,18 @@ const MedicineTypeEditor = () => {
 
   const initialData = initialDataRes?.response?.data;
 
+  const breadcrumbs = [
+    { title: "Medicine type", isNavigation: true, path: "/dashboard/medicine-type" },
+    { title: id ? "Edit Medicine Type" : "Add Medicine Type", isNavigation: false },
+  ];
+
   return (
-    <div className="flex flex-col gap-4">
-      <NavbarItem title={id ? "Edit Medicine Type" : "Add Medicine Type"} />
-      <div className="px-4 py-4">
+    <div className="flex flex-col">
+      <NavbarItem
+        title={id ? "Edit Medicine Type" : "Add Type"}
+        breadcrumbs={breadcrumbs}
+      />
+      <div className="px-8 py-4">
         {isLoading ? (
           <div className="flex flex-1 justify-center items-center">
             <CustomSpinner />

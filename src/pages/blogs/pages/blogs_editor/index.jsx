@@ -16,9 +16,18 @@ const BlogsEditor = () => {
 
   const initialData = initialDataRes?.response?.data;
 
+  const breadcrumbs = [
+    {
+      title: "Blogs",
+      path: "/dashboard/blogs",
+      isNavigation: true,
+    },
+    { title: id ? "Edit Blog" : "Add Blog", isNavigation: false },
+  ];
+
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Admins" />
+      <NavbarItem title="Admins" breadcrumbs={breadcrumbs} />
       <div className="px-8 py-4">
         {isLoading ? (
           <div className="flex flex-1 justify-center items-center ">

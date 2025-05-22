@@ -32,8 +32,8 @@ const ProductDetails = () => {
   }
 
   const breadcrumbs = [
-    { title: "Products", navigate: "/dashboard/products", isNavigation: true },
-    { title: product?.name, navigate: "", isNavigation: true },
+    { title: "Products", path: "/dashboard/products", isNavigation: true },
+    { title: product?.name,  isNavigation: false },
   ];
 
   return (

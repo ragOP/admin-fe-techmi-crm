@@ -14,7 +14,14 @@ const AdminEditor = () => {
     enabled: !!id,
   });
 
-  const breadcrumbs = [{ title: "Admins", isNavigation: false }];
+  const breadcrumbs = [
+    {
+      title: "Admins",
+      isNavigation: true,
+      path: "/dashboard/admins",
+    },
+    { title: id ? "Edit Product" : "Add Admin", isNavigation: false },
+  ];
 
   const initialData = initialDataRes?.response?.data;
 

@@ -35,32 +35,43 @@ export default NavbarItem;
 export const NavbarBreadcrumb = ({ breadcrumbs = [] }) => {
   const navigate = useNavigate();
 
-  const onNavigateToDashboard = () => {
-    navigate("/dashboard");
-  }
   return (
     <header className="flex shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-6">
       <div className="flex items-center gap-2">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href={onNavigateToDashboard}>Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <button
+                  type="button"
+                  onClick={() => navigate("/dashboard")}
+                  className="bg-transparent border-none p-0 m-0 cursor-pointer text-inherit"
+                >
+                  Dashboard
+                </button>
+              </BreadcrumbLink>
             </BreadcrumbItem>
-            {/* <BreadcrumbSeparator className="hidden md:block" /> */}
 
             {breadcrumbs.map((item) => (
-              <React.Fragment key={item.navigate || item.title}>
+              <React.Fragment key={item.title}>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href={item.navigate}>
-                    {item.title}
+                  <BreadcrumbLink asChild>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (item.isNavigation && item.path) {
+                          navigate(item.path);
+                        }
+                      }}
+                      className="bg-transparent border-none p-0 m-0 cursor-pointer text-inherit"
+                    >
+                      {item.title}
+                    </button>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
               </React.Fragment>
             ))}
-            {/* <BreadcrumbItem>
-              <BreadcrumbPage>{title}</BreadcrumbPage>
-            </BreadcrumbItem> */}
           </BreadcrumbList>
         </Breadcrumb>
       </div>

@@ -148,12 +148,12 @@ const HsnCodesTable = ({ setHsnCodesLength, params }) => {
         <ActionMenu
           options={[
             {
-              label: "Edit HSN Code",
+              label: "Edit",
               icon: Pencil,
               action: () => onEditHsnCode(row),
             },
             {
-              label: "Delete HSN Code",
+              label: "Delete",
               icon: Trash2,
               action: () => handleOpenDialog(row),
               className: "text-red-500",
