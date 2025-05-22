@@ -24,19 +24,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { updateAdmin } from "../helper/updateAdmin";
 
 // Validation Schema
 const AdminFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .optional(),
   role: z.enum(["admin"]),
-  services: z.array(z.string()).min(1, "At least one service is required"), // Ensure at least one service is selected
+  services: z.array(z.string()).min(1, "At least one service is required"),
+  is_active: z.boolean().default(true),
 });
 
 const AdminForm = ({ isEdit = false, initialData }) => {
   const navigate = useNavigate();
-
+  console.log("AdminForm", initialData);
   // Fetch services for dropdown
   const { data: services } = useQuery({
     queryKey: ["services"],
@@ -45,17 +50,50 @@ const AdminForm = ({ isEdit = false, initialData }) => {
 
   const form = useForm({
     resolver: zodResolver(AdminFormSchema),
-    defaultValues: initialData || {
-      name: "",
-      email: "",
-      password: "",
-      role: "admin",
-      services: [], // Initialize as empty array
-    },
+    defaultValues: initialData
+      ? {
+          ...initialData,
+          password: "",
+          is_active: initialData.is_active ?? true,
+          services: Array.isArray(initialData.services)
+            ? initialData.services.map((s) =>
+                typeof s === "string" ? s : s._id
+              )
+            : [],
+        }
+      : {
+          name: "",
+          email: "",
+          password: "",
+          role: "admin",
+          services: [],
+          is_active: true,
+        },
   });
 
   const mutation = useMutation({
-    mutationFn: createAdmin,
+    mutationFn: async () => {
+      if (isEdit) {
+        const payload = {
+          name: form.getValues("name"),
+          email: form.getValues("email"),
+          role: form.getValues("role"),
+          services: form.getValues("services"),
+          is_active: form.getValues("is_active"),
+        };
+        return await updateAdmin({ id: initialData._id, payload });
+      } else {
+        const payload = {
+          name: form.getValues("name"),
+          email: form.getValues("email"),
+          password: form.getValues("password"),
+          role: form.getValues("role"),
+          services: form.getValues("services"),
+          is_active: form.getValues("is_active"),
+        };
+        return await createAdmin(payload);
+      }
+    },
     onSuccess: (res) => {
       if (res?.response?.success) {
         toast.success(`Admin ${isEdit ? "updated" : "created"} successfully`);
@@ -71,15 +109,21 @@ const AdminForm = ({ isEdit = false, initialData }) => {
   });
 
   const onSubmit = async (data) => {
-    mutation.mutate(data);
+    // Remove password if editing and password is empty
+    if (isEdit && !data.password) {
+      const { password, ...rest } = data;
+      mutation.mutate(rest);
+    } else {
+      mutation.mutate(data);
+    }
   };
 
   // Handle service selection
   const handleServiceChange = (serviceId, checked) => {
     const currentServices = form.getValues("services") || [];
     const updatedServices = checked
-      ? [...currentServices, serviceId] // Add service
-      : currentServices.filter((id) => id !== serviceId); // Remove service
+      ? [...currentServices, serviceId]
+      : currentServices.filter((id) => id !== serviceId);
 
     form.setValue("services", updatedServices);
   };
@@ -114,6 +158,7 @@ const AdminForm = ({ isEdit = false, initialData }) => {
                   type="email"
                   placeholder="Enter admin email"
                   {...field}
+                  disabled={isEdit}
                 />
               </FormControl>
               <FormMessage />
@@ -121,7 +166,7 @@ const AdminForm = ({ isEdit = false, initialData }) => {
           )}
         />
 
-        {/* Password Field */}
+        {/* Password Field (only on add) */}
         {!isEdit && (
           <FormField
             control={form.control}
@@ -190,6 +235,24 @@ const AdminForm = ({ isEdit = false, initialData }) => {
                   </div>
                 ))}
               </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Active Field */}
+        <FormField
+          control={form.control}
+          name="is_active"
+          render={({ field }) => (
+            <FormItem className="flex flex-row gap-4 items-center">
+              <FormLabel>Active</FormLabel>
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

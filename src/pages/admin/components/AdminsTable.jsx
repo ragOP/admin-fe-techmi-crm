@@ -9,9 +9,11 @@ import { CustomDialog } from "@/components/custom_dialog";
 import { toast } from "sonner";
 import { fetchAdmins } from "../helpers/fetchAdmins";
 import { deleteAdmins } from "../helpers/deleteAdmins";
+import { useNavigate } from "react-router";
 
 const AdminsTable = ({ setadminsLength, params, setParams }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: adminsRes,
@@ -53,6 +55,10 @@ const AdminsTable = ({ setadminsLength, params, setParams }) => {
 
   const handleDeleteAdmin = (id) => {
     deleteAdminMutation(id);
+  };
+
+  const onNavigateToEdit = (id) => {
+    navigate(`/dashboard/admins/edit/${id}`);
   };
 
   useEffect(() => {
@@ -129,32 +135,32 @@ const AdminsTable = ({ setadminsLength, params, setParams }) => {
         </div>
       ),
     },
-    // {
-    //   key: "actions",
-    //   label: "Actions",
-    //   render: (value, row) => (
-    //     <ActionMenu
-    //       options={[
-    //         {
-    //           label: "View Admin Details",
-    //           icon: Eye,
-    //           action: () => console.log("View admin details"),
-    //         },
-    //         {
-    //           label: "Edit Admin",
-    //           icon: Pencil,
-    //           action: () => console.log("Edit admin"),
-    //         },
-    //         {
-    //           label: "Delete Admin",
-    //           icon: Trash2,
-    //           action: () => handleOpenDialog(row),
-    //           className: "text-red-500",
-    //         },
-    //       ]}
-    //     />
-    //   ),
-    // },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (value, row) => (
+        <ActionMenu
+          options={[
+            // {
+            //   label: "View Admin Details",
+            //   icon: Eye,
+            //   action: () => console.log("View admin details"),
+            // },
+            {
+              label: "Edit Admin",
+              icon: Pencil,
+              action: () => onNavigateToEdit(row._id),
+            },
+            {
+              label: "Delete Admin",
+              icon: Trash2,
+              action: () => handleOpenDialog(row),
+              className: "text-red-500",
+            },
+          ]}
+        />
+      ),
+    },
   ];
 
   const onPageChange = (page) => {
@@ -183,11 +189,11 @@ const AdminsTable = ({ setadminsLength, params, setParams }) => {
       />
 
       <CustomDialog
-        isOpen={openDelete}
+        onOpen={openDelete}
         onClose={handleCloseDialog}
-        title={`Delete ${selectedAdmin?.name}?`}
+        title={`Delete ${selectedAdmin?.name}`}
         description="This action will permanently remove the admin account."
-        modalType="confirmation"
+        modalType="Delete"
         onConfirm={() => handleDeleteAdmin(selectedAdmin?._id)}
         isLoading={isDeleting}
       />

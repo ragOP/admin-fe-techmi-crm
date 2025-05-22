@@ -64,6 +64,7 @@ const HsnCodesEditor = lazy(() =>
   import("@/pages/hsn_codes/pages/hsn_codes_editor")
 );
 
+
 const Router = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -124,6 +125,7 @@ const Router = () => {
 
           <Route path="admins" element={<Admins />} />
           <Route path="admins/add" element={<AdminEditor />} />
+          <Route path="admins/edit/:id" element={<AdminEditor />} />
 
           <Route path="sub-admins" element={<SubAdmins />} />
           <Route path="sub-admins/add" element={<SubAdminEditor />} />
