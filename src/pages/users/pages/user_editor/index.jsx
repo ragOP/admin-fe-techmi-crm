@@ -13,7 +13,6 @@ const UserEditor = () => {
     queryFn: () => getUserById({ id }),
     enabled: !!id,
   });
-
   const initialData = initialDataRes?.response?.data;
 
   return (

@@ -33,6 +33,7 @@ import { fetchMedicineType } from "@/pages/medicine_type/helpers/fetchMedicineTy
 import { Textarea } from "@/components/ui/textarea";
 import { fetchBrand } from "@/pages/brand/helpers/fetchBrand";
 import { MultiSelect } from "react-multi-select-component"; // Install: npm i react-multi-select-component
+import { fetchHsnCodes } from "@/pages/hsn_codes/helpers/fetchHsnCodes";
 
 const ProductsForm = ({ initialData, isEditMode }) => {
   const navigate = useNavigate();
@@ -76,12 +77,13 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       is_best_seller: initialData?.is_best_seller || false,
       category: initialData?.category || [],
       medicine_type: initialData?.medicine_type?._id || null,
-      gst: initialData?.gst || 0,
-      cgst: initialData?.cgst || 0,
-      sgst: initialData?.sgst || 0,
-      igst: initialData?.igst || 0,
+      // gst: initialData?.gst || 0,
+      // cgst: initialData?.cgst || 0,
+      // sgst: initialData?.sgst || 0,
+      // igst: initialData?.igst || 0,
       is_active: initialData?.is_active ?? true,
       quantity: initialData?.quantity || 0,
+      hsn_code: initialData?.hsn_code || "",
     },
   });
 
@@ -186,7 +188,6 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       "created_by_admin",
       role === "super_admin" ? currentAdmin : reduxAdminId
     );
-
 
     if (isEditMode) {
       updateMutation.mutate(formData);
@@ -728,93 +729,42 @@ function ProductImageFields({ form }) {
 }
 
 function ProductTaxFields({ form }) {
+  const { data: hsnCodes } = useQuery({
+    queryKey: ["hsn_codes"],
+    queryFn: () => fetchHsnCodes({}),
+    select: (data) => data?.response?.data?.data,
+  });
+
+  console.log(hsnCodes);
+
   return (
-    <>
-      {/* GST */}
-      <div className="col-span-3">
-        <FormField
-          control={form.control}
-          name="gst"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>GST</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter GST"
-                  {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      {/* CGST */}
-      <div className="col-span-3">
-        <FormField
-          control={form.control}
-          name="cgst"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CGST</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter CGST"
-                  {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      {/* SGST */}
-      <div className="col-span-3">
-        <FormField
-          control={form.control}
-          name="sgst"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>SGST</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter SGST"
-                  {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      {/* IGST */}
-      <div className="col-span-3">
-        <FormField
-          control={form.control}
-          name="igst"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>IGST</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter IGST"
-                  {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-    </>
+    <div className="col-span-3">
+      <FormField
+        control={form.control}
+        name="hsn_code"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>HSN Code</FormLabel>
+            <FormControl>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select brand" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.isArray(hsnCodes) &&
+                    hsnCodes.map((code) => (
+                      <SelectItem key={code._id} value={code._id}>
+                        {code.hsn_code}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
   );
 }
 
