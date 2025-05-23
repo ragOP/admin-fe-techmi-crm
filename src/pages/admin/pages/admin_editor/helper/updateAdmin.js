@@ -5,7 +5,7 @@ export const updateAdmin = async ({ id, payload }) => {
   try {
     const response = await apiService({
       endpoint: `${endpoints.admin}/${id}`,
-      method: "PUT",
+      method: "PATCH",
       data: payload,
     });
 
