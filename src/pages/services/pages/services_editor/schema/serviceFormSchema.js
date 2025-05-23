@@ -12,4 +12,5 @@ export const ServicesFormSchema = z.object({
   description: z.string().optional(),
   meta_data: z.record(z.any()).optional(),
   images: z.array(z.instanceof(File)),
+  is_active: z.boolean().default(true),
 });

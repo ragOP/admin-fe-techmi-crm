@@ -22,12 +22,13 @@ import { createService } from "../helper/createService";
 import { useEffect, useState } from "react";
 import { urlToFile } from "@/utils/file/urlToFile";
 import { X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ServicesForm = ({ initialData, isEditMode }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const reduxAdminId = useSelector(selectAdminId);
-  const [images, setImages] = useState([]); // State to track images
+  const [images, setImages] = useState([]);
 
   const form = useForm({
     resolver: zodResolver(ServicesFormSchema),
@@ -36,7 +37,8 @@ const ServicesForm = ({ initialData, isEditMode }) => {
       slug: initialData?.slug || "",
       description: initialData?.description || "",
       meta_data: initialData?.meta_data || {},
-      images: [], // Initialize as empty array
+      images: [],
+      is_active: initialData?.is_active ?? true,
     },
   });
 
@@ -99,7 +101,7 @@ const ServicesForm = ({ initialData, isEditMode }) => {
     formData.append("name", data.name);
     formData.append("slug", data.slug);
     formData.append("description", data.description);
-    formData.append("created_by_admin", reduxAdminId);
+    formData.append("is_active", data.is_active);
 
     // Append images to form data
     images.forEach((file) => {
@@ -111,6 +113,7 @@ const ServicesForm = ({ initialData, isEditMode }) => {
       updateMutation.mutate(formData);
     } else {
       // Create mode: Call the create mutation
+      formData.append("created_by_admin", reduxAdminId);
       createMutation.mutate(formData);
     }
   };
@@ -182,6 +185,7 @@ const ServicesForm = ({ initialData, isEditMode }) => {
             </FormItem>
           )}
         />
+
         {/* Display Images */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           {images.map((file, index) => (
@@ -200,11 +204,29 @@ const ServicesForm = ({ initialData, isEditMode }) => {
                 }}
                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
               >
-              <X size={16} />
+                <X size={16} />
               </button>
             </div>
           ))}
         </div>
+
+        <FormField
+          control={form.control}
+          name="is_active"
+          render={({ field }) => (
+            <FormItem className="flex flex-row gap-4 items-center">
+              <FormLabel>Active</FormLabel>
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {/* Submit Button */}
         <Button
           type="submit"

@@ -16,10 +16,15 @@ const CouponEditor = () => {
 
   const initialData = initialDataRes?.response?.data;
 
+  const breadcrumbs = [
+    { title: "Coupons", isNavigation: true, path: "/dashboard/coupons" },
+    { title: id ? "Edit coupon" : "Add coupon", isNavigation: false },
+  ];
+
   return (
-    <div className="flex flex-col gap-4">
-      <NavbarItem title="User" />
-      <div className="px-4 py-4">
+    <div className="flex flex-col">
+      <NavbarItem title="Coupon" breadcrumbs={breadcrumbs} />
+      <div className="px-8 py-4">
         {isLoading ? (
           <div className="flex flex-1 justify-center items-center ">
             <CustomSpinner />

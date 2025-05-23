@@ -32,7 +32,7 @@ import AdminsDropdown from "@/components/admins_dropdown";
 import { fetchMedicineType } from "@/pages/medicine_type/helpers/fetchMedicineType";
 import { Textarea } from "@/components/ui/textarea";
 import { fetchBrand } from "@/pages/brand/helpers/fetchBrand";
-import { MultiSelect } from "react-multi-select-component"; // Install: npm i react-multi-select-component
+import { MultiSelect } from "react-multi-select-component";
 import { fetchHsnCodes } from "@/pages/hsn_codes/helpers/fetchHsnCodes";
 
 const ProductsForm = ({ initialData, isEditMode }) => {
@@ -83,7 +83,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       // igst: initialData?.igst || 0,
       is_active: initialData?.is_active ?? true,
       quantity: initialData?.quantity || 0,
-      hsn_code: initialData?.hsn_code || "",
+      hsn_code: initialData?.hsn_code || null,
     },
   });
 
@@ -184,11 +184,6 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       }
     });
 
-    formData.append(
-      "created_by_admin",
-      role === "super_admin" ? currentAdmin : reduxAdminId
-    );
-
     if (isEditMode) {
       updateMutation.mutate(formData);
     } else {
@@ -197,6 +192,11 @@ const ProductsForm = ({ initialData, isEditMode }) => {
           ? { is_created_by_super_admin: true }
           : {}),
       };
+      formData.append(
+        "created_by_admin",
+        role === "super_admin" ? currentAdmin : reduxAdminId
+      );
+
       createMutation.mutate(formData, params);
     }
   };
@@ -833,7 +833,7 @@ function ProductStatusFields({ form, isEditMode }) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                {isEditMode ? "Update" : "Add"} Product Quantity
+                {isEditMode ? "Add" : "Add"} Product Quantity
               </FormLabel>
               <FormControl>
                 <Input

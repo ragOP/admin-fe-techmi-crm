@@ -24,7 +24,6 @@ const ServicesTable = ({ setServiceLength, params, setParams }) => {
   });
 
   const totalServices = services?.total || 1;
-  console.log("totalServices", totalServices);
 
   const [openDelete, setOpenDelete] = useState(false);
   const [serviceData, setServiceData] = useState(null);
