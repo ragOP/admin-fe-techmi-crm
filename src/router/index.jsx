@@ -66,6 +66,7 @@ const HsnCodes = lazy(() => import("@/pages/hsn_codes"));
 const HsnCodesEditor = lazy(() =>
   import("@/pages/hsn_codes/pages/hsn_codes_editor")
 );
+const TermsCondition = lazy(() => import("@/pages/terms_condition"));
 
 
 const Router = () => {
@@ -204,6 +205,8 @@ const Router = () => {
           <Route path="configuration/header" element={<HeaderConfig />} />
           <Route path="configuration/internal" element={<InternalConfig />} />
           <Route path="configuration/app-banners" element={<AppBanners />} />
+
+          <Route path="terms-conditions" element={<TermsCondition />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>

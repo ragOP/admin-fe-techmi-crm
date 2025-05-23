@@ -166,6 +166,13 @@ export const data = {
       icon: ContactIcon,
       roles: ["super_admin", "admin"],
     },
+    {
+      title: "Terms & Conditions",
+      name: "Terms & Conditions",
+      url: "/dashboard/terms-conditions",
+      icon: Code,
+      roles: ["super_admin", "admin"],
+    }
   ],
   // extra: [
   //   {

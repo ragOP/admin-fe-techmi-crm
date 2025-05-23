@@ -23,7 +23,7 @@ const BlogsDetails = () => {
 
   const breadcrumbs = [
     { title: "Blog", path: "/dashboard/blogs", isNavigation: true },
-    { title: blog.title, path: "/dashboard/blogs", isNavigation: true },
+    { title: blog?.title, path: "/dashboard/blogs", isNavigation: true },
   ];
 
   return (
@@ -51,13 +51,13 @@ const BlogsDetails = () => {
             <div className="mb-8">
               <img
                 src={blog.bannerImageUrl}
-                alt={blog.title}
+                alt={blog?.title}
                 className="w-full h-70 object-cover rounded-lg shadow-lg"
               />
             </div>
 
             <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-              {blog.title}
+              {blog?.title}
             </h1>
 
             <div className="flex items-center space-x-4 mb-6">
