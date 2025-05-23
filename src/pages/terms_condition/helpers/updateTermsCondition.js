@@ -8,11 +8,9 @@ export const updateTermsConditions = async ({ payload, id }) => {
       endpoint: `${endpoints.blogs}/${id}`,
       method: "PUT",
       data: payload,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
     });
 
+    console.log(">>>rwsponse", apiResponse);
     return apiResponse;
   } catch (error) {
     console.error(error);

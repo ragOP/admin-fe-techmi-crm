@@ -1,16 +1,16 @@
 import { apiService } from "@/api/api_services";
 import { endpoints } from "@/api/enpoints";
 
-export const createTermsCondition = async (data) => {
-    console.log(">>>>>>>>>>>>> from create ", data);
+export const getTermsCondition = async () => {
+    console.log(">>>>>>>>>>>>> from get ");
   try {
     const apiResponse = await apiService({
       endpoint: `${endpoints.terms_condition}`,
-      method: "POST",
-      data,
+      method: "GET",
     });
 
-    return apiResponse;
+    console.log(">>>rwsponse", apiResponse)
+    return apiResponse.response.data;
   } catch (error) {
     console.error(error);
   }

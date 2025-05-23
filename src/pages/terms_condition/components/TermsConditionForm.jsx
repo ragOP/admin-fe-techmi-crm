@@ -1,7 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -14,20 +13,10 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { createTermsCondition } from "../helpers/createTermsCondition";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import TextEditor from "@/components/text_editor";
-import { urlToFile } from "@/utils/file/urlToFile";
-import { X } from "lucide-react";
+import { createTermsCondition } from "../helpers/createTermsCondition";
 import { updateTermsConditions } from "../helpers/updateTermsCondition";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const TermsConditionFormSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters")
@@ -77,17 +66,10 @@ const TermsConditionForm = ({ isEdit = false, initialData }) => {
   });
 
   const onSubmit = async (data) => {
-    const formData = new FormData();
-
-    console.log(formData, data);
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
     if (isEdit) {
-      updateMutation.mutate(formData);
+      updateMutation.mutate(data);
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(data);
     }
   };
 

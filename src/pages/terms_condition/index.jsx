@@ -3,7 +3,7 @@ import NavbarItem from "@/components/navbar/navbar_item";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDebounce } from "@uidotdev/usehooks";
-import TermsConditionForm from "./components/TermsConditionForm";
+import TermsConditionList from "./components/TermsConditionList";
 
 const TermsCondition = () => {
   const navigate = useNavigate();
@@ -42,24 +42,12 @@ const TermsCondition = () => {
   }, [debouncedSearch]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col px-6 mb-4 ">
       <NavbarItem title="Terms & Conditions" breadcrumbs={breadcrumbs} />
-
-      <div className="px-4">
-        <CustomActionMenu
-          title="Terms & Conditions"  
-          total={blogsLength}
-          disableAdd
-          onRowsPerPageChange={onRowsPerPageChange}
-          showRowSelection={true}
-          rowsPerPage={params.per_page}
-        />
-      </div>
-      <div className="px-4">
-        <TermsConditionForm />
-      </div>
+      <TermsConditionList />
     </div>
   );
 };
 
 export default TermsCondition;
+
