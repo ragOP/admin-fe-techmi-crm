@@ -112,9 +112,9 @@ const TopProducts = ({ params }) => {
                 </TableCell> */}
                   <TableCell>
                     <Badge
-                      variant={product.instock ? "success" : "destructive"}
+                      variant={product.inventory > 0 ? "success" : "destructive"}
                     >
-                      {product.instock ? "In Stock" : "Out of Stock"}
+                      {product.inventory > 0 ? "In Stock" : "Out of Stock"}
                     </Badge>
                   </TableCell>
                 </TableRow>

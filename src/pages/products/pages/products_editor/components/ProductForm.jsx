@@ -207,7 +207,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           <ProductBasicFields form={form} />
           <ProductPriceFields form={form} />
-          <ProductStockFields form={form} />
+          {/* <ProductStockFields form={form} /> */}
           <ProductMetaFields
             form={form}
             role={role}

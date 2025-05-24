@@ -1,11 +1,7 @@
 import * as React from "react";
-import {
-  Briefcase,
-  Package,
-} from "lucide-react";
+import { Briefcase, Package } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
-// import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
 import {
@@ -16,7 +12,6 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Input } from "./ui/input";
-// import { NavProjects } from "./nav-projects";
 import { useSelector } from "react-redux";
 import {
   selectAdminEmail,
@@ -35,12 +30,11 @@ export function AppSidebar({ ...props }) {
 
   const filteredNavMain = filterItemsByRole(data.navMain, role);
   const filteredProjects = filterItemsByRole(data.projects, role);
-  // const filteredExtra = filterItemsByRole(data.extra, role);
   const filteredMore = filterItemsByRole(data.more, role);
 
-  const {
-    data: services,
-  } = useQuery({
+  const [search, setSearch] = React.useState("");
+
+  const { data: services } = useQuery({
     queryKey: ["services"],
     queryFn: fetchServices,
   });
@@ -68,24 +62,63 @@ export function AppSidebar({ ...props }) {
     avatar: "/user.jpg",
   };
 
+  // Helper to filter items and their submenus
+  const filterBySearch = (items) =>
+    items
+      .map((item) => {
+        // If item has sub-items, filter them too
+        if (item.items && Array.isArray(item.items)) {
+          const filteredSub = filterBySearch(item.items);
+          if (
+            item.title.toLowerCase().includes(search.toLowerCase()) ||
+            filteredSub.length > 0
+          ) {
+            return { ...item, items: filteredSub };
+          }
+          return null;
+        }
+        // No sub-items: filter by title
+        if (item.title.toLowerCase().includes(search.toLowerCase())) {
+          return item;
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+  // Only show sections if they have items after filtering
+  const navMainFiltered = filterBySearch(filteredNavMain);
+  const projectsFiltered = filterBySearch(filteredProjects);
+  const orderManagementFiltered = filterBySearch(orderManagement);
+  const moreFiltered = filterBySearch(filteredMore);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} role={role} />
-        <Input placeholder="Search" className="bg-white" />
+        <Input
+          placeholder="Search"
+          className="bg-white dark:bg-gray-800"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </SidebarHeader>
       <SidebarContent className="overflow-y-auto [&::-webkit-scrollbar]:hidden">
-        <NavMain items={filteredNavMain} showHeader={false} />
-        <NavMain items={filteredProjects} showHeader={true} header={"More"} />
-        <NavMain
-          items={orderManagement}
-          showHeader={true}
-          header={"Management"}
-        />
-        {/* <NavProjects projects={filteredExtra} /> */}
+        {navMainFiltered.length > 0 && (
+          <NavMain items={navMainFiltered} showHeader={false} />
+        )}
+        {projectsFiltered.length > 0 && (
+          <NavMain items={projectsFiltered} showHeader={true} header={"More"} />
+        )}
+        {orderManagementFiltered.length > 0 && (
+          <NavMain
+            items={orderManagementFiltered}
+            showHeader={true}
+            header={"Management"}
+          />
+        )}
       </SidebarContent>
       <SidebarFooter>
-        <NavMain items={filteredMore} />
+        {moreFiltered.length > 0 && <NavMain items={moreFiltered} />}
         <NavUser user={userInfo} />
       </SidebarFooter>
       <SidebarRail />

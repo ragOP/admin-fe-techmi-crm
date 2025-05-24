@@ -22,9 +22,9 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const predefinedRanges = {
   "All Time": null,
-  "Last Week": {
-    from: startOfWeek(addDays(new Date(), -7)),
-    to: endOfWeek(addDays(new Date(), -7)),
+  "This Week": {
+    from: startOfWeek(new Date()),
+    to: endOfWeek(new Date()),
   },
   "This Month": {
     from: startOfMonth(new Date()),

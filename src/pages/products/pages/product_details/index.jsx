@@ -98,7 +98,7 @@ const ProductDetails = () => {
               <Badge variant="secondary">Best Seller</Badge>
             )}
             <Badge variant={product.instock ? "default" : "destructive"}>
-              {product.instock ? "In Stock" : "Out of Stock"}
+              {product.inventory > 0 ? "In Stock" : "Out of Stock"}
             </Badge>
           </div>
 

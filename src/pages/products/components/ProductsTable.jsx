@@ -120,11 +120,11 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
       label: "Discounted Price",
       render: (value) => `₹${value}`,
     },
-    {
-      key: "instock",
-      label: "In Stock",
-      render: (value) => (value ? "Yes" : "No"),
-    },
+    // {
+    //   key: "instock",
+    //   label: "In Stock",
+    //   render: (value) => (value ? "Yes" : "No"),
+    // },
     {
       key: "inventory",
       label: "Inventory",
