@@ -26,7 +26,7 @@ const TermsCondition = () => {
 
   const renderForm = () => (
     <div className="px-4">
-      <TermsConditionForm id={data?._id} isEdit={isEdit} initialData={terms} />
+      <TermsConditionForm id={data?._id} isEdit={isEdit} initialData={data} />
     </div>
   );
 

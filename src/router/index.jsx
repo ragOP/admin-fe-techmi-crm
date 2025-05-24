@@ -69,6 +69,10 @@ const HsnCodesEditor = lazy(() =>
 const TermsCondition = lazy(() => import("@/pages/terms_condition"));
 const PrivacyPolicy = lazy(() => import("@/pages/privacy_policy"));
 const Faq = lazy(() => import("@/pages/faq"));
+const Testimonials = lazy(() => import("@/pages/testimonial"));
+const TestimonialsEditor = lazy(() =>
+  import("@/pages/testimonial/pages/testimonial_editor")
+);
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -210,6 +214,10 @@ const Router = () => {
           <Route path="info-policy/terms-conditions" element={<TermsCondition />} />
           <Route path="info-policy/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="info-policy/faq" element={<Faq />} />
+
+          <Route path="testimonials" element={<Testimonials />} />
+          <Route path="testimonials/add" element={<TestimonialsEditor />} />
+          <Route path="testimonials/edit/:id" element={<TestimonialsEditor />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>

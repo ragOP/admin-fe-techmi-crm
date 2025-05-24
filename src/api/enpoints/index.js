@@ -66,4 +66,7 @@ export const endpoints = {
   terms_condition: "api/terms-condition",
   privacy_policy: "api/privacy-policy",
   faq: "api/faq",
+
+  // testimonial
+  testimonial: "api/testimonials",
 };

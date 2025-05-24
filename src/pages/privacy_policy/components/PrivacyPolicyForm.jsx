@@ -80,7 +80,7 @@ const PrivacyPolicyForm = ({ id, isEdit = false, initialData }) => {
                   render={({ field }) => (
                     <TextEditor
                       ref={quillRef}
-                      defaultValue={field.value}
+                      value={field.value}
                       onTextChange={field.onChange}
                       placeholder={"Enter Privacy Policy"}
                       height={600}

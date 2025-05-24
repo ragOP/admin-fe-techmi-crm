@@ -8,7 +8,7 @@ export const getPrivacyPolicy = async () => {
       method: "GET",
     });
 
-    return apiResponse?.response?.data[0];
+    return apiResponse?.response?.data;
   } catch (error) {
     console.error(error);
   }

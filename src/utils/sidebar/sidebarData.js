@@ -10,6 +10,7 @@ import {
   FormInput,
   Layers,
   LayoutDashboard,
+  MessageSquarePlus,
   Package,
   Pill,
   Receipt,
@@ -192,6 +193,13 @@ export const data = {
         },
       ],
     },
+    {
+      title: "Testimonial",
+      name: "Testimonial",
+      url: "/dashboard/testimonials",
+      icon: MessageSquarePlus,
+      roles: ["super_admin", "admin", "sub_admin"],
+    }
   ],
   // extra: [
   //   {
