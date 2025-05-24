@@ -76,10 +76,7 @@ const HomeConfig = () => {
   return (
    <>
    <NavbarItem title="Home" breadcrumbs={breadcrumbs} />
-    <div className="p-10 max-w-4xl mx-auto w-full space-y-10">
-      <h2 className="text-2xl font-semibold text-foreground text-center">
-        Homepage Configuration
-      </h2>
+    <div className="px-10 py-4 mb-5 w-full space-y-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {["heading", "subheading"].map((field) => (
           <div key={field} className="space-y-3">
@@ -87,7 +84,7 @@ const HomeConfig = () => {
               {field}
             </label>
             <Input
-              className="w-full bg-gray-800 border-gray-700 text-white px-4 py-2 rounded-md"
+              className="mt-2 w-full bg-gray-800 border-gray-700 text-white px-4 py-2 rounded-md"
               value={config[field] || ""}
               onChange={(e) =>
                 setConfig({ ...config, [field]: e.target.value })
@@ -115,7 +112,7 @@ const HomeConfig = () => {
               </label>
               <Input
                 type="file"
-                className="w-full bg-gray-800 border-gray-700 text-white rounded-md px-4 py-1"
+                className="mt-2 w-full bg-gray-800 border-gray-700 text-white rounded-md px-4 py-1"
                 onChange={(e) => handleFileUpload(field, e.target.files[0])}
               />
               {(preview[field] || config[field]) && (

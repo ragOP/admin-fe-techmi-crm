@@ -66,7 +66,9 @@ const HsnCodes = lazy(() => import("@/pages/hsn_codes"));
 const HsnCodesEditor = lazy(() =>
   import("@/pages/hsn_codes/pages/hsn_codes_editor")
 );
-
+const TermsCondition = lazy(() => import("@/pages/terms_condition"));
+const PrivacyPolicy = lazy(() => import("@/pages/privacy_policy"));
+const Faq = lazy(() => import("@/pages/faq"));
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -204,6 +206,10 @@ const Router = () => {
           <Route path="configuration/header" element={<HeaderConfig />} />
           <Route path="configuration/internal" element={<InternalConfig />} />
           <Route path="configuration/app-banners" element={<AppBanners />} />
+
+          <Route path="info-policy/terms-conditions" element={<TermsCondition />} />
+          <Route path="info-policy/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="info-policy/faq" element={<Faq />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>

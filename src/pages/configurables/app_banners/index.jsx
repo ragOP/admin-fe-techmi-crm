@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,18 +12,84 @@ import {
 } from "@/components/ui/carousel";
 import { GripVertical, Trash2, Upload } from "lucide-react";
 import NavbarItem from "@/components/navbar/navbar_item";
-import { fetchAppBanners, postAppBanners, deleteAppBanner } from "../helper";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+import {
+  fetchAppBanners,
+  postAppBanners,
+  deleteAppBanner,
+} from "../helper";
+
+const SortableItem = ({ id, banner, index, onDelete }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <Card
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className={`transition-all duration-200 border-l-4 ${
+        banner.type === "new" ? "border-l-green-500" : "border-l-blue-500"
+      }`}
+    >
+      <CardContent {...listeners}>
+        <div className="flex items-center gap-3">
+          <div className="cursor-grab hover:cursor-grabbing p-1 text-gray-400 hover:text-gray-600">
+            <GripVertical className="h-5 w-5" />
+          </div>
+
+          <div className="flex-1">
+            <div className="text-base font-medium">Banner {index + 1}</div>
+            <div className="text-sm text-gray-500 truncate">
+              {(banner?.name || "").slice(0, 10)} •{" "}
+              {banner.type === "new" ? "New upload" : "Existing"}
+            </div>
+          </div>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDelete(banner._id, index)}
+            className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const AppBanners = () => {
   const [config, setConfig] = useState([]);
   const [loading, setLoading] = useState(false);
   const breadcrumbs = [{ title: "App Banners", isNavigation: false }];
+  const sensors = useSensors(useSensor(PointerSensor));
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetchAppBanners({});
-        setConfig(response?.response?.data[0].banner || {});
+        setConfig(response?.response?.data[0].banner || []);
       } catch (error) {
         toast.error("Failed to load banners");
       }
@@ -49,30 +114,24 @@ const AppBanners = () => {
       file: file,
       url: previewURL,
       type: "new",
+      _id: crypto.randomUUID(), // For unique drag id
     };
     const newConfig = [...config, newBanner];
     setConfig(newConfig);
 
     setLoading(true);
-
     try {
-      const bannersToUpload = newConfig;
       const payload = new FormData();
-
-      bannersToUpload.forEach((item, index) => {
-        console.log("item", item);
-        console.log("index", index);
+      newConfig.forEach((item, index) => {
         payload.append(`files[${index}][name]`, item.name);
         if (item.url && !item.file) {
           payload.append(`files[${index}][url]`, item.url);
         } else {
-          console.log("item.file", item.file);
           payload.append(`files[${index}][file]`, item.file);
         }
       });
 
-      const response = await postAppBanners({ data: payload });
-
+      await postAppBanners({ data: payload });
       toast.success("Banner uploaded successfully!");
       event.target.value = "";
     } catch (error) {
@@ -82,110 +141,51 @@ const AppBanners = () => {
     }
   };
 
-  const handleDeleteBanner = (id, index) => {
+  const handleDeleteBanner = async (id, index) => {
     const updatedBanners = [...config];
     try {
-      deleteAppBanner({ id });
+      await deleteAppBanner({ id });
       updatedBanners.splice(index, 1);
-      setConfig([...updatedBanners]);
+      setConfig(updatedBanners);
       toast.success("Banner deleted successfully!");
     } catch (error) {
       toast.error(`Deletion failed: ${error?.message || "Unknown error"}`);
     }
   };
 
-const onDragEnd = (result) => {
-  if (!result.destination) return;
-
-  const items = Array.from(config);
-  const [reorderedItem] = items.splice(result.source.index, 1);
-  items.splice(result.destination.index, 0, reorderedItem);
-
-  setConfig(items);
-};
-
+  const onDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      const oldIndex = config.findIndex((item) => item._id === active.id);
+      const newIndex = config.findIndex((item) => item._id === over.id);
+      setConfig((items) => arrayMove(items, oldIndex, newIndex));
+    }
+  };
 
   return (
     <>
       <NavbarItem title="App Banners" breadcrumbs={breadcrumbs} />
       <div className="p-6 w-full mx-auto">
-        {/* Main Content Area - 60% List, 40% Preview */}
         <div className="flex gap-6 mb-8">
-          {/* Left Side - Banner List (60%) */}
           <div className="w-3/5">
             <h2 className="text-xl font-semibold mb-4">Banner List</h2>
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+              <SortableContext items={config.map((item) => item._id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-3">
+                  {config.map((banner, index) => (
+                    <SortableItem
+                      key={banner._id}
+                      id={banner._id}
+                      banner={banner}
+                      index={index}
+                      onDelete={handleDeleteBanner}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
 
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="banners">
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className="space-y-3"
-                  >
-                    {config?.map((banner, index) => (
-                      <Draggable
-                        key={banner._id}
-                        draggableId={banner._id}
-                        index={index}
-                      >
-                        {(provided, snapshot) => (
-                          <Card
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`transition-all duration-200 ${
-                              snapshot.isDragging
-                                ? "opacity-50 scale-95 shadow-lg"
-                                : "opacity-100 scale-100"
-                            } border-l-4 ${
-                              banner.type === "new"
-                                ? "border-l-green-500"
-                                : "border-l-blue-500"
-                            }`}
-                          >
-                            <CardContent>
-                              <div className="flex items-center gap-3">
-                                <div
-                                  {...provided.dragHandleProps}
-                                  className="cursor-grab hover:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
-                                >
-                                  <GripVertical className="h-5 w-5" />
-                                </div>
-
-                                <div className="flex-1">
-                                  <div className="text-base font-medium">
-                                    Banner {index + 1}
-                                  </div>
-                                  <div className="text-sm text-gray-500 truncate">
-                                    {(banner?.name).slice(0, 10) || "No Name"} •
-                                    {banner.type === "new"
-                                      ? " New upload"
-                                      : " Existing"}
-                                  </div>
-                                </div>
-
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleDeleteBanner(
-                                    banner._id, index)}
-                                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided?.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-
-            {!config?.length > 0 && (
+            {config.length === 0 && (
               <Card>
                 <CardContent className="flex items-center justify-center h-32 text-gray-500">
                   No banners added yet. Upload your first banner below.
@@ -194,38 +194,36 @@ const onDragEnd = (result) => {
             )}
           </div>
 
-          {/* Right Side - Carousel Preview (40%) */}
           <div className="w-2/6">
             <h2 className="text-xl font-semibold mb-4">Preview</h2>
-
-            {config?.length > 0 ? (
+            {config.length > 0 ? (
               <Carousel>
                 <CarouselContent>
-                  {config?.map((banner, index) => (
+                  {config.map((banner, index) => (
                     <CarouselItem key={`preview-${index}-${banner.name}`}>
-                      <div className="p-1">
-                        <div className="flex aspect-video items-center justify-center p-6 bg-muted rounded-lg">
+                      <div className="p-1 relative">
+                        <div className="flex aspect-video items-center justify-center p-6 bg-muted rounded-lg relative">
                           <img
                             src={banner.url || banner}
                             alt={`Banner ${index + 1}`}
                             className="object-contain h-full w-full"
                           />
                           <div className="absolute bottom-2 left-2 bg-black/70 text-white text-sm px-3 py-1 rounded">
-                            {index + 1} / {config?.length}
+                            {index + 1} / {config.length}
                           </div>
-                          <div className="absolute top-2 right-2">
-                            {banner.type === "new" && (
+                          {banner.type === "new" && (
+                            <div className="absolute top-2 right-2">
                               <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
                                 New
                               </span>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                {config?.length > 1 && (
+                {config.length > 1 && (
                   <>
                     <CarouselPrevious />
                     <CarouselNext />
@@ -234,7 +232,7 @@ const onDragEnd = (result) => {
               </Carousel>
             ) : (
               <Card>
-                <CardContent className="flex items-center justify-center h-64 text-gray-500 ">
+                <CardContent className="flex items-center justify-center h-64 text-gray-500">
                   <div className="text-center">
                     <Upload className="h-12 w-12 mx-auto mb-2" />
                     <p>No banners to preview</p>
@@ -245,7 +243,6 @@ const onDragEnd = (result) => {
           </div>
         </div>
 
-        {/* Bottom Section - Single File Upload */}
         <Card className="bg-background border-blue-200">
           <CardContent className="p-6">
             <div className="text-center">
@@ -255,7 +252,6 @@ const onDragEnd = (result) => {
               <p className="text-gray-600 mb-4">
                 Select an image file to upload (JPEG, PNG, WEBP • Max 5MB)
               </p>
-
               <div className="relative inline-block">
                 <Input
                   type="file"

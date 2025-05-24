@@ -58,14 +58,13 @@ const InternalConfig = () => {
   return (
    <>
    <NavbarItem title="Internal Configuration" breadcrumbs={breadcrumbs} />
-    <div className="p-10 max-w-4xl mx-auto w-full space-y-1">
-      <h2 className="text-3xl font-bold text-foreground text-center">Internal Configuration</h2>
+    <div className="px-10 py-4 w-full space-y-1">
 
       <div className="space-y-6">
         <div className="space-y-3">
           <label className="font-semibold text-lg text-foreground capitalize">About Description</label>
           <Textarea
-            className="w-full bg-gray-800 border-gray-700 text-white px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="mt-2 w-full bg-gray-800 border-gray-700 text-white px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
             value={config.aboutDescription || ""}
             onChange={(e) => setConfig({ ...config, aboutDescription: e.target.value })}
           />
@@ -79,7 +78,7 @@ const InternalConfig = () => {
             <label className="font-semibold text-lg text-foreground capitalize">{field.replace(/([A-Z])/g, ' $1')}</label>
             <input 
               type="file" 
-              className="w-full bg-gray-800 border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" 
+              className="mt-2 w-full bg-gray-800 border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" 
               onChange={(e) => handleFileUpload(field, e.target.files[0])} 
             />
             {(preview[field] || config[field]) && (
@@ -97,7 +96,7 @@ const InternalConfig = () => {
           <label className="font-semibold text-lg text-foreground capitalize">Slider Images</label>
           <input 
             type="file" 
-            className="w-full bg-gray-800 border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" 
+            className="mt-2 w-full bg-gray-800 border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" 
             onChange={(e) => handleFileUpload("sliderImages", e.target.files[0])} 
           />
           <div className="grid grid-cols-3 gap-4">

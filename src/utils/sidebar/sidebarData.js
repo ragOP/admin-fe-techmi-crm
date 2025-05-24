@@ -1,6 +1,8 @@
 import {
+  BadgeInfo,
   BellIcon,
   Briefcase,
+  CircleHelp,
   Code,
   ContactIcon,
   Crown,
@@ -148,7 +150,7 @@ export const data = {
         {
           title: "App Banners",
           url: "/dashboard/configuration/app-banners",
-        }
+        },
       ],
       roles: ["super_admin"],
     },
@@ -165,6 +167,30 @@ export const data = {
       url: "/dashboard/contact-us",
       icon: ContactIcon,
       roles: ["super_admin", "admin"],
+    },
+    {
+      title: "Info & Policy",
+      name: "Info & Policy",
+      url: "/dashboard/info-policy",
+      icon: BadgeInfo,
+      roles: ["super_admin", "admin"],
+      items: [
+        {
+          title: "Terms & Conditions",
+          name: "Terms & Conditions",
+          url: "/dashboard/info-policy/terms-conditions",
+        },
+        {
+          title: "Privacy Policy",
+          name: "Privacy Policy",
+          url: "/dashboard/info-policy/privacy-policy",
+        },
+        {
+          title: "FAQ",
+          name: "FAQ",
+          url: "/dashboard/info-policy/faq",
+        },
+      ],
     },
   ],
   // extra: [

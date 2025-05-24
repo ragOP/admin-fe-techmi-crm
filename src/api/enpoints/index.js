@@ -61,4 +61,9 @@ export const endpoints = {
 
   // Hsn Codes
   hsn_codes: "api/hsn-codes",
+
+  // Info and Policy
+  terms_condition: "api/terms-condition",
+  privacy_policy: "api/privacy-policy",
+  faq: "api/faq",
 };
