@@ -13,8 +13,10 @@ import {
 import FaqForm from "./FaqForm";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
 
 const FaqCard = ({ faq, index, onDelete }) => {
+  const [open, setOpen] = useState(false);
   const {
     attributes,
     listeners,
@@ -31,18 +33,24 @@ const FaqCard = ({ faq, index, onDelete }) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...attributes} >
       <Card className="px-6 py-4 shadow-md flex flex-row justify-between items-center space-x-2">
-        <div className="cursor-move text-muted-foreground">
+        <div className="cursor-move text-muted-foreground" {...listeners}>
           <GripVertical size={16} />
         </div>
         <div className="w-full">
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <div
-                className="prose cursor-pointer"
-                dangerouslySetInnerHTML={{ __html: faq.question }}
+             <div className="prose cursor-pointer">
+              <div className="text-base font-semibold">
+                {faq.question}
+              </div>
+               <div
+                className="text-base text-muted-foreground"
+                dangerouslySetInnerHTML={{ __html: faq.answer }}
               />
+
+             </div>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -51,7 +59,9 @@ const FaqCard = ({ faq, index, onDelete }) => {
                   Make changes to your faq here. Click save when you're done.
                 </DialogDescription>
               </DialogHeader>
-              <FaqForm id={faq._id} isEdit={true} initialData={faq} disableMinHeight height={250} />
+              <FaqForm id={faq._id} isEdit={true} initialData={faq} disableMinHeight height={250} 
+              closeDialog={() => setOpen(false)}
+              />
             </DialogContent>
           </Dialog>
         </div>

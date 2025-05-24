@@ -1,13 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import JoditEditor from "jodit-react";
 
-const TextEditor = ({ defaultValue, onTextChange, placeholder, height, disableMinHeight }) => {
+const TextEditor = ({ value, onTextChange, placeholder, height, disableMinHeight }) => {
   const editor = useRef(null);
-  const [content, setContent] = useState("");
-
-  useEffect(() => {
-    if (defaultValue) setContent(defaultValue);
-  }, [defaultValue]);
 
   const config = {
     height: height || 400,
@@ -25,10 +20,9 @@ const TextEditor = ({ defaultValue, onTextChange, placeholder, height, disableMi
   return (
     <JoditEditor
       ref={editor}
-      value={content}
+      value={value}
       config={config}
       onBlur={(newContent) => {
-        setContent(newContent);
         onTextChange(newContent);
       }}
     />

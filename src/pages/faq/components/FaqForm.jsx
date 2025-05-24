@@ -26,15 +26,25 @@ const FaqFormSchema = z.object({
   answer: z.string().min(2, "Answer must be at least 2 characters"),
 });
 
-const FaqForm = ({ id, isEdit = false, initialData, height, disableMinHeight }) => {
+const FaqForm = ({
+  id,
+  isEdit = false,
+  initialData,
+  height,
+  disableMinHeight,
+  closeDialog,
+}) => {
   const reduxAdminId = useSelector(selectAdminId);
   const quillRef = useRef();
   const navigate = useNavigate();
 
-  const defaultValues = useMemo(() => ({
-    question: initialData?.question || "",
-    answer: initialData?.answer || "",
-  }), [initialData]);
+  const defaultValues = useMemo(
+    () => ({
+      question: initialData?.question || "",
+      answer: initialData?.answer || "",
+    }),
+    [initialData]
+  );
 
   const form = useForm({
     resolver: zodResolver(FaqFormSchema),
@@ -42,20 +52,38 @@ const FaqForm = ({ id, isEdit = false, initialData, height, disableMinHeight }) 
   });
 
   const mutation = useMutation({
-    mutationFn: (data) => isEdit 
-      ? updateFaq({ payload: data, id }) 
-      : createFaq({ ...data, created_by_admin: reduxAdminId }),
+    mutationFn: (data) =>
+      isEdit
+        ? updateFaq({ payload: data, id })
+        : createFaq({ ...data, created_by_admin: reduxAdminId }),
     onSuccess: (res) => {
       if (res?.response?.success) {
+        if (closeDialog) {
+          closeDialog();
+        }
         toast.success(`Faq ${isEdit ? "updated" : "created"} successfully`);
-        form.reset();
+        if (isEdit) {
+          // reset to initialData after update
+          form.reset(initialData);
+        } else {
+          // clear form after create
+          form.reset({
+            question: "",
+            answer: "",
+          });
+        }
       } else {
-        toast.error(res?.response?.message || `Failed to ${isEdit ? "update" : "create"} Faq`);
+        toast.error(
+          res?.response?.message ||
+            `Failed to ${isEdit ? "update" : "create"} Faq`
+        );
       }
     },
     onError: (error) => {
       console.error(error);
-      toast.error(`Failed to ${isEdit ? "update" : "create"} Faq. Please try again.`);
+      toast.error(
+        `Failed to ${isEdit ? "update" : "create"} Faq. Please try again.`
+      );
     },
   });
 
@@ -77,7 +105,7 @@ const FaqForm = ({ id, isEdit = false, initialData, height, disableMinHeight }) 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-         {/* Question Field */}
+        {/* Question Field */}
         <FormField
           control={form.control}
           name="question"
@@ -105,11 +133,11 @@ const FaqForm = ({ id, isEdit = false, initialData, height, disableMinHeight }) 
                   render={({ field }) => (
                     <TextEditor
                       ref={quillRef}
-                      defaultValue={field.value}
+                      value={field.value}
                       onTextChange={field.onChange}
                       placeholder={"Enter Answer"}
-                      height={height || 600} 
-                      disableMinHeight
+                      height={height || 600}
+                      disableMinHeight={disableMinHeight}
                     />
                   )}
                 />
@@ -121,7 +149,11 @@ const FaqForm = ({ id, isEdit = false, initialData, height, disableMinHeight }) 
 
         <div className="mt-2">
           <Button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? "Processing..." : isEdit ? "Update Faq" : "Create Faq"}
+            {mutation.isPending
+              ? "Processing..."
+              : isEdit
+              ? "Update Faq"
+              : "Create Faq"}
           </Button>
         </div>
       </form>
