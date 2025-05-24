@@ -44,7 +44,8 @@ const FaqList = () => {
 
   useEffect(() => {
     if (data) {
-      setFaqs(data);
+      const sortedFaqs = data.sort((a, b) => a.order - b.order);
+      setFaqs(sortedFaqs);
     }
   }, [data]);
 
@@ -60,10 +61,12 @@ const FaqList = () => {
 
     const oldIndex = faq.findIndex((item) => item._id === active.id);
     const newIndex = faq.findIndex((item) => item._id === over.id);
-    const updated = arrayMove(faq, oldIndex, newIndex);
+    const updated = arrayMove(faq, oldIndex, newIndex).map((item, index) => ({
+    ...item,
+    order: index,
+  }));
 
     setFaqs(updated);
-    console.log(updated);
     reorderMutation.mutate(updated);
   };
 
