@@ -64,4 +64,5 @@ export const endpoints = {
 
   // Info and Policy
   terms_condition: "api/terms-condition",
+  privacy_policy: "api/privacy-policy",
 };

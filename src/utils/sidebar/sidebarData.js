@@ -172,6 +172,13 @@ export const data = {
       url: "/dashboard/terms-conditions",
       icon: Code,
       roles: ["super_admin", "admin"],
+    }, 
+    {
+      title: "Privacy Policy",
+      name: "Privacy Policy",
+      url: "/dashboard/privacy-policy",
+      icon: Code,
+      roles: ["super_admin", "admin"],
     }
   ],
   // extra: [
