@@ -5,7 +5,7 @@ export const updateTermsConditions = async ({ payload, id }) => {
   try {
     console.log(">>>>>>>>>>>>>>>>>>>>>>>paylod from update", payload);
     const apiResponse = await apiService({
-      endpoint: `${endpoints.blogs}/${id}`,
+      endpoint: `${endpoints.terms_condition}/${id}`,
       method: "PUT",
       data: payload,
     });

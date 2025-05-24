@@ -35,22 +35,25 @@ const TermCard = ({ term, index, moveCard, onDelete }) => {
         <div className="flex justify-center items-center cursor-move text-muted-foreground">
           <GripVertical size={16} />
         </div>
-        <div className="w-full flex justify-start">
+        <div
+          onClick={() => console.log("Open in editor function")}
+          className="w-full flex justify-start cursor-pointer"
+        >
           <div
             className="prose"
             dangerouslySetInnerHTML={{ __html: term.title }}
           />
         </div>
-       <div className="flex justify-center items-center ">
-         <Button
-          variant="destructive"
-          size="sm"
-          className=""
-          onClick={() => onDelete(term._id)}
-        >
-          <Trash2 size={16} />
-        </Button>
-       </div>
+        <div className="flex justify-center items-center ">
+          <Button
+            variant="destructive"
+            size="sm"
+            className=""
+            onClick={() => onDelete(term._id)}
+          >
+            <Trash2 size={16} />
+          </Button>
+        </div>
       </Card>
     </div>
   );
@@ -58,49 +61,52 @@ const TermCard = ({ term, index, moveCard, onDelete }) => {
 
 const TermsConditionList = () => {
   const queryClient = useQueryClient();
-  const [terms, setTerms] = useState([]);
+  const [terms, setTerms] = useState({});
+  const [isEdit, setIsEdit] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["terms"],
     queryFn: getTermsCondition,
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteTermsCondition,
-    onSuccess: (res) => {
-      console.log(res.response.message);
-      queryClient.invalidateQueries(["terms"])
-      toast.success(res);
-    },
-  });
+  // const deleteMutation = useMutation({
+  //   mutationFn: deleteTermsCondition,
+  //   onSuccess: (res) => {
+  //     queryClient.invalidateQueries(["terms"]);
+  //     toast.success(res);
+  //   },
+  // });
 
-  const reorderMutation = useMutation({
-    mutationFn: updateTermsConditions,
-    onSuccess: () => queryClient.invalidateQueries(["terms"]),
-  });
+  // const reorderMutation = useMutation({
+  //   mutationFn: updateTermsConditions,
+  //   onSuccess: () => queryClient.invalidateQueries(["terms"]),
+  // });
 
-  const moveCard = (fromIndex, toIndex) => {
-    const updated = [...terms];
-    const [moved] = updated.splice(fromIndex, 1);
-    updated.splice(toIndex, 0, moved);
-    setTerms(updated);
+  // const moveCard = (fromIndex, toIndex) => {
+  //   const updated = [...terms];
+  //   const [moved] = updated.splice(fromIndex, 1);
+  //   updated.splice(toIndex, 0, moved);
+  //   setTerms(updated);
 
-    reorderMutation.mutate(updated.map((t, i) => ({ id: t.id, order: i })));
-  };
+  //   reorderMutation.mutate(updated.map((t, i) => ({ id: t.id, order: i })));
+  // };
 
-  const handleDelete = (id) => {
-    deleteMutation.mutate(id);
-  };
+  // const handleDelete = (id) => {
+  //   deleteMutation.mutate(id);
+  // };
 
   useEffect(() => {
-    if (data) {
-      setTerms(data);
+    if (data?.terms_and_conditions) {
+      setIsEdit(true);
+      setTerms({
+        terms_and_conditions: data?.terms_and_conditions,
+      });
     }
   }, [data]);
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex flex-col overflow-x-auto p-4 space-y-4">
+      {/* <div className="flex flex-col overflow-x-auto p-4 space-y-4">
         {isLoading && <Skeleton className="w-40 h-40" />}
         {terms.map((term, index) => (
           <TermCard
@@ -111,10 +117,24 @@ const TermsConditionList = () => {
             onDelete={handleDelete}
           />
         ))}
-      </div>
-      <div className="px-4">
-        <TermsConditionForm />
-      </div>
+      </div> */}
+      {/* <div className="px-4">
+        <TermsConditionForm
+          isEdit={isEdit}
+          initialData={terms.terms_and_conditions}
+         />
+      </div> */}
+      {isLoading ? (
+        <Skeleton className="w-full h-full" />
+      ) : terms ? (
+        <div className="px-4">
+          <TermsConditionForm id={data?._id} isEdit={isEdit} initialData={terms} />
+        </div>
+      ) : (
+        <div className="px-4">
+          <TermsConditionForm />
+        </div>
+      )}
     </DndProvider>
   );
 };

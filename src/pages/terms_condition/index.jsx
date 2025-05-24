@@ -1,53 +1,45 @@
 import CustomActionMenu from "@/components/custom_action";
 import NavbarItem from "@/components/navbar/navbar_item";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { useDebounce } from "@uidotdev/usehooks";
-import TermsConditionList from "./components/TermsConditionList";
+import TermsConditionForm from "./components/TermsConditionForm";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { getTermsCondition } from "./helpers/getTermsCondition";
 
 const TermsCondition = () => {
-  const navigate = useNavigate();
-
-  const paramInitialState = {
-    page: 1,
-    per_page: 50,
-    search: "",
-  };
-  const [blogsLength, setBlogsLength] = useState(0);
-  const [searchText, setSearchText] = useState("");
-  const [params, setParams] = useState(paramInitialState);
-
-  const debouncedSearch = useDebounce(searchText, 500);
-
-  const handleSearch = (e) => {
-    setSearchText(e.target.value);
-  };
-
-  const onRowsPerPageChange = (newRowsPerPage) => {
-    setParams((prev) => ({
-      ...prev,
-      per_page: newRowsPerPage,
-    }));
-  };
+  const [terms, setTerms] = useState({});
+  const [isEdit, setIsEdit] = useState(false);
 
   const breadcrumbs = [{ title: "Terms & Conditions", isNavigation: false }];
 
+  const { data, isLoading } = useQuery({
+    queryKey: ["terms"],
+    queryFn: getTermsCondition,
+  });
+
   useEffect(() => {
-    if (params.search !== debouncedSearch) {
-      setParams((prev) => ({
-        ...prev,
-        search: debouncedSearch,
-      }));
+    if (data?.terms_and_conditions) {
+      setIsEdit(true);
+      setTerms({ terms_and_conditions: data.terms_and_conditions });
     }
-  }, [debouncedSearch]);
+  }, [data]);
+
+  const renderForm = () => (
+    <div className="px-4">
+      <TermsConditionForm id={data?._id} isEdit={isEdit} initialData={terms} />
+    </div>
+  );
 
   return (
-    <div className="flex flex-col px-6 mb-4 ">
+    <div className="flex flex-col px-6 mb-4">
       <NavbarItem title="Terms & Conditions" breadcrumbs={breadcrumbs} />
-      <TermsConditionList />
+      {isLoading ? (
+        <Skeleton className="w-full h-full" />
+      ) : (
+        renderForm()
+      )}
     </div>
   );
 };
 
 export default TermsCondition;
-
