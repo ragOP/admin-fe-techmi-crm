@@ -68,7 +68,7 @@ const HsnCodesEditor = lazy(() =>
 );
 const TermsCondition = lazy(() => import("@/pages/terms_condition"));
 const PrivacyPolicy = lazy(() => import("@/pages/privacy_policy"));
-
+const Faq = lazy(() => import("@/pages/faq"));
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -207,8 +207,9 @@ const Router = () => {
           <Route path="configuration/internal" element={<InternalConfig />} />
           <Route path="configuration/app-banners" element={<AppBanners />} />
 
-          <Route path="terms-conditions" element={<TermsCondition />} />
-          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="info-policy/terms-conditions" element={<TermsCondition />} />
+          <Route path="info-policy/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="info-policy/faq" element={<Faq />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>
