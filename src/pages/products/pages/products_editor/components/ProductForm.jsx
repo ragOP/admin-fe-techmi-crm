@@ -83,7 +83,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       // igst: initialData?.igst || 0,
       is_active: initialData?.is_active ?? true,
       quantity: initialData?.quantity || 0,
-      hsn_code: initialData?.hsn_code || null,
+      hsn_code: initialData?.hsn_code?._id || null,
     },
   });
 
@@ -155,6 +155,8 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       toast.error("Failed to update product. Please try again.");
     },
   });
+
+  console.log(form.getValues());
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -735,7 +737,7 @@ function ProductTaxFields({ form }) {
     select: (data) => data?.response?.data?.data,
   });
 
-  console.log(hsnCodes);
+  console.log("HSN Codes:", hsnCodes);
 
   return (
     <div className="col-span-3">
