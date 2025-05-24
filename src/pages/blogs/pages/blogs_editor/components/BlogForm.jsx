@@ -295,7 +295,7 @@ const BlogForm = ({ isEdit = false, initialData }) => {
                   render={({ field }) => (
                     <TextEditor
                       ref={quillRef}
-                      defaultValue={field.value}
+                      value={field.value}
                       onTextChange={field.onChange}
                     />
                   )}

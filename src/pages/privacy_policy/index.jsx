@@ -18,6 +18,7 @@ const PrivacyPolicy = () => {
 
   useEffect(() => {
     if (data?.privacy_policy) {
+      console.log("controll reachgnjkn ")
       setIsEdit(true);
       setPrivacyPolicy({ privacy_policy: data.privacy_policy });
     }
@@ -28,6 +29,8 @@ const PrivacyPolicy = () => {
       <PrivacyPolicyForm id={data?._id} isEdit={isEdit} initialData={privacyPolicy} />
     </div>
   );
+
+  console.log("data", data);
 
   return (
     <div className="flex flex-col px-6 mb-4">

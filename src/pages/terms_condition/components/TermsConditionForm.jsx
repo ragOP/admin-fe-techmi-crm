@@ -29,13 +29,11 @@ const TermsConditionForm = ({ id, isEdit = false, initialData }) => {
   const quillRef = useRef();
   const navigate = useNavigate();
 
-  const defaultValues = useMemo(() => ({
-    terms_and_conditions: initialData?.terms_and_conditions || "",
-  }), [initialData]);
-
   const form = useForm({
     resolver: zodResolver(TermsConditionFormSchema),
-    defaultValues,
+    defaultValues: {
+      terms_and_conditions: initialData?.terms_and_conditions || "",
+    },
   });
 
   const mutation = useMutation({
@@ -59,12 +57,6 @@ const TermsConditionForm = ({ id, isEdit = false, initialData }) => {
     mutation.mutate(data);
   };
 
-  useEffect(() => {
-    if (isEdit && initialData) {
-      form.setValue("terms_and_conditions", initialData.terms_and_conditions);
-    }
-  }, [isEdit, initialData, form]);
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -80,7 +72,7 @@ const TermsConditionForm = ({ id, isEdit = false, initialData }) => {
                   render={({ field }) => (
                     <TextEditor
                       ref={quillRef}
-                      defaultValue={field.value}
+                      value={field.value}
                       onTextChange={field.onChange}
                       placeholder={"Enter Terms & Conditions"}
                       height={600}
