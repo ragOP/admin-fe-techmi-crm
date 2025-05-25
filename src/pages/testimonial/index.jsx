@@ -22,7 +22,6 @@ const Testimonials = () => {
           title="testimonials"
           total={testimonialLength}
           onAdd={onAdd}
-          handleSearch={handleSearch}
         />
         <TestimonialsTable
           setTestimonialLength={setTestimonialLength}

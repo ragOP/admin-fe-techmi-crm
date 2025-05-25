@@ -6,7 +6,6 @@ import {
 import { format } from "date-fns";
 import CustomTable from "@/components/custom_table";
 import ActionMenu from "@/components/action_menu";
-import Typography from "@/components/typography";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
@@ -25,8 +24,6 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
     queryKey: ["testimonials"],
     queryFn: () => fetchTestimonials(),
   });
-
-  const total = testimonials?.total || 1;
 
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
@@ -101,9 +98,6 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
     setTestimonialLength(testimonials?.length || 0);
   }, [testimonials, setTestimonialLength]);
 
-  const onPageChange = (page) => {
-    setParams((prev) => ({ ...prev, page: page + 1 }));
-  };
 
   return (
     <>
@@ -112,7 +106,6 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
         data={testimonials}
         isLoading={isLoading}
         error={error}
-        onPageChange={onPageChange}
       />
       <CustomDialog
         onOpen={openDelete}

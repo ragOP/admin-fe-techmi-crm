@@ -17,11 +17,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { createTestimonial } from "../helpers/createTestimonial";
 import { updateTestimonial } from "../helpers/updateTestimonial";
-import RatingCard from "@/pages/testimonial/components/RatingCard";
+import { Rating } from "react-simple-star-rating";
+import { useState } from "react";
 
 const TestimonialsForm = ({ initialData, isEditMode }) => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [preview, setPreview] = useState(initialData?.image || null);
 
   const form = useForm({
     resolver: zodResolver(TestimonialsFormSchema),
@@ -58,12 +60,12 @@ const TestimonialsForm = ({ initialData, isEditMode }) => {
   const onSubmit = (data) => {
     console.log(data);
     const formData = new FormData();
-  formData.append("customer_name", data.customer_name);
-  formData.append("message", data.message);
-  formData.append("rating", String(data.rating));
-  if (data.image instanceof File) {
-    formData.append("image", data.image); // only append if it's a File
-  }
+    formData.append("customer_name", data.customer_name);
+    formData.append("message", data.message);
+    formData.append("rating", String(data.rating));
+    if (data.image instanceof File) {
+      formData.append("image", data.image); // only append if it's a File
+    }
     if (isEditMode) updateMutation.mutate(formData);
     else {
       createMutation.mutate(formData);
@@ -99,6 +101,7 @@ const TestimonialsForm = ({ initialData, isEditMode }) => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="rating"
@@ -106,8 +109,14 @@ const TestimonialsForm = ({ initialData, isEditMode }) => {
             <FormItem>
               <FormLabel>Rating</FormLabel>
               <FormControl>
-                {/* <Textarea placeholder="Enter rating" {...field} /> */}
-                <RatingCard value={field.value} onChange={field.onChange} />
+                <Rating
+                  allowFraction
+                  initialValue={field.value}
+                  onClick={(rate) => field.onChange(rate)}
+                  size={25}
+                  SVGstyle={{ display: "inline-block" }}
+                  transition
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,14 +131,30 @@ const TestimonialsForm = ({ initialData, isEditMode }) => {
             <FormItem>
               <FormLabel>Image</FormLabel>
               <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    form.setValue("image", file); // manually set value
-                  }}
-                />
+                <div className="space-y-4">
+                  {preview && (
+                    <img
+                      src={
+                        typeof preview === "string"
+                          ? preview
+                          : URL.createObjectURL(preview)
+                      }
+                      alt="Image Preview"
+                      className="h-32 w-32 object-cover rounded-md"
+                    />
+                  )}
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setPreview(file); // update preview
+                        form.setValue("image", file); // update form value
+                      }
+                    }}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
