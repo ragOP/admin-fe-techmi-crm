@@ -23,6 +23,7 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
   } = useQuery({
     queryKey: ["testimonials"],
     queryFn: () => fetchTestimonials(),
+    select: (data) => data?.data,
   });
 
   const [openDelete, setOpenDelete] = useState(false);
