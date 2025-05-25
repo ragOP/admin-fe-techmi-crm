@@ -202,11 +202,11 @@ const AppBanners = () => {
                   {config.map((banner, index) => (
                     <CarouselItem key={`preview-${index}-${banner.name}`}>
                       <div className="p-1 relative">
-                        <div className="flex aspect-video items-center justify-center p-6 bg-muted rounded-lg relative">
+                        <div className="flex aspect-video items-center justify-center bg-muted rounded-lg relative">
                           <img
                             src={banner.url || banner}
                             alt={`Banner ${index + 1}`}
-                            className="object-contain h-full w-full"
+                            className="object-cover h-full w-full"
                           />
                           <div className="absolute bottom-2 left-2 bg-black/70 text-white text-sm px-3 py-1 rounded">
                             {index + 1} / {config.length}
