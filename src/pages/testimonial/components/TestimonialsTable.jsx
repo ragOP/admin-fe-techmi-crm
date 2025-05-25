@@ -1,5 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTestimonials, deleteTestimonial } from "../helpers/fetchTestimonials";
+import {
+  fetchTestimonials,
+  deleteTestimonial,
+} from "../helpers/fetchTestimonials";
 import { format } from "date-fns";
 import CustomTable from "@/components/custom_table";
 import ActionMenu from "@/components/action_menu";
@@ -52,11 +55,21 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
         </div>
       ),
     },
-    { key: "customer_name",
-       label: "Customer Name",
-      render: (value) => value || "N/A"
-     },
-    { key: "message", label: "Message" },
+    {
+      key: "customer_name",
+      label: "Customer Name",
+      render: (value) => value || "N/A",
+    },
+    {
+      key: "message",
+      label: "Message",
+      render: (value) =>
+        value
+          ? value.length > 50
+            ? `${value.slice(0, 50)}...`
+            : value
+          : "N/A",
+    },
     {
       key: "createdAt",
       label: "Created At",
