@@ -63,7 +63,6 @@ const Products = () => {
   };
 
   const onRowsPerPageChange = (value) => {
-    console.log("Rows per page", value);
     setParams((prev) => ({
       ...prev,
       per_page: value,

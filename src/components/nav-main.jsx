@@ -16,9 +16,16 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-export function NavMain({ items, showHeader = false, header }) {
+export function NavMain({ items, showHeader = false, header, pathname }) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isActive = (itemUrl) => {
+    if (itemUrl === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+    return pathname.startsWith(itemUrl);
+  };
 
   return (
     <SidebarGroup>
@@ -29,14 +36,20 @@ export function NavMain({ items, showHeader = false, header }) {
             <Collapsible
               key={item.title}
               asChild
-              defaultOpen={item.items.some((subItem) => subItem.url === location.pathname)}
+              defaultOpen={item.items.some((subItem) => isActive(subItem.url))}
               className="group/collapsible"
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
                     tooltip={item.title}
-                    className={item.items.some((subItem) => subItem.url === location.pathname) ? "bg-gray-200 dark:bg-gray-700" : ""}
+                    className={
+                      item.items.some(
+                        (subItem) => subItem.url === location.pathname
+                      )
+                        ? "bg-gray-200 dark:bg-gray-700"
+                        : ""
+                    }
                   >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
@@ -50,7 +63,11 @@ export function NavMain({ items, showHeader = false, header }) {
                         <SidebarMenuSubButton asChild>
                           <a
                             onClick={() => navigate(subItem.url)}
-                            className={location.pathname === subItem.url ? "bg-gray-300 dark:bg-gray-600" : ""}
+                            className={
+                              isActive(subItem.url)
+                                ? "bg-gray-300 dark:bg-gray-600"
+                                : ""
+                            }
                           >
                             <span>{subItem.title}</span>
                           </a>
@@ -66,7 +83,9 @@ export function NavMain({ items, showHeader = false, header }) {
               <SidebarMenuButton
                 tooltip={item.title}
                 onClick={() => navigate(item.url)}
-                className={location.pathname === item.url ? "bg-gray-200 dark:bg-gray-700" : ""}
+                className={
+                  isActive(item.url) ? "bg-gray-200 dark:bg-gray-700" : ""
+                }
               >
                 {item.icon ? <item.icon /> : <Circle className="w-4 h-4" />}
                 <span>{item.title}</span>

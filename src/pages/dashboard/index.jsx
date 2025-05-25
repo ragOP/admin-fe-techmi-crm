@@ -2,10 +2,18 @@ import NavbarItem from "@/components/navbar/navbar_item";
 import AnalyticsCards from "./components/AnalyticsCards";
 import DashboardCharts from "./components/DashboardCharts";
 import { DateRangePicker } from "@/components/date_filter";
-import { useState } from "react";
-import TopProducts from "./components/TopProducts";
+import { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { CloudDownload, Printer } from "lucide-react";
+import ExportDashboardDialog from "./components/ExportDashboardDialog";
+import { useReactToPrint } from "react-to-print";
 
 const Dashboard = () => {
+  const contentRef = useRef(null);
+
+  const reactToPrintFn = useReactToPrint({ contentRef });
+
+  const [openBulkExportDialog, setOpenBulkExportDialog] = useState(false);
   const [params, setParams] = useState({
     start_date: null,
     end_date: null,
@@ -33,17 +41,55 @@ const Dashboard = () => {
     });
   };
 
+  const onOpenBulkExportDialog = () => {
+    setOpenBulkExportDialog(true);
+  };
+
+  const onCloseBulkExportDialog = () => {
+    setOpenBulkExportDialog(false);
+  };
+
+  const CustomBox = () => {
+    return (
+      <div className="flex flex-row gap-4">
+        <Button
+          onClick={onOpenBulkExportDialog}
+          variant="outline"
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <CloudDownload />
+          <span>Bulk Export</span>
+        </Button>
+        <Button
+          onClick={reactToPrintFn}
+          variant="outline"
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <Printer />
+          <span>Print</span>
+        </Button>
+        <DateRangePicker onChange={handleDateRangeChange} />
+      </div>
+    );
+  };
+
   return (
-    <div className="flex flex-col gap-4">
-      <NavbarItem
-        title="Dashboard"
-        customBox={<DateRangePicker onChange={handleDateRangeChange} />}
+    <>
+      <div className="flex flex-col gap-4">
+        <NavbarItem title="Dashboard" customBox={<CustomBox />} />
+        <div className="flex flex-col gap-4" ref={contentRef}>
+          <AnalyticsCards params={params} />
+
+          <DashboardCharts params={params} />
+        </div>
+      </div>
+
+      <ExportDashboardDialog
+        openDialog={openBulkExportDialog}
+        onClose={onCloseBulkExportDialog}
+        params={params}
       />
-
-      <AnalyticsCards params={params} />
-
-      <DashboardCharts params={params} />
-    </div>
+    </>
   );
 };
 

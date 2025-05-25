@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { clearCredentials } from "@/redux/admin/adminSlice";
 import { useDispatch } from "react-redux";
 import { Loader2 } from "lucide-react";
+import InventoryHistory from "@/pages/products/pages/inventory_hisotry";
 
 // Lazy imports
 const Layout = lazy(() => import("@/layout"));
@@ -79,15 +80,19 @@ const Router = () => {
   const navigate = useNavigate();
 
   const checkTokenExpiration = () => {
-    const publicRoutes = ['/login', '/signup', '/forgot-password'];
-    const publicPathPrefixes = ['/reset-password/'];
-    
+    const publicRoutes = ["/login", "/signup", "/forgot-password"];
+    const publicPathPrefixes = ["/reset-password/"];
+
     if (publicRoutes.includes(window.location.pathname)) {
       return;
     }
 
     // Check routes with dynamic parameters
-    if (publicPathPrefixes.some(prefix => window.location.pathname.startsWith(prefix))) {
+    if (
+      publicPathPrefixes.some((prefix) =>
+        window.location.pathname.startsWith(prefix)
+      )
+    ) {
       return;
     }
 
@@ -164,6 +169,10 @@ const Router = () => {
           <Route path="products/add" element={<ProductsEditor />} />
           <Route path="products/edit/:id" element={<ProductsEditor />} />
           <Route path="products/:id" element={<ProductDetails />} />
+          <Route
+            path="products/inventory-history/:id"
+            element={<InventoryHistory />}
+          />
 
           {/* Categories Routes */}
           <Route path="categories" element={<Categories />} />
@@ -211,13 +220,22 @@ const Router = () => {
           <Route path="configuration/internal" element={<InternalConfig />} />
           <Route path="configuration/app-banners" element={<AppBanners />} />
 
-          <Route path="info-policy/terms-conditions" element={<TermsCondition />} />
-          <Route path="info-policy/privacy-policy" element={<PrivacyPolicy />} />
+          <Route
+            path="info-policy/terms-conditions"
+            element={<TermsCondition />}
+          />
+          <Route
+            path="info-policy/privacy-policy"
+            element={<PrivacyPolicy />}
+          />
           <Route path="info-policy/faq" element={<Faq />} />
 
           <Route path="testimonials" element={<Testimonials />} />
           <Route path="testimonials/add" element={<TestimonialsEditor />} />
-          <Route path="testimonials/edit/:id" element={<TestimonialsEditor />} />
+          <Route
+            path="testimonials/edit/:id"
+            element={<TestimonialsEditor />}
+          />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>

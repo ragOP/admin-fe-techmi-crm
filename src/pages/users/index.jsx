@@ -30,7 +30,7 @@ const Users = () => {
     setSearchText(e.target.value);
   };
 
-    const onOpenBulkExportDialog = () => {
+  const onOpenBulkExportDialog = () => {
     setOpenBulkExportDialog(true);
   };
 
