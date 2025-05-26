@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { CustomDialog } from "@/components/custom_dialog";
 
-const TestimonialsTable = ({ setTestimonialLength }) => {
+const TestimonialsTable = ({ setTestimonialLength, params, setParams }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -21,8 +21,9 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["testimonials"],
-    queryFn: () => fetchTestimonials(),
+    queryKey: ["testimonials", params],
+    queryFn: () => fetchTestimonials({ params }),
+    select: (data) => data?.data,
   });
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -68,6 +69,17 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
           : "N/A",
     },
     {
+      key: "rating",
+      label: "Rating",
+      render: (value) =>(
+        <div className="flex items-center gap-2">
+          {[...Array(value)].map((star) => (
+            <span>⭐</span>
+          ))}
+        </div>
+      ),
+    },
+    {
       key: "createdAt",
       label: "Created At",
       render: (value) => format(new Date(value), "dd/MM/yyyy"),
@@ -94,6 +106,17 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
     },
   ];
 
+   const onPageChange = (page) => {
+    setParams((prev) => ({
+      ...prev,
+      page: page + 1,
+    }));
+  };
+
+  const perPage = params.per_page;
+  const currentPage = params.page;
+  const totalPages = Math.ceil(testimonials?.length / perPage);
+
   useEffect(() => {
     setTestimonialLength(testimonials?.length || 0);
   }, [testimonials, setTestimonialLength]);
@@ -106,6 +129,10 @@ const TestimonialsTable = ({ setTestimonialLength }) => {
         data={testimonials}
         isLoading={isLoading}
         error={error}
+        perPage={perPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
       <CustomDialog
         onOpen={openDelete}
