@@ -22,8 +22,11 @@ import { filterItemsByRole } from "@/utils/sidebar/filterItemsByRole";
 import { data } from "@/utils/sidebar/sidebarData";
 import { useQuery } from "@tanstack/react-query";
 import { fetchServices } from "@/pages/services/helpers/fetchServices";
+import { useLocation } from "react-router";
 
 export function AppSidebar({ ...props }) {
+  const location = useLocation();
+
   const role = useSelector(selectAdminRole);
   const name = useSelector(selectAdminName);
   const email = useSelector(selectAdminEmail);
@@ -62,11 +65,9 @@ export function AppSidebar({ ...props }) {
     avatar: "/user.jpg",
   };
 
-  // Helper to filter items and their submenus
   const filterBySearch = (items) =>
     items
       .map((item) => {
-        // If item has sub-items, filter them too
         if (item.items && Array.isArray(item.items)) {
           const filteredSub = filterBySearch(item.items);
           if (
@@ -77,7 +78,6 @@ export function AppSidebar({ ...props }) {
           }
           return null;
         }
-        // No sub-items: filter by title
         if (item.title.toLowerCase().includes(search.toLowerCase())) {
           return item;
         }
@@ -90,6 +90,8 @@ export function AppSidebar({ ...props }) {
   const projectsFiltered = filterBySearch(filteredProjects);
   const orderManagementFiltered = filterBySearch(orderManagement);
   const moreFiltered = filterBySearch(filteredMore);
+
+  const pathname = location.pathname;
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -104,21 +106,33 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent className="overflow-y-auto [&::-webkit-scrollbar]:hidden">
         {navMainFiltered.length > 0 && (
-          <NavMain items={navMainFiltered} showHeader={false} />
+          <NavMain
+            items={navMainFiltered}
+            showHeader={false}
+            pathname={pathname}
+          />
         )}
         {projectsFiltered.length > 0 && (
-          <NavMain items={projectsFiltered} showHeader={true} header={"More"} />
+          <NavMain
+            items={projectsFiltered}
+            showHeader={true}
+            header={"More"}
+            pathname={pathname}
+          />
         )}
         {orderManagementFiltered.length > 0 && (
           <NavMain
             items={orderManagementFiltered}
             showHeader={true}
             header={"Management"}
+            pathname={pathname}
           />
         )}
       </SidebarContent>
       <SidebarFooter>
-        {moreFiltered.length > 0 && <NavMain items={moreFiltered} />}
+        {moreFiltered.length > 0 && (
+          <NavMain items={moreFiltered} pathname={pathname} />
+        )}
         <NavUser user={userInfo} />
       </SidebarFooter>
       <SidebarRail />

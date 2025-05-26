@@ -77,10 +77,7 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       is_best_seller: initialData?.is_best_seller || false,
       category: initialData?.category || [],
       medicine_type: initialData?.medicine_type?._id || null,
-      // gst: initialData?.gst || 0,
-      // cgst: initialData?.cgst || 0,
-      // sgst: initialData?.sgst || 0,
-      // igst: initialData?.igst || 0,
+      product_type: initialData?.product_type || "product",
       is_active: initialData?.is_active ?? true,
       quantity: initialData?.quantity || 0,
       hsn_code: initialData?.hsn_code?._id || null,
@@ -828,7 +825,7 @@ function ProductStatusFields({ form, isEditMode }) {
         />
       </div>
 
-      <div className="col-span-6">
+      <div className="col-span-3">
         <FormField
           control={form.control}
           name="quantity"
@@ -844,6 +841,33 @@ function ProductStatusFields({ form, isEditMode }) {
                   {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="col-span-3">
+        <FormField
+          control={form.control}
+          name="product_type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product type</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={(val) => field.onChange(val)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="product">Product</SelectItem>
+                    <SelectItem value="service">Service</SelectItem>
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

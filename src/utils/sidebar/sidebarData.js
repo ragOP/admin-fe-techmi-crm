@@ -2,8 +2,6 @@ import {
   BadgeInfo,
   BellIcon,
   Briefcase,
-  CircleHelp,
-  Code,
   ContactIcon,
   Crown,
   FileText,
@@ -199,7 +197,7 @@ export const data = {
       url: "/dashboard/testimonials",
       icon: MessageSquarePlus,
       roles: ["super_admin", "admin", "sub_admin"],
-    }
+    },
   ],
   // extra: [
   //   {

@@ -22,7 +22,12 @@ export const endpoints = {
   register: "api/auth/register",
   users: "api/auth/user",
   signup: "api/auth/register",
+
+  // products
   product: "api/product",
+
+  productInventoryHistory: "api/inventory-history",
+  
   category: "api/category",
   service: "api/service",
   cart: "api/cart",

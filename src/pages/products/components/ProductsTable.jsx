@@ -48,6 +48,7 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
     }));
     // window.scrollTo(0, 0);
   };
+
   const { mutate: deleteProuductsMutation, isLoading: isDeleting } =
     useMutation({
       mutationFn: deleteProduct,
@@ -68,12 +69,16 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
   const products = apiProductsResponse?.response?.data?.data || [];
   const total = apiProductsResponse?.response?.data?.total || 0;
 
-  const onNavigateToEdit = (service) => {
-    navigate(`/dashboard/products/edit/${service._id}`);
+  const onNavigateToEdit = (product) => {
+    navigate(`/dashboard/products/edit/${product._id}`);
   };
 
-  const onNavigateDetails = (service) => {
-    navigate(`/dashboard/products/${service._id}`);
+  const onNavigateDetails = (product) => {
+    navigate(`/dashboard/products/${product._id}`);
+  };
+
+  const onNavigateInventoryHistory = (product) => {
+    navigate(`/dashboard/products/inventory-history/${product._id}`);
   };
 
   useEffect(() => {
@@ -129,7 +134,28 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
       key: "inventory",
       label: "Inventory",
     },
-    { key: "manufacturer", label: "Manufacturer" },
+    {
+      key: "product_type",
+      label: "Product type",
+      render: (value) => {
+        let bg = "bg-blue-100";
+        let text = "text-blue-700";
+        if (value === "service") {
+          bg = "bg-purple-100";
+          text = "text-purple-700";
+        } else if (value === "product") {
+          bg = "bg-blue-100";
+          text = "text-blue-700";
+        }
+        return (
+          <span
+            className={`inline-block px-2 py-1 rounded-full ${bg} ${text} text-xs font-medium`}
+          >
+            {value ? value.charAt(0).toUpperCase() + value.slice(1) : "-"}
+          </span>
+        );
+      },
+    },
     {
       key: "is_active",
       label: "Status",
@@ -183,6 +209,11 @@ const ProductsTable = ({ setProductLength, params, setParams }) => {
               icon: Trash2,
               action: () => onOpenDialog(row),
               className: "text-red-500",
+            },
+            {
+              label: "Inventory history",
+              icon: Eye,
+              action: () => onNavigateInventoryHistory(row),
             },
           ]}
         />
