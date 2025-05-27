@@ -1,139 +1,133 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { GripVertical, Trash2, Upload } from "lucide-react";
-import NavbarItem from "@/components/navbar/navbar_item";
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useSelector } from "react-redux";
+import { useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import { PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
+import NavbarItem from "@/components/navbar/navbar_item";
+import { selectAdminRole } from "@/redux/admin/adminSelector";
 import {
   fetchAppBanners,
   postAppBanners,
   deleteAppBanner,
+  fetchProducts,
 } from "../helper";
-
-const SortableItem = ({ id, banner, index, onDelete }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      className={`transition-all duration-200 border-l-4 ${
-        banner.type === "new" ? "border-l-green-500" : "border-l-blue-500"
-      }`}
-    >
-      <CardContent {...listeners}>
-        <div className="flex items-center gap-3">
-          <div className="cursor-grab hover:cursor-grabbing p-1 text-gray-400 hover:text-gray-600">
-            <GripVertical className="h-5 w-5" />
-          </div>
-
-          <div className="flex-1">
-            <div className="text-base font-medium">Banner {index + 1}</div>
-            <div className="text-sm text-gray-500 truncate">
-              {(banner?.name || "").slice(0, 10)} •{" "}
-              {banner.type === "new" ? "New upload" : "Existing"}
-            </div>
-          </div>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(banner._id, index)}
-            className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+import AddBanner from "./components/AddBanner";
+import PreviewBanner from "./components/PreviewBanner";
+import BannerList from "./components/BannerList";
 
 const AppBanners = () => {
+  // Local state
   const [config, setConfig] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({});
+  
+  // Refs for infinite scrolling
+  const observerRef = useRef(null);
+  const dropdownRef = useRef(null);
+  
+  // Configuration
   const breadcrumbs = [{ title: "App Banners", isNavigation: false }];
   const sensors = useSensors(useSensor(PointerSensor));
+  const role = useSelector(selectAdminRole);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchAppBanners({});
-        setConfig(response?.response?.data[0].banner || []);
-      } catch (error) {
-        toast.error("Failed to load banners");
-      }
-    };
-    fetchData();
-  }, []);
+  // Base parameters for product fetching
+  const baseParams = {
+    per_page: 10,
+    search: "",
+  };
 
-  const handleSingleFileUpload = async (event) => {
+  // Infinite query for products with pagination
+  const {
+    data: productPages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    error: productsError,
+  } = useInfiniteQuery({
+    queryKey: ["products", role],
+    queryFn: async ({ pageParam = 1 }) => {
+      console.log("Fetching products page:", pageParam);
+      return fetchProducts({
+        params: { ...baseParams, page: pageParam },
+        role,
+      });
+    },
+    getNextPageParam: (lastPage, pages) => {
+      const currentPage = pages.length;
+      const totalItems = lastPage.response?.data?.total || 0;
+      const loadedItems = pages.reduce(
+        (sum, page) => sum + (page.response?.data?.data?.length || 0), 
+        0
+      );
+      
+      console.log(`Page ${currentPage}: loaded ${loadedItems}/${totalItems} items`);
+      return loadedItems < totalItems ? currentPage + 1 : undefined;
+    },
+    // Flatten all pages into single array
+    select: (data) => data.pages.map((page) => page.response.data.data).flat(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+  });
+
+  // Get flattened products array
+  const products = productPages ?? [];
+
+  // Simple query for banners
+  const { data: banners = [] } = useQuery({
+    queryKey: ["banners"],
+    queryFn: fetchAppBanners,
+    select: (data) => data.response?.data[0].banner,
+  });
+
+  // Handle file selection (validation only)
+  const handleFileSelection = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Validate file type
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Only JPEG, PNG or WEBP files are allowed.");
+      event.target.value = ""; // Reset file input
       return;
     }
 
-    const previewURL = URL.createObjectURL(file);
+    // Store file data for later upload
+    setFormData({
+      file,
+      fileName: file.name,
+      fileUrl: URL.createObjectURL(file)
+    });
+  };
 
-    const newBanner = {
-      name: file.name,
-      file: file,
-      url: previewURL,
-      type: "new",
-      _id: crypto.randomUUID(), // For unique drag id
-    };
-    const newConfig = [...config, newBanner];
-    setConfig(newConfig);
+  // Handle banner upload when Add Banner button is clicked
+  const handleAddBanner = async (productId) => {
+    console.log("productId", productId);
+    if (!formData.file || !productId) {
+      toast.error("Please select both a product and a file.");
+      return;
+    }
+
+    // Prepare form data
+    const payload = new FormData();
+    payload.append("name", formData.fileName);
+    payload.append("file", formData.file);
+    payload.append("product", productId);
 
     setLoading(true);
     try {
-      const payload = new FormData();
-      newConfig.forEach((item, index) => {
-        payload.append(`files[${index}][name]`, item.name);
-        if (item.url && !item.file) {
-          payload.append(`files[${index}][url]`, item.url);
-        } else {
-          payload.append(`files[${index}][file]`, item.file);
-        }
-      });
-
       await postAppBanners({ data: payload });
       toast.success("Banner uploaded successfully!");
-      event.target.value = "";
+      queryClient.invalidateQueries(["banners"]);
+      
+      // Reset form data
+      setFormData({});
+      if (formData.fileUrl) {
+        URL.revokeObjectURL(formData.fileUrl);
+      }
     } catch (error) {
       toast.error(`Upload failed: ${error?.message || "Unknown error"}`);
     } finally {
@@ -141,18 +135,18 @@ const AppBanners = () => {
     }
   };
 
+  // Handle banner deletion
   const handleDeleteBanner = async (id, index) => {
-    const updatedBanners = [...config];
     try {
       await deleteAppBanner({ id });
-      updatedBanners.splice(index, 1);
-      setConfig(updatedBanners);
+      queryClient.invalidateQueries(["banners"]);
       toast.success("Banner deleted successfully!");
     } catch (error) {
       toast.error(`Deletion failed: ${error?.message || "Unknown error"}`);
     }
   };
 
+  // Handle drag and drop reordering
   const onDragEnd = (event) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -162,127 +156,36 @@ const AppBanners = () => {
     }
   };
 
+  // Handle products loading error
+  useEffect(() => {
+    if (productsError) {
+      toast.error(`Failed to load products: ${productsError.message}`);
+    }
+  }, [productsError]);
+
   return (
     <>
       <NavbarItem title="App Banners" breadcrumbs={breadcrumbs} />
       <div className="p-6 w-full mx-auto">
         <div className="flex gap-6 mb-8">
-          <div className="w-3/5">
-            <h2 className="text-xl font-semibold mb-4">Banner List</h2>
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-              <SortableContext items={config.map((item) => item._id)} strategy={verticalListSortingStrategy}>
-                <div className="space-y-3">
-                  {config.map((banner, index) => (
-                    <SortableItem
-                      key={banner._id}
-                      id={banner._id}
-                      banner={banner}
-                      index={index}
-                      onDelete={handleDeleteBanner}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-
-            {config.length === 0 && (
-              <Card>
-                <CardContent className="flex items-center justify-center h-32 text-gray-500">
-                  No banners added yet. Upload your first banner below.
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          <div className="w-2/6">
-            <h2 className="text-xl font-semibold mb-4">Preview</h2>
-            {config.length > 0 ? (
-              <Carousel>
-                <CarouselContent>
-                  {config.map((banner, index) => (
-                    <CarouselItem key={`preview-${index}-${banner.name}`}>
-                      <div className="p-1 relative">
-                        <div className="flex aspect-video items-center justify-center bg-muted rounded-lg relative">
-                          <img
-                            src={banner.url || banner}
-                            alt={`Banner ${index + 1}`}
-                            className="object-cover h-full w-full"
-                          />
-                          <div className="absolute bottom-2 left-2 bg-black/70 text-white text-sm px-3 py-1 rounded">
-                            {index + 1} / {config.length}
-                          </div>
-                          {banner.type === "new" && (
-                            <div className="absolute top-2 right-2">
-                              <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                                New
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                {config.length > 1 && (
-                  <>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </>
-                )}
-              </Carousel>
-            ) : (
-              <Card>
-                <CardContent className="flex items-center justify-center h-64 text-gray-500">
-                  <div className="text-center">
-                    <Upload className="h-12 w-12 mx-auto mb-2" />
-                    <p>No banners to preview</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          <BannerList
+            config={banners}
+            products={products}
+            sensors={sensors}
+            onDragEnd={onDragEnd}
+            handleDeleteBanner={handleDeleteBanner}
+            handleFileSelection={handleFileSelection}
+            handleAddBanner={handleAddBanner}
+            formData={formData}
+            loading={loading}
+            isFetchingNextPage={isFetchingNextPage}
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            observerRef={observerRef}
+            dropdownRef={dropdownRef}
+          />
         </div>
-
-        <Card className="bg-background border-blue-200">
-          <CardContent className="p-6">
-            <div className="text-center">
-              <h2 className="text-xl text-foreground font-semibold mb-2">
-                Add Banner
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Select an image file to upload (JPEG, PNG, WEBP • Max 5MB)
-              </p>
-              <div className="relative inline-block">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleSingleFileUpload}
-                  disabled={loading}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                />
-                <Button
-                  className={`${
-                    loading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                  } text-white px-8 py-3 text-lg`}
-                  disabled={loading}
-                >
-                  <Upload className="h-5 w-5 mr-2" />
-                  {loading ? "Uploading..." : "Choose File to Upload"}
-                </Button>
-              </div>
-
-              {loading && (
-                <div className="mt-4">
-                  <div className="w-full bg-gray-200 rounded-full h-2 max-w-md mx-auto">
-                    <div className="bg-blue-600 h-2 rounded-full animate-pulse w-1/2"></div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <PreviewBanner config={banners} />
       </div>
     </>
   );
