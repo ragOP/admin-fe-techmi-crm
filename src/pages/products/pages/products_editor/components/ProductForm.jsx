@@ -44,15 +44,27 @@ const ProductsForm = ({ initialData, isEditMode }) => {
 
   const [currentAdmin, setCurrentAdmin] = useState(null);
 
+  const medicineTypesParams = {
+    is_active: true,
+    page: 1,
+    per_page: 100,
+  };
+
   const { data: medicineTypes = [] } = useQuery({
     queryKey: ["medicine_types_list"],
-    queryFn: fetchMedicineType,
+    queryFn: () => fetchMedicineType({ params: medicineTypesParams }),
     select: (data) => data?.response?.data?.data,
   });
 
+  const brandParams = {
+    is_active: true,
+    page: 1,
+    per_page: 100,
+  };
+
   const { data: brandList = [] } = useQuery({
     queryKey: ["brand_list"],
-    queryFn: fetchBrand,
+    queryFn: () => fetchBrand({ params: brandParams }),
     select: (data) => data?.response?.data?.data,
   });
 
@@ -728,9 +740,12 @@ function ProductImageFields({ form }) {
 }
 
 function ProductTaxFields({ form }) {
+  const params = {
+    is_active: true,
+  };
   const { data: hsnCodes } = useQuery({
     queryKey: ["hsn_codes"],
-    queryFn: () => fetchHsnCodes({}),
+    queryFn: () => fetchHsnCodes({ params }),
     select: (data) => data?.response?.data?.data,
   });
 
