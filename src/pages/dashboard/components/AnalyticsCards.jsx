@@ -32,7 +32,7 @@ const AnalyticsCards = ({ params }) => {
         ? `₹${Number(overview.totalRevenue.value).toLocaleString()}`
         : "-",
       change: overview.totalRevenue
-        ? `${overview.totalRevenue.changes.trend === "up" ? "+" : "-"}${
+        ? `${overview.totalRevenue.changes.trend === "up" ? "+" : ""}${
             overview.totalRevenue.changes.percentage_change
           }%`
         : "-",
@@ -44,7 +44,7 @@ const AnalyticsCards = ({ params }) => {
       label: overview.totalUsers?.label || "Total Users",
       value: overview.totalUsers?.value ?? "-",
       change: overview.totalUsers
-        ? `${overview.totalUsers.changes.trend === "up" ? "+" : "-"}${
+        ? `${overview.totalUsers.changes.trend === "up" ? "+" : ""}${
             overview.totalUsers.changes.percentage_change
           }%`
         : "-",
@@ -56,7 +56,7 @@ const AnalyticsCards = ({ params }) => {
       label: overview.totalOrders?.label || "Total Orders",
       value: overview.totalOrders?.value ?? "-",
       change: overview.totalOrders
-        ? `${overview.totalOrders.changes.trend === "up" ? "+" : "-"}${
+        ? `${overview.totalOrders.changes.trend === "up" ? "+" : ""}${
             overview.totalOrders.changes.percentage_change
           }%`
         : "-",
