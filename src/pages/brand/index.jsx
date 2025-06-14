@@ -70,7 +70,11 @@ const Brands = () => {
 
   return (
     <div className="flex flex-col">
-      <NavbarItem title="Brands" breadcrumbs={breadcrumbs} customBox={<DateRangePicker onChange={handleDateRangeChange} />} />
+      <NavbarItem
+        title="Brands"
+        breadcrumbs={breadcrumbs}
+        customBox={<DateRangePicker onChange={handleDateRangeChange} />}
+      />
 
       <div className="px-4">
         <CustomActionMenu

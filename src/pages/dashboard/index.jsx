@@ -68,7 +68,14 @@ const Dashboard = () => {
           <Printer />
           <span>Print</span>
         </Button>
-        <DateRangePicker onChange={handleDateRangeChange} />
+        <DateRangePicker
+          value={
+            params.start_date && params.end_date
+              ? { from: params.start_date, to: params.end_date }
+              : undefined
+          }
+          onChange={handleDateRangeChange}
+        />
       </div>
     );
   };

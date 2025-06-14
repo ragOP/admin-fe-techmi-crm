@@ -93,6 +93,8 @@ const ProductsForm = ({ initialData, isEditMode }) => {
       is_active: initialData?.is_active ?? true,
       quantity: initialData?.quantity || 0,
       hsn_code: initialData?.hsn_code?._id || null,
+      is_prescription_required:
+        initialData?.is_prescription_required || false,
     },
   });
 
@@ -819,7 +821,7 @@ function ProductStatusFields({ form, isEditMode }) {
           name="is_active"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Is Active</FormLabel>
+              <FormLabel>Product status</FormLabel>
               <FormControl>
                 <Select
                   value={field.value ? "true" : "false"}
@@ -831,6 +833,60 @@ function ProductStatusFields({ form, isEditMode }) {
                   <SelectContent>
                     <SelectItem value="true">Active</SelectItem>
                     <SelectItem value="false">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="col-span-3">
+        <FormField
+          control={form.control}
+          name="product_type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product Type</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={(val) => field.onChange(val)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="product">Product</SelectItem>
+                    <SelectItem value="service">Service</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="col-span-3">
+        <FormField
+          control={form.control}
+          name="is_prescription_required"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product Prescription</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value ? "true" : "false"}
+                  onValueChange={(val) => field.onChange(val === "true")}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Required</SelectItem>
+                    <SelectItem value="false">Not required</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -856,33 +912,6 @@ function ProductStatusFields({ form, isEditMode }) {
                   {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-
-      <div className="col-span-3">
-        <FormField
-          control={form.control}
-          name="product_type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product type</FormLabel>
-              <FormControl>
-                <Select
-                  value={field.value}
-                  onValueChange={(val) => field.onChange(val)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="product">Product</SelectItem>
-                    <SelectItem value="service">Service</SelectItem>
-                  </SelectContent>
-                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

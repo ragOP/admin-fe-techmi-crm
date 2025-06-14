@@ -31,4 +31,5 @@ export const productsFormSchema = z.object({
   is_active: z.boolean().default(true),
   quantity: z.number().optional(),
   product_type: z.string().optional().default("product"),
+  is_prescription_required: z.boolean().default(false),
 });

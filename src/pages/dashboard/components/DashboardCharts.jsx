@@ -142,8 +142,6 @@ const DashboardCharts = ({ params }) => {
     totalOrders: it.totalOrders,
   }));
 
-  console.log("modifiedOrdersByMonth", ordersByMonth, modifiedOrdersByMonth);
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 mt-4 mb-4 ">
       <div className="flex flex-col flex-1 h-full gap-6">

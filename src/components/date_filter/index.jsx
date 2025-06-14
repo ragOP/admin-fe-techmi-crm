@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  addDays,
   endOfMonth,
   endOfWeek,
   endOfYear,
@@ -38,10 +37,46 @@ const predefinedRanges = {
 
 const rangeLabels = Object.keys(predefinedRanges).concat("Custom");
 
-export function DateRangePicker({ className, onChange }) {
+export function DateRangePicker({ className, onChange, value }) {
+  // If value is provided, operate in controlled mode
+  const isControlled = value !== undefined;
   const [selectedLabel, setSelectedLabel] = React.useState("All Time");
   const [customRange, setCustomRange] = React.useState([null, null]);
   const [open, setOpen] = React.useState(false);
+
+  // Sync state with value prop in controlled mode
+  React.useEffect(() => {
+    if (isControlled) {
+      if (!value || (!value.from && !value.to)) {
+        setSelectedLabel("All Time");
+        setCustomRange([null, null]);
+      } else {
+        // Check if value matches a predefined range
+        let matched = false;
+        for (const [label, range] of Object.entries(predefinedRanges)) {
+          if (
+            range &&
+            value.from &&
+            value.to &&
+            range.from.toDateString() === new Date(value.from).toDateString() &&
+            range.to.toDateString() === new Date(value.to).toDateString()
+          ) {
+            setSelectedLabel(label);
+            setCustomRange([range.from, range.to]);
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          setSelectedLabel("Custom");
+          setCustomRange([
+            value.from ? new Date(value.from) : null,
+            value.to ? new Date(value.to) : null,
+          ]);
+        }
+      }
+    }
+  }, [isControlled, value && value.from, value && value.to]);
 
   const displayValue = React.useMemo(() => {
     if (selectedLabel === "All Time") return "All Time";
@@ -61,7 +96,7 @@ export function DateRangePicker({ className, onChange }) {
   }, [selectedLabel, customRange]);
 
   React.useEffect(() => {
-    if (onChange) {
+    if (!isControlled && onChange) {
       if (selectedLabel === "Custom") {
         onChange(
           customRange[0] && customRange[1]
@@ -72,7 +107,7 @@ export function DateRangePicker({ className, onChange }) {
         onChange(predefinedRanges[selectedLabel] || null);
       }
     }
-  }, [selectedLabel, customRange, onChange]);
+  }, [selectedLabel, customRange, onChange, isControlled]);
 
   return (
     <div className={cn(className)}>
@@ -109,6 +144,13 @@ export function DateRangePicker({ className, onChange }) {
                 onClick={() => {
                   setSelectedLabel(label);
                   if (label !== "Custom") setOpen(false);
+                  if (isControlled && onChange) {
+                    if (label === "Custom") {
+                      // Don't call onChange yet, wait for custom range
+                    } else {
+                      onChange(predefinedRanges[label] || null);
+                    }
+                  }
                 }}
               >
                 {label}
@@ -120,7 +162,16 @@ export function DateRangePicker({ className, onChange }) {
                   selectsRange
                   startDate={customRange[0]}
                   endDate={customRange[1]}
-                  onChange={(update) => setCustomRange(update)}
+                  onChange={(update) => {
+                    setCustomRange(update);
+                    if (isControlled && onChange) {
+                      if (update[0] && update[1]) {
+                        onChange({ from: update[0], to: update[1] });
+                      } else {
+                        onChange(null);
+                      }
+                    }
+                  }}
                   inline
                   monthsShown={2}
                   maxDate={new Date()}
